@@ -1,0 +1,207 @@
+E 1
+
+id ∘ f = f
+
+use fun-ext
+
+(id ∘ f) x
+= id (f x)
+= f x
+
+...
+
+Q 2
+
+f ∘ g = id
+f ∘ g' = id
+
+g' = g' ∘ id
+= g' ∘ (f ∘ g)
+= (g' ∘ f) ∘ g
+= id ∘ g
+= id
+
+cf uniqueness of inverses in a group
+
+Q 3
+
+initial objects are isomorphic
+
+Q 4
+
+initial object in omega = 0
+no terminal object
+
+Q 5
+
+no initial or terminal in Mon
+
+E 6
+
+Set^≅(A,B) =
+  Σ f : A → B
+    g : B → A
+    f ∘ g = id
+    g ∘ f = id
+
+(id,id) : Set^≅(A,A)
+
+(f,g) ∘ (f',g') = (f ∘ f', g' ∘ g)
+
+(f,g)^(-1) = (g,f)
+
+Q 7
+
+PRE
+
+initial object: (0 , λ x y → ⊥)
+
+terminal object : (1 , λ x y → ⊤)
+
+MON
+
+initial object : ({e} , e , e * e = e)
+= terminal object
+
+
+E 8
+
+e : A → B surjective: all y:B,ex x :A. e x = y
+
+it is an epi:
+f,g : B → C
+f ∘ e = g ∘ e -> f = g
+assume h : f ∘ e = g ∘ e
+assume y : B
+? : f y = g x=y
+using surj
+x : A, e y = x
+hence we have to show
+? f (e x) = g (e x)
+which follows from h.
+[]
+
+i : A → B injective : i x = i y → x = y
+
+it is a mono :
+i ∘ f = i ∘ g
+use fun-ext
+(i ∘ f) x = i ( f x)
+(i ∘ g) x = i ( g x)
+and by inj we have that i (f x) = i (g x)
+
+
+e is epi -> epi is surjective
+f ∘ e = g ∘ e -> f = g
+
+f b = T
+g b = ∃ a : A . e a = b
+
+=> g (e a) = f (e a)
+g (e a) = T
+? (a : A) →  ∃ a : A . e a = e a []
+hence using e is epi
+∀ b : B . (∃ a : A . e a = b) = ⊤
+[]
+
+data myProp : Prop where
+  ⊤ : myProp
+  surj : B → myProp
+
+true : myProp → Prop
+
+f : B → myProp
+f b = ⊤
+g b = surj b
+
+E 10
+
+f : A → B
+
+inj : ∀ x y : A, f x = f y → x = y
+surj : ∀ y : B ∃ x : A. f x = y
+
+unique choice
+(∀ x : A ∃! y : B. R x y) → ∃ f:A → B. ∀ x:A.R x (f x)
+
+we can use R : B → A → Prop
+with R y x = (f x = y)
+existence follows from surjectivity
+uniqueness
+R y x = (f x = y)
+R y x' = (f x' = y)
+f x = y = f x'
+-> x = x' using inj
+
+hence ∃ g : B → A . ∀ x : A,f (g x) = x
+hence f ∘ g = id
+g ∘ f = id
+we can show
+f ∘ (g ∘ f) = f ∘ id
+f ∘ (g ∘ f) =
+(f ∘ g) ∘ f =
+id ∘ f = f
+= f ∘ id
+and hence because f is a mono
+g ∘ f = id
+
+E 11
+
+i : ℕ → ℤ
+
+is epi
+
+f,g : ℤ → M
+with (M,z,*)
+
+f ∘ i = g ∘ i
+
+? f = g
+for all n:ℕ we have that f(i n) = g (i n)
+but what about negative numbers
+f(-n) = g(-n) ?
+f(-n) = z * f(-n) = g(0) * f(-n)
+= g(-n + n) * f(-n)
+= g(-n) * g(n) * f(-n)
+= g(-n) * f(n) * f(-n)
+= g(-n) * f(n + -n)
+= g(-n) * f(0)
+= g(-n) * z
+= g(-n)
+
+i is a mono because it is injective as a function.
+
+but it is not an isomorphism
+because any isomorphism on monoids is an isomorphism of sets
+but i obviously isn't an isomorphsim of sets.
+
+E 12
+
+f : A → B
+l,r : B → A
+l ∘ f = id
+f ∘ r = id
+
+l = r
+l = l ∘ f ∘ r
+= id ∘ r
+= r
+
+E 13
+
+f ∘ g = id
+F f ∘ F g
+= F (f ∘ g)
+= F id
+= id
+
+E 20
+
+Eg P-fin(X) or M-fin(X)
+Defn of Psi doesn't work because we do not preserve equality
+of powersets, e.g as+bs = bs+as but
+phi g (as+bs) != (phi g as) + (phi g bs)
+
+E 21
+
+transitive, reflexive closure of a relation.

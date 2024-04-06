@@ -1,0 +1,28 @@
+example
+
+free monad over a functor
+
+M X = \mu X. X + F X
+example lists
+
+F-algebra with variables. 
+
+discuss \eta, bin, \mu
+
+dual cofree comonad.
+
+F-coalgebras with ?
+
+general definition
+
+a) monoid in the category of endofucntors
+b) Kleisli triples
+
+equivalences
+
+examples from functional programming
+
+relation to adjunctions.
+every adjunction gives rise to a monad and a comonad
+examples
+

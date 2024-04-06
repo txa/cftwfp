@@ -1,0 +1,12 @@
+...
+
+general definition of limits and colimits
+
+limits and colimits in presheaf cats
+
+ends and coends (for presheaves)
+limits are ends
+colimits are coends.
+
+initial algebra and terminal coalgebras from colimits and limits
+
