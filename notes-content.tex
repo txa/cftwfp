@@ -79,7 +79,9 @@
 \renewcommand{\ExerciseHeader}{{\noindent\textbf{
 \ExerciseName\ \ExerciseHeaderNB\ExerciseHeaderTitle
 \ExerciseHeaderOrigin\;}}}
-\renewcommand{\AnswerHeader}{{\textit{Solution}\;}}
+\renewcommand{\AnswerHeader}{\noindent{\textit{\textbf{Solution\ \ExerciseHeaderNB:}}\;}}
+\renewcommand{\ExerciseSkipAfter}{8pt}
+\renewcommand{\AnswerSkipAfter}{8pt}
 
 \newtheorem{question}[Exercise]{Question}
 
@@ -127,11 +129,38 @@ We borrow Agda's convention to write mixfix operations by using $\_$ where the a
 We start with the standard example of a category: the category of sets $\cSet$. To define a category we need a type of objects which is $\Set$
 %\footnote{So really we have categories of sets on every level $\cat{\Set_i}$.}%
 . We write $\obj{\cSet} = \Set$. 
-Given two objects $A,B : \Set$ we define the set of morphisms which in this case is the set of functions, $\cSet(A,B) = A \to B$. For every object $A : \Set$ we have an identity function $\id_A : A \to A$ which is defined as $\id_A\,a = a$, given functions $f : B \to C$ and $g : A \to B$ we define function composition $f \circ g : A \to C$ as $(f\circ g)\,a = f\,(g\,a)$. The strange order of arguments in composition is a consequence of the fact that we write function application this way around, hence there is no change of direction in the definition of $\circ$. We observe that there are a number of laws for function composition: identity is neutral, that is given $f : A \to B$ we have that $\id_B \circ f = f$ and $f \circ \id_A = f$ and moreover it is associative, that is given three composable function $f : C \to D, g : B \to C, h : A \to B$ we have that $f \circ (g \circ h) = (f \circ g) \circ h$.
+Given two objects $A,B : \Set$ we define the set of morphisms which in this case is the set of functions, $\cSet(A,B) = A \to B$. For every object $A : \Set$ we have an identity function $\id_A : A \to A$ which is defined as $\id_A\,a = a$, given functions $f : B \to C$ and $g : A \to B$ we define function composition $f \circ g : A \to C$ as $(f\circ g)\,a = f\,(g\,a)$. The strange order of arguments in composition is a consequence of the fact that we write function application this way around, hence there is no change of direction in the definition of $\circ$. We observe that there are a number of laws for function composition: identity is neutral, that is given $f : A \to B$ we have that $\id_B \circ f = f$ and $f \circ \id_A = f$ and moreover it is associative, that is given three composable function $h : C \to D, g : B \to C, f : A \to B$ we have that $h \circ (g \circ f) = (h \circ g) \circ f$.
 
 \begin{Exercise}
   Write down the proofs that identity is neutral and composition is associative in detail.
 \end{Exercise}
+\begin{Answer}
+  We use the principle of \emph{function extensionality}: for functions $f,f':A\to B$, if $f(a)=f'(a)$ for all $a:A$, then $f=f'$.
+
+  First we prove that the identity function is neutral, i.e. that $\id_B\circ f=f$ and $f\circ\id_A=f$ for any $f\colon A\to B$. Pick arbitrary $a:A$. Then
+  \begin{align*}
+    (\id_B \circ f)(a) 
+      &= \id_B(f(a)) \tag{Defn. of $\circ$}\\
+      &= f(a) \tag{Defn. of $\id_B$} 
+  \end{align*}
+  So $\id_B\circ f = f$. Also,
+  \begin{align*}
+    (f\circ id_A)(a) 
+      &= f(\id_A(a)) \tag{Defn. of $\circ$}\\
+      &= f(a) \tag{Defn. of $\id_A$} 
+  \end{align*}
+  so $f\circ\id_A = f$.
+
+  Now to prove associativity. Pick composable function $h : C \to D, g : B \to C, f : A \to B$ and arbitrary $a:A$. Then,
+  \begin{align*}
+    (h \circ (g \circ f))(a)
+      &= h((g\circ f)(a)) \tag{Defn. $\circ$}\\
+      &= h(g(f(a))) \tag{Defn. $\circ$}\\
+      &= (h\circ g)(f(a)) \tag{Defn. $\circ$}\\
+      &= ((h\circ g)\circ f)(a) \tag{Defn. $\circ$}\\
+  \end{align*}
+  so $h \circ (g \circ f) = (h \circ g) \circ f$.
+\end{Answer}
 
 We abstract from this example to define what is a category: A category $\cat{C}$ is given by a type of objects $\obj{\cat{C}}$ and given two objects $A,B: \obj{\cat{C}}$, a set of morphisms $\homC{C}{A}{B} : \Set$ called the \emph{homset}. 
 %Inspired by the set example we also write $A \to_{\cat{C}} B$ for this.
@@ -187,6 +216,21 @@ We call $f$ and $g$ \emph{isomorphisms}. We write $f : A \cong B$ or omitting th
 \begin{Exercise}
   Show that inverses are unique, i.e. if $(f,g)$ and $(f,g')$ are an isomorphisms then $g = g'$. 
 \end{Exercise}
+\begin{Answer}
+  Unfolding the definition of ``isomorphism'', we know the following:
+  \begin{alignat*}{2}
+    f\circ g &= \id_B \qquad g\circ f&&=\id_A\\
+    f\circ g' &= \id_B \qquad g'\circ f&&=\id_A
+  \end{alignat*}
+  and we want to show $g=g'$. We do so by the following chain of equations:
+  \begin{align*}
+    g &= \id_A \circ g \\
+      &= (g'\circ f) \circ g\\
+      &= g' \circ (f\circ g)\\
+      &= g' \circ \id_B\\
+      &= g'.
+  \end{align*}
+\end{Answer}
 
 Now given two terminal objects $\bf{1},\bf{1'}$ we have $!'_{\bf{1}} : \bf{1} \to \bf{1'}$ and $!_{\bf{1'}} : \bf{1} \to \bf{1'}$. There compositions are the identity because for example $!_{\bf{1'}} \circ !_{\bf{1'}} : \bf{1} \to \bf{1}$ but there is also the identity $\id_{\bf{1}} : \bf{1} \to \bf{1}$ and since we said that there is exactly one morphism from any object to the terminal object it must be that $!_{\bf{1'}} \circ !_{\bf{1'}} = !_{\bf{1}} = \id_{\bf{1}}$. The same reasoning shows that the other composition is also the identity.
 
