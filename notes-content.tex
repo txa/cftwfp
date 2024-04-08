@@ -72,6 +72,7 @@
 \newcommand{\from}{\mathrm{from}}
 \newcommand{\Eq}[2]{\mathrm{Eq}(#1,#2)}
 \newcommand{\eq}[1]{\mathrm{eq}(#1)}
+\newcommand{\const}[1][]{\mathrm{const}_{#1}}
 
 %\newcommand{\exp}[2]{\expC{}{#1}{#2}}
 
@@ -246,6 +247,14 @@ category. We use the syllable \emph{co-} in this situation, we could say that an
 \begin{Exercise}
   Prove explicitly that initial objects are unique upto isomorphism.
 \end{Exercise}
+\begin{Answer}
+  This is a simple dualisation of the argument for terminal objects above. Suppose we had two initial objects $\bf{0}$ and $\bf{0'}$. Then the two triangles below commute.
+  \[\begin{tikzcd}
+      \bf{0} \arrow{r}{?_{\bf{0'}}} \arrow[swap]{d}{\id_{\bf 0}} & \bf{0'} \arrow{d}{\id_{\bf 0'}} \arrow{dl}{?'_{\bf{0}}} \\
+      \bf{0} \arrow[swap]{r}{?_{\bf{0'}}} & \bf{0'}
+  \end{tikzcd}\]
+  We know that $?'_{\bf 0}\circ ?_{\bf 0'}=\id_{\bf 0}$ (the upper left triangle) because both $?'_{\bf 0}\circ ?_{\bf 0'}$ and $\id_{\bf 0}$ are elements of $\cat{C}({\bf 0}, {\bf 0})$, but by the initiality of $\bf{0}$ there must be a \emph{unique} such morphism. By similar reasoning, we know that there is a unique element of $\cat{C}({\bf 0'}, {\bf 0'})$, so the lower right triangle commutes, i.e. $?_{\bf 0'}\circ ?'_{\bf 0}=\id_{\bf 0'}$. Thus we have shown that $(?_{\bf 0'},?'_{\bf 0})$ is an isomorphism.
+\end{Answer}
 
 When I say that a category has a terminal or initial object this also indicates that I assume that we have chosen one which I indicate by $1$ or $0$ respectively. The same principle applies to all categorical constructs we are going to introduce. We will later discuss the concept of univalent categories which entails that categorical constructions are unique.
 
@@ -255,7 +264,7 @@ When I say that a category has a terminal or initial object this also indicates 
 Let us look at some other examples of categories. We can use the natural numbers to define some categories: The category $\cat{\omega}$ has as objects the natural numbers and morphisms are given as $\homC{\omega}{m}{n} = m \leq n$. This is a category because $\leq$ is reflexive and transitive and those properties give rise to identity and composition. The laws hold trivial because there is at most one element of a proposition. This category is an example of a degenerate case of a category: it is a \emph{preorder}, i.e. a relation that is reflexive and transitive. 
 
 \begin{question}
-  Has this category an initial or a terminal object? 
+  Does this category have an initial or a terminal object? 
 \end{question}
 
 % An interesting preorder is the category of propositions $\cat{\Prop}$ whose objects are propositions and whose morphisms are implications that is $P \to Q : \Prop$ with $P,Q : \Prop$. 
@@ -263,7 +272,7 @@ Let us look at some other examples of categories. We can use the natural numbers
 Another category we can be build from natural numbers has only one object and its morphisms are the natural numbers. The identity morphism is $0$ and composition is given by addition. The laws follow from the fact that $0$ is neutral ($n+0 = n = 0+n$) and associative $(l+m)+n = l+(m+n)$. Here we exploit the algebraic properties of $+$, namely that it is a \emph{monoid}; hence categories with one object correspond to monoids.
 
 \begin{question}
-  Has this category an initial or a terminal object? 
+  Does this category have an initial or a terminal object? 
 \end{question}
 
 In Mathematics we are also interested in equivalence relations (preorders that are symmetric) and groups (monoids that have a inverses), like the integers $\Int$ with addition on negation). We can also do this for categories by saying that a category is a \emph{groupoid}, if for every morphism $f : A \to B$ there is an inverse $f^{-1} : B \to A$ such that $f \circ f^{-1} = \id$ and $f^{-1} \circ f = \id$. A groupoid whose homsets are propositions is an equivalence relation and a groupoid with one object is a group.
@@ -301,6 +310,18 @@ A \arrow[r,twoheadrightarrow,"e"]  & B
   Show that the monos in $\cat{Set}$ are exactly the injective functions and the epis are exactly the surjective functions.
 % \footnote{It seems that the implication epi $\to$ surjective needs impredicativity, i.e. $\Prop_i : \Set_i$.} -- not true
 \end{Exercise}
+\begin{Answer}
+  First, we show that a function $i\colon A\to B$ is injective if and only if it's a monomorphism in the category $\cat{\Set}$.
+  \begin{enumerate}
+    \item[($\Rightarrow$)] Suppose $i$ is injective, i.e. for all $a,a'\colon A$, if $i(a)=i(a')$ then $a=a'$. To show it's a mono, pick arbitrary $f,g\colon C\to A$ such that $i\circ f = i\circ g$. To show $f=g$, pick some $x\colon C$. Then we know $(i\circ f)(x)=(i\circ g)(x)$, i.e.
+    \[ i(f(x)) = i(g(x)). \]
+    But by the injectivity of $i$, we know that $f(x)=g(x)$. Since $x$ was arbitrary, conclude $f=g$. Thus $i$ is mono.
+    \item[($\Leftarrow$)] Now suppose $i\colon A\to B$ is a mono. Given $a,a'$ such that $i(a)=i(a')$, we want to show that $a=a'$. Now consider the functions $\const[a]$ and $\const[a']$ from the singleton set $\bf{1}$ to $A$, which send the single element to $a$ and $a'$, respectively.
+    \[ \begin{tikzcd}[column sep=large] \bf{1} \arrow[shift left=2]{r}{\const[a]} \arrow[swap,shift right=2]{r}{\const[a']} & A \arrow{r}{i} & B \end{tikzcd} \]
+    The equation $i(a)=i(a')$ is equivalently written $i\circ\const[a]=i\circ\const[a']$. But since $f$ is a mono, this tells us that $\const[a]=\const[a']$, i.e. that $a=a'$. So conclude $i$ is injective.
+  \end{enumerate}
+\end{Answer}
+
 If a function $f : A \to B$ has a left inverse $l : B \to A$ with $l \circ f = \id$ then it is mono, because  
 \begin{align*}
 f \circ g = f \circ h 
