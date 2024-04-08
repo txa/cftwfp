@@ -322,7 +322,7 @@ However, if we know that the function is a mono and an epi because of inverses (
 A functor is a morphism between categories, the standard example is the List functor which is an endofunctor on the category of sets, i.e. it is a functor from $\cSet$ to $\cSet$, I write $\List : \cSet \to \cSet$ overloading $\to$%
 \footnote{In the literature people often write $[\cSet,\cSet].$}.
 The list functor has an effect on objects, i.e. sets, given $A : \Set$ we obtain $\List\,A : \Set$ which is the set of lists over $A$ which we write as $[a_0,a_1,\dots,a_{n-1}]$, this includes the empty list $[]$.
-The List functor comes with map function which maps a function $f : A \to B$ to $\List\,f : \List\,A \to \List\,B$, which is defined as 
+The List functor comes with a function which ``maps'' a function $f : A \to B$ to $\List\,f : \List\,A \to \List\,B$, which is defined as 
 \[ \List\,f\, [a_0,a_1,\dots,a_{n-1}] = [f\,a_0,f\,a_1,\dots,f\,a_{n-1}]\]
 Note that we overload $\List$ to mean at the same time a map on objects and a map on morphisms. $\List$ also preserves the categorical structure, it maps identity to identity, that is $\List\,\id_A = \id_{\List\,A}$ and 
 $\List\,(f\circ g) = (\List\,f) \circ (\List\,g)$. This can be easily seen by showing that both sides are pointwise equal when applied to a generic list
@@ -405,7 +405,7 @@ Hence, clearly the diagram doesn't commute since $[\true,\true,\false] \not= [\f
 Here is some notation for the type of natural transformations. As we use $\Pi$ in type theory we use an integral in category theory, that is we write
 \footnote{Just think of \emph{parametric $\Pi$ type} when you see the integral.}
 \[ \rev : \int_{A:\Set} \List\,A \to \List\,A \]
-The integral here is a general concept called \emph{an end}, but I am not going to define it in full generality here. There are also coends (corresponding to $\Sigma$-types in type theory) which also use the integral notation but the index is on the top.
+The integral here is a general concept called \emph{an end} (see \autoref{sec:ends-coends} for the general definition of ends). There are also coends (corresponding to $\Sigma$-types in type theory) which also use the integral notation but the index is on the top.
 
 We define in general, what a \emph{natural transformation} is: Given two functors $F,G : \cat{C} \to \cat{D}$ a natural transformation $\alpha$ from $F$ to $G$ is given by a family of morphisms: 
 \[\alpha : \Pi_{A : \obj{\cat{C}}} \cat{D}(F\,A,G\,A)\]
@@ -439,9 +439,9 @@ To express that $\alpha$ is a natural transformation we write:
 
 Functors between any two categories $\cat{C},\cat{D}$ and natural transformations form a category, the functor category $\cat{C}\cat{\to}\cat{D}$. It's objects are functors $F : \cat{C} \to \cat{D}$ and given two functors $F,G$ the homset is the set
 \footnote{This is a set in our sense because two natural transformations are equal when they are pointwise equal (and we don't need to talk about equality of objects). However, they are not necessarily small. The natural transformations between two endofunctors on $\cat{\Set_i}$ are not in $\Set_i$ because we quantify over all small sets.}
-of natural transformations $\int_{X:C} \homC{D}{F\,X}{G\,X}$, the identity natural transformation $\id : \int_{X:C}\homC{D}{F\,X}{F\,X}$ is given by $\id_X = id_{F\,X}$ and given $\alpha : \int_{X:C} \homC{D}{F\,X}{G\,X}, \beta : \int_{X:C}\homC{D}{G\,X}{H\,X}$ their composition is 
+of natural transformations $\int_{X:\obj{\cat{C}}} \homC{D}{F\,X}{G\,X}$, the identity natural transformation $\id : \int_{X:\obj{\cat{C}}}\homC{D}{F\,X}{F\,X}$ is given by $\id_X = \id_{F\,X}$ and given $\alpha : \int_{X:\obj{\cat{C}}} \homC{D}{F\,X}{G\,X}, \beta : \int_{X:\obj{\cat{C}}}\homC{D}{G\,X}{H\,X}$ their composition is 
 \begin{align*}
-& (\beta \circ \alpha) : \int_{X:C} \homC{D}{F\,X}{H\,X}\\
+& (\beta \circ \alpha) : \int_{X:\obj{\cat{C}}} \homC{D}{F\,X}{H\,X}\\
 & (\beta \circ \alpha)_X = \beta_X \circ \alpha_X
 \end{align*}
 \begin{exercise}
@@ -616,8 +616,15 @@ The Yoneda lemma is famous for mystifying the students of category theory, not s
 
 Let $F$ be a functor $\cat{C}^\op \to \cat{\Set}$ this is called \emph{a presheaf}%
 \footnote{This immediately triggers the question: \emph{what is a sheaf?} but the answer is beyond this course. It suffices to say that in order to say what a sheaf is we need a topological structure on the category.}
-. An example for such a functor is $\homC{C}{\_}{A}$
-\footnote{As indicated in the prelimenaries we write $\homC{C}{\_}{A}$ for $\lambda X.\homC{C}{X}{A}$. In particular we can apply it, e.g. $\homC{C}{\_}{A}\,B = \homC{C}{B}{A}$.}
+.
+Rather than thinking of presheaves as functors from the dual category, it's useful to
+treat them as \emph{contravariant} functors: on objects, they behave the same as
+usual functors (sending objects $X\colon\obj{\cat{C}}$ to sets $F(X)\colon\Set$),
+but on morphisms, they're ``flipped around'': for $f\colon\cat{C}(A,B)$, $F(f)$
+is a function from $F(B)$ to $F(A)$.
+
+An example for such a functor is $\homC{C}{\_}{A}$
+\footnote{As indicated in the preliminaries we write $\homC{C}{\_}{A}$ for $\lambda X.\homC{C}{X}{A}$. In particular we can apply it, e.g. $\homC{C}{\_}{A}\,B = \homC{C}{B}{A}$.}
  where $A:\obj{\cat{C}}$, in this case the functor is called \emph{representable}. The morphism part is given by composition, that is given $f:\homC{C}{B}{C} = \homC{C^\op}{C}{B}$:
 \begin{align*}
 &\homC{C}{f}{A} : \homC{C}{C}{A} \to \homC{C}{B}{A} \\
@@ -626,7 +633,7 @@ Let $F$ be a functor $\cat{C}^\op \to \cat{\Set}$ this is called \emph{a preshea
 \begin{exercise}
   Check that $\homC{C}{\_}{A}$ satisfies the functor laws.
 \end{exercise}
-Indeed, since we already learnt that functors and natural transformations form a category, preshaves over $\cat{C}$ form a category which we denote as $\PSh\,\cat{C}$. Now using the other input of the homset of $\cat{C}$ we can form a functor $\Y : \cat{C} \to \PSh\,\cat{C}$, called the \emph{Yoneda embedding}, which is defined on objects as $\Y\,A = \homC{C}{\_}{A}$. To define the morphism part assume $f:\homC{C}{A}{B}$:
+Indeed, since we already learnt that functors and natural transformations form a category, presheaves over $\cat{C}$ form a category which we denote as $\PSh\,\cat{C}$. Now using the other input of the homset of $\cat{C}$ we can form a functor $\Y : \cat{C} \to \PSh\,\cat{C}$, called the \emph{Yoneda embedding}, which is defined on objects as $\Y\,A = \homC{C}{\_}{A}$. To define the morphism part assume $f:\homC{C}{A}{B}$:
 \begin{align*}
 & \Y\,f :  \int_{X:\cat{C}}\homC{C}{X}{A} \to \homC{C}{X}{B} \\
 & (\Y\,f)_X\,g = f \circ g
@@ -755,7 +762,7 @@ Sometimes we need the Yoneda lemma for covariant functors but this is no problem
 \label{sec:ends-coends}
 
 Since I have introduced the notation $\int_{A : \obj{\cat{C}}} \cat{D}(F\,A,G\,A)$ to define natural transformations, you are maybe wondering what the general meaning of these \emph{integrals} are. It is clear that $\cat{D}(F\,A,G\,A)$ is an function from
-$\obj{\cat{C}}$ but it is neither co- nor contravariant. However, it is a profunctor that is a functor of the type $F : \op{\cat{C}}\times\cat{C} \to \Set$ if we define it as $F(A^{-},A^{+})= \cat{D}(F\,A^{-},G\,A^{+})$.
+$\obj{\cat{C}}$ but it is neither co- nor contravariant. However, it is a profunctor that is a functor of the type $F : \cat{C}^\op\times\cat{C} \to \cat{\Set}$ if we define it as $F(A^{-},A^{+})= \cat{D}(F\,A^{-},G\,A^{+})$.
 \begin{exercise}
   Fill in the morphism part of $F$.
 \end{exercise}
