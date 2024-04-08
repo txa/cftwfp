@@ -53,6 +53,8 @@
 \newcommand{\PSh}{\mathbf{PSh}}
 \newcommand{\pair}[2]{[#1,#2]}
 \newcommand{\inj}{\mathrm{inj}}
+\newcommand{\inl}{\mathrm{inl}}
+\newcommand{\inr}{\mathrm{inr}}
 \newcommand{\case}[2]{{\setlength{\arraycolsep}{1pt}
    \renewcommand{\arraystretch}{0.6}\left[\begin{array}{c}#1\\#2\end{array}\right]}}
 \newcommand{\Fin}{\mathrm{Fin}}
@@ -365,6 +367,32 @@ A \arrow[r,twoheadrightarrow,"e"]  & B
     \item[($\Leftarrow$)] Now suppose $i\colon A\to B$ is a mono. Given $a,a'$ such that $i(a)=i(a')$, we want to show that $a=a'$. Now consider the functions $\const[a]$ and $\const[a']$ from the singleton set $\bf{1}$ to $A$, which send the single element to $a$ and $a'$, respectively.
     \[ \begin{tikzcd}[column sep=large] \bf{1} \arrow[shift left=2]{r}{\const[a]} \arrow[swap,shift right=2]{r}{\const[a']} & A \arrow{r}{i} & B \end{tikzcd} \]
     The equation $i(a)=i(a')$ is equivalently written $i\circ\const[a]=i\circ\const[a']$. But since $f$ is a mono, this tells us that $\const[a]=\const[a']$, i.e. that $a=a'$. So conclude $i$ is injective.
+  \end{enumerate}
+
+  Now, the proof that $e\colon A \to B$ is surjective iff it's an epimorphism in $\cat{Set}$.
+  \begin{enumerate}
+    \item[($\Rightarrow$)] Suppose $e$ is surjective, that is, for all $b\colon B$, there is some $a\colon A$ such that $e(a)=b$. Now take arbitrary $f,g\colon B\to C$ such that $f\circ e=g\circ e$ and show $f=g$. By function extensionality, it suffices to pick arbitrary $b\colon B$ and show $f(b)=g(b)$. By surjectivity, obtain some $a\colon A$ such that $e(a)=b$. Since $f\circ e=g\circ e$, we know
+    \[ f(e(a)) = g(e(a)) \qquad\text{that is,}\qquad f(b)=g(b),\]
+    as desired.
+    \item[($\Leftarrow$)] The opposite direction, that $e$ epic implies $e$ surjective requires more work. We need to call to mind two other notions we'll use in the construction. The first is that of the \emph{disjoint union} of two sets: if $X$ and $Y$ are sets, we'll write $X+Y$ for the set
+    \[  \{\inl(x) \mid x\colon X\} \cup \{\inr(y)\mid y\colon Y\}. \]
+    So $X+Y$ contains a copy of the set $X$ (tagged with ``$\inl$'') and a copy of $Y$ (tagged with ``$\inr$''). We can also regard $\inl$ as a function $X\to X+Y$ and likewise $\inr\colon Y\to X+Y$.
+    
+    We'll also use \emph{set quotients}. Given a set $X$ and an equivalence relation $\_\sim\_$ on $X$ (that is, a reflexive, symmetric, and transitive relation), we can define the set $X/\sim$ of $\sim$-equivalence classes: for each $x\colon X$, the set $[x]_\sim \colon X/\sim$ consists of all the $x'\colon X$ such that $x\sim x'$. So it's the case that $[x]_\sim = [x']_\sim$ if and only if $x\sim x'$ (prove this, by the properties of equivalence relations). We have a canonical function $\eta\colon X\to X/\sim$, sending each $x$ to $[x]_\sim$.
+
+    Now, let's combine these to prove that an epi $e:A\to B$ in $\cat{Set}$ must be a surjection. Define an equivalence relation $\sim$ to be the \emph{least equivalence relation} on the set $B+B$ such that:
+    \[ \inl(b) \sim \inr(b') \quad\text{iff}\quad \exists a\colon A. b=e(a)=b'. \]
+    In other words, we declare that $\inl(b)\sim\inr(b')$ when there's such an $a\colon A$, and then relate those pairs (and only those pairs) we need to in order to make this an equivalence relation.
+    
+    Define $f:B\to (B+B)/\sim$ to be $\eta\circ\inl$ and $g$ to be $\eta\circ\inr$. To use the fact that $e$ is an epimorphism, we want to prove that $f\circ e = g\circ e$. By function extensionality, pick arbitrary $a\colon A$. By the definition of $\sim$ (instantiating both $b$ and $b'$ to $e(a)$), it must be the case that
+    \[ \inl(e(a)) \sim \inr(e(a)) \]
+    because there is some $a\colon A$ such that $e(a)=e(a)=e(a)$, namely $a$ itself. Since $\inl(e(a))$ is $\sim$-related to $\inr(e(a))$, they must have the same $\sim$-equivalence classes, i.e.
+    \[ \eta(\inl(e(a))) = \eta(\inr(e(a))). \]
+    Since $a$ was arbitrary, conclude $\eta\circ\inl\circ e = \eta\circ\inr\circ e$, that is, $f\circ e = g\circ e$. 
+    
+    Then apply the fact that $e$ is an epimorphism: $f\circ e = g\circ e$ tells us that $f=g$. So, for any $b\colon B$, $\eta(\inl(b))=\eta(\inr(b))$, i.e.
+    \[ [\inl(b)]_\sim = [\inr(b)]_\sim. \]
+    But we know this is the case if and only if $\inl(b)\sim\inr(b)$. But, by the definition of $\sim$, this tells us that there must exist some $a$ such that $b=e(a)=b$. So we have succeeded in proving surjectivity of $e$: we took an arbitrary $b$ and found some $a$ such that $e(a)=b$.
   \end{enumerate}
 \end{Answer}
 
