@@ -73,6 +73,7 @@
 \newcommand{\Eq}[2]{\mathrm{Eq}(#1,#2)}
 \newcommand{\eq}[1]{\mathrm{eq}(#1)}
 \newcommand{\const}[1][]{\mathrm{const}_{#1}}
+\newcommand{\inv}{^{-1}}
 
 %\newcommand{\exp}[2]{\expC{}{#1}{#2}}
 
@@ -263,31 +264,76 @@ When I say that a category has a terminal or initial object this also indicates 
 
 Let us look at some other examples of categories. We can use the natural numbers to define some categories: The category $\cat{\omega}$ has as objects the natural numbers and morphisms are given as $\homC{\omega}{m}{n} = m \leq n$. This is a category because $\leq$ is reflexive and transitive and those properties give rise to identity and composition. The laws hold trivial because there is at most one element of a proposition. This category is an example of a degenerate case of a category: it is a \emph{preorder}, i.e. a relation that is reflexive and transitive. 
 
-\begin{question}
+\begin{Exercise}
   Does this category have an initial or a terminal object? 
-\end{question}
+\end{Exercise}
+\begin{Answer}
+  It does have an initial object: 0. For all $n\colon\Nat$, we know $0\leq n$, so we get a morphism in $\homC{\omega}{0}{n}$. Since all the hom-sets are $\Prop$'s, we know that this morphism must be unique. This is an instance of a more general fact: if we view any preorder as a category (as we've done for the preorder $(\Nat,\leq)$ here), then an initial object in this category (if there is one) is a \emph{least element} in the preorder.
+
+  Dually, a terminal object in $\cat{\omega}$ would be a \emph{greatest element} in the preorder $(\Nat,\leq)$. But we know that there is no greatest natural number, hence there is no terminal object in $\cat{\omega}$. If we added a ``point at infinity'' greater than all natural numbers, i.e. considered the preorder $\omega+1$, then this \emph{would} have a greatest element and the corresponding category would have a terminal object. 
+\end{Answer}
 
 % An interesting preorder is the category of propositions $\cat{\Prop}$ whose objects are propositions and whose morphisms are implications that is $P \to Q : \Prop$ with $P,Q : \Prop$. 
 
 Another category we can be build from natural numbers has only one object and its morphisms are the natural numbers. The identity morphism is $0$ and composition is given by addition. The laws follow from the fact that $0$ is neutral ($n+0 = n = 0+n$) and associative $(l+m)+n = l+(m+n)$. Here we exploit the algebraic properties of $+$, namely that it is a \emph{monoid}; hence categories with one object correspond to monoids.
 
-\begin{question}
+\begin{Exercise}
   Does this category have an initial or a terminal object? 
-\end{question}
+\end{Exercise}
+\begin{Answer}
+  No. If an object $X$ is either initial or terminal, then this implies that $\cat{C}(X,X)$ must be the singleton set $\{\id_X\}$. But there is not one morphism from this object to itself, there are infinitely many.
+\end{Answer}
 
 In Mathematics we are also interested in equivalence relations (preorders that are symmetric) and groups (monoids that have a inverses), like the integers $\Int$ with addition on negation). We can also do this for categories by saying that a category is a \emph{groupoid}, if for every morphism $f : A \to B$ there is an inverse $f^{-1} : B \to A$ such that $f \circ f^{-1} = \id$ and $f^{-1} \circ f = \id$. A groupoid whose homsets are propositions is an equivalence relation and a groupoid with one object is a group.
 
 \begin{Exercise}
-  Show that  sets with isomorphisms are a groupoid. Here the objects are sets and the homsets are isomorphisms. First you need to show that this is indeed a category.
+  Let $\Set^{\cong}$ be the category whose objects are sets but whose morphisms are just the $\Set$-\emph{isomorphisms}. Show that this is a category, and moreover a groupoid. 
 \end{Exercise}
+\begin{Answer}
+  First, to check that this is a category. The identity functions are isomorphisms in $\Set$, since they are self-inverse, so $\cat{\Set^{\cong}}$ has identity morphisms. Moreover, $\cat{\Set^{\cong}}$ ``inherits'' the composition operation: if $f\colon A\to B$ and $g\colon B\to C$ are functions, with inverses $f\inv$ and $g\inv$ respectively, then $g\circ f : A \to C$ is their composite. This is also an isomorphism in $\cat{\Set}$, with inverse $f\inv\circ g\inv$ (check that this composition makes sense):
+  \begin{align*}
+    (f\inv\circ g\inv)\circ (g\circ f) 
+      &= f\inv \circ (g\inv\circ g)\circ f\\ 
+      &= f\inv \circ \id\circ f \\
+      &= f\inv \circ f \\
+      &= \id\\
+    (g\circ f)\circ (f\inv\circ g\inv)
+      &= g\circ (f\circ f\inv)\circ g\inv\\
+      &= g\circ \id \circ g\inv\\
+      &= g\circ g\inv\\
+      &= \id.
+  \end{align*}
+  So $g\circ f$ is indeed a morphism of $\cat{Set^{\cong}}$. The associativity and unit laws are also inherited from $\cat{\Set}$.
+
+  This is also a groupoid: each morphism $f$, by virtue of being a $\cat{Set}$-isomorphism, comes equipped with an inverse $f\inv$, which is also its inverse in $\cat{Set^{\cong}}$. So every morphism is an iso, i.e. this is a groupoid.
+\end{Answer}
 
 A rich source of categories are sets with structure. For example we define the category of preorders $\cat{Pre}$: Its objects are preorders that is a set $A$ together with a relation $R : A \to A \to \Prop$ which is reflexive and transitive. Given preorders $(A,R)$ and $(B,S)$ a morphism is a function $f : A \to B$ which preserves the relation that is if $R\,a\,a'$ then $S\,(f\,a)\,(f\,a')$. We use identity and composition as in $\cat{Set}$, we need to check that identity is a preorder morphism and that the composition of preorder morphisms is a preorder morphism.
 
 Another example is the category of monoids $\cat{Mon}$: Its objects are monoids, that is a set $A$ with a neutral element $e:A$ and a binary operation $\_*\_$ such that the laws of a monoid hold ($x*e=x, e*x=x, x*(y*z) = (x*y)*z$). A morphism between monoids $(A,e, \_*\_)$ and $(B,e',\_*'\_)$ is a function $f : A \to B$ which preserves the structure, i.e. $f\,e = e'$ and $f\,(x * y) = (f\,x) *' (f\, y)$. Again we only have to show that identity is a morphism and that morphisms are closed under composition to see that this is a category.
 
-\begin{question}
+\begin{Exercise}
   Do the categories $\cat{Pre}$ and $\cat{Mon}$ have initial and terminal objects?
-\end{question}
+\end{Exercise}
+\begin{Answer}
+  Yes, both categories have both initial and terminal objects. 
+  
+  $\cat{Pre}$ gets its initial and terminal objects from $\cat{Set}$:
+  \begin{itemize}
+    \item The intial object of $\cat{Set}$, the empty set $\emptyset$, has a trivial preorder relation on it (we don't need to specify anything to define a relation $\emptyset \to \emptyset \to \Prop$). For any preorder $(A,R)$, the unique map $\emptyset \to A$ is a preorder morphism---again, there's nothing to check.
+    \item The terminal object of $\cat{Set}$, a singleton set $\{\star\}$, can only have one preorder relation $T$ on it: reflexivity requires that $T\;\star\;\star$, and that entirely determines $T\colon\{\star\}\to\{\star\}\to\Prop$. For any preorder $(A,R)$, the unique map $!_A\colon A\to\{\star\}$ is indeed a preorder morphism: for any $x,y\colon A$, it's the case that $!_A(x)=!_A(y)=\star$, so the requirement that $R\;x\;y$ implies $T\;(!_A(x))\;(!_A(y))$ is satisfied automatically.
+  \end{itemize}
+
+  $\cat{Mon}$ also gets its \emph{terminal} object from $\cat{Set}$, but not \emph{initial}:
+  \begin{itemize}
+    \item The singleton set $\{\star\}$ can only have one monoid structure, namely the one where $\star * \star = \star$ and $\star$ as the neutral element. For any other monoid $(A,e,\_*'\_)$, the unique map $!_A$ indeed sends the netural element $e$ to the neutral element $\star$, and, for $x,y\colon A$,
+    \[ !_A(x)\;*\;!_A(y) \quad=\quad \star * \star \quad=\quad \star \quad=\quad !_A(x\;*'\;y) \]
+    so $!_A$ is a monoid morphism $(A,e,\_*'\_) \to (\{\star\},\star,\_*\_)$.
+    \item We cannot put a monoid structure on $\emptyset$, because a monoid requires a neutral element. But there is still an initial object of $\cat{Mon}$:
+    
+    [REDACTED until 09/04. \textit{Hint: what's the least amount of structure a monoid has to have?}]
+  \end{itemize}
+\end{Answer}
 
 \subsection{Monos and epis}
 \label{sec:monos-epis}
