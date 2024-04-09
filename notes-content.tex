@@ -602,6 +602,29 @@ To express that $\alpha$ is a natural transformation we write:
       \Maybe\;(g\circ f)\;\nothing &= \nothing\\ &= \Maybe\;g\;(\Maybe\;f\;\nothing)\\ &= ((\Maybe\;g)\circ(\Maybe\;f))\;\nothing\\
       \Maybe\;(g\circ f)\;(\just\;a) &= \just((g\circ f)\;a)\\ &= \just(g(f(a)))\\ &=  \Maybe\;g\;(\Maybe\;f\;(\just a))\\ &= ((\Maybe\;g)\circ(\Maybe\;f))\;(\just\;a)
     \end{align*}
+  \Question
+    The definition above defines a function $\hd_A\colon\List\,A\to\Maybe\,A$ for each set $A$. So to verify this is a natural transformation, we just need to verify that, for all $f\colon A\to B$, the naturality square
+    \[ \begin{tikzcd} \List\,A \arrow{r}{\hd_A}\arrow[swap]{d}{\List\,f} & \Maybe\,A \arrow{d}{\Maybe\,f}\\
+        \List\,B \arrow[swap]{r}{\hd_B} & \Maybe\,B
+     \end{tikzcd} \]
+     commutes. This is done by function extensionality, as usual, i.e. proving that any $L\colon\List\,A$ is sent to the same element of $\Maybe\,B$ by either route. As with the definition of $\hd$, we break into two cases: $L=[]$ and $L=[a_0,\ldots]$.
+     \begin{align*}
+        (\hd_B\circ\List\,f)\;[]
+          &= \hd_B(\List\,f\,[])\\
+          &= \hd_B\,[]\\
+          &= \nothing\\
+          &= \Maybe\,f\,\nothing\\
+          &= \Maybe\,f\,(\hd_A\,[])\\
+          &= (\Maybe(f)\circ\hd_A)\,[]\\
+        (\hd_B\circ\List\,f)\;[a_0,\ldots]
+            &= \hd_B(\List\,f\,[a_0,\ldots])\\
+            &= \hd_B\,[f(a_0),\ldots]\\
+            &= \just(f(a_0))\\
+            &= \Maybe\,f\,(\just\,a_0)\\
+            &= \Maybe\,f\,(\hd_A\,[a_0,\ldots])\\
+            &= (\Maybe(f)\circ\hd_A)\,[a_0,\ldots]
+     \end{align*}
+     So conclude $\hd_B\circ\List(f) = \Maybe(f)\circ\hd_A$, as required.
 \end{Answer}
 
 Functors between any two categories $\cat{C},\cat{D}$ and natural transformations form a category, the functor category $\cat{C}\cat{\to}\cat{D}$. It's objects are functors $F : \cat{C} \to \cat{D}$ and given two functors $F,G$ the homset is the set
@@ -647,11 +670,21 @@ Let's go through this in detail, a monoid morphism $f:\cat{Mon}(F\,A,M)$ is give
 On the other hand given a function $g : A \to |M|$ we can define a function $\psi_{A,M}\,g : \List\,A \to |M|$ using
 \begin{align*}
   \psi\,g\,[] & = e \\
-  \psi\,g\, [a_0,a_1,\dots,a_{n-1}] & = (g\,a_0) * (g\,a_1) * \dots * (g\,a_n)
+  \psi\,g\, [a_0,a_1,\dots,a_{n-1}] & = (g\,a_0) * (g\,a_1) * \dots * (g\,a_{n-1})
 \end{align*}
 \begin{Exercise}
   Show that $\psi\,g$ is a monoid morphism, i.e. $\phi\,g : \cat{Mon}(F\,A,M)$
 \end{Exercise}
+\begin{Answer}
+  $\psi\,g$ preserves the neutral element: it sends $[]$ to $e$. As for preserving the monoid operation, observe:
+  \begin{align*}
+      &\psi\,g\,([a_0,a_1,\dots,a_{n-1}]\app[b_0,b_1,\dots,b_{m-1}])\\
+        &= (g\,a_0) * (g\,a_1) * \dots * (g\,a_{n-1}) * (g\,b_0) * (g\,b_1) * \dots * (g\,b_{m-1})\\
+        &= ((g\,a_0) * (g\,a_1) * \dots * (g\,a_{n-1})) * ((g\,b_0) * (g\,b_1) * \dots * (g\,b_{m-1}))\\
+        &= (\psi\,g\,[a_0,a_1,\dots,a_{n-1}]) * (\psi\,g\,[b_0,b_1,\dots,b_{m-1}])
+  \end{align*}
+  so this is indeed a monoid morphism.
+\end{Answer}
 Hence we have constructed functions:
 \[\begin{tikzcd}[column sep = large]
 \cat{Mon}(F\,A,M) \arrow[r,"\phi_{A,M}",bend right] & \cat{\Set}(A,U\,M) \arrow[l,"\psi_{A,M}",bend right]
@@ -704,6 +737,22 @@ The other direction is a bit more interesting: to show that $\psi \circ \phi = \
     \cat{Mon}(F\,B,N) \arrow[r,"\phi_{B,N}" below]  & \cat{\Set}(B,U\,N)  
 \end{tikzcd}\]
 \end{Exercise}
+\begin{Answer}
+  Pick arbitrary $h\colon\homC{Mon}{F\,A}{M}$. Then the down-then-right trip around the square gives
+  \[ \phi\,(g\circ h\circ F(f)) \colon \homC{Set}{A}{U\,N} \]
+  this function sends $a\colon A$ to $g(h(\List\,f\,[a)))$, that is, $g(h\,[f\,a])$ by definition of $\phi$ and $F$.
+  
+  The right-then-down path takes $h$ to $(U\,g)\circ (\phi\,h)\circ f$. Calculating this at $a:A$, we get:
+  \begin{align*}
+    ((U\,g)\circ (\phi\,h)\circ f)\,a 
+      &= (U\,g)\,(\phi\,h\,(f\,a))\\
+      &= (U\,g)\,(h\,[f\,a])\\
+      &= g(h\,[f\,a]).
+  \end{align*}
+  This is the same expression we got by the other direction. Since $a$ was arbitrary, conclude
+  \[ \phi\,(g\circ h\circ F(f)) = (U\,g)\circ (\phi\,h)\circ f,\]
+  which is naturality.
+\end{Answer}
 \begin{question}
   Why don't we need to verify that $\psi$ is a natural transformation?
 \end{question}
