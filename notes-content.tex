@@ -573,7 +573,7 @@ To express that $\alpha$ is a natural transformation we write:
   \item Show that the function $\hd : \Pi_{A:\Set}\List\,A \to \Maybe\,A$ which is defined as
     \begin{align*}
       &\hd\,[] && = \nothing \\
-      &\hd\,  [a_0,a_1,\dots,a_{n-1}]  && = a_0
+      &\hd\,  [a_0,a_1,\dots,a_{n-1}]  && = \just\,a_0
     \end{align*}
     is a natural transformation (i.e. $\hd : \int_{A:\Set}\List\,A \to \Maybe\,A$).
   \end{enumerate}
@@ -703,7 +703,7 @@ In this case we say that $L$ is left adjoint to $R$ (or that $R$ is right adjoin
 \cat{D} \arrow[u,bend left = 50,"L" left, ]
 \end{tikzcd}\]
 
-We can actually obtain the list functor as the composition of the forgetful and the free functor: $\List = F \circ U$. We will return to this observation later, because functors which are obtained by composing a free and a forgetful functor are always monads and indeed List is a monad.
+We can actually obtain the list functor as the composition of the forgetful and the free functor: $\List = U \circ F$. We will return to this observation later, because functors which are obtained by composing a free and a forgetful functor are always monads and indeed List is a monad.
 
 \begin{Exercise}
 \label{ex:free-preorder}
@@ -924,7 +924,7 @@ $(A,F(A,f)\,z) \sim (B,F(f,B)\,z)$. We can use coends to interpret the concept o
 
 To remember when to use subscripts or superscripts we notice that in the case of ends the index is closer to the end of the page while for coends it is closer to the \emph{coend}, i.e. the beginning, of the page.
 
-
+\newpage
 \section{Products, coproducts and exponentials}
 \label{sec:prod-copr-expon}
 
