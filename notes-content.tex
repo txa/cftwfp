@@ -331,9 +331,7 @@ Another example is the category of monoids $\cat{Mon}$: Its objects are monoids,
     \item The singleton set $\{\star\}$ can only have one monoid structure, namely the one where $\star * \star = \star$ and $\star$ as the neutral element. For any other monoid $(A,e,\_*'\_)$, the unique map $!_A$ indeed sends the netural element $e$ to the neutral element $\star$, and, for $x,y\colon A$,
     \[ !_A(x)\;*\;!_A(y) \quad=\quad \star * \star \quad=\quad \star \quad=\quad !_A(x\;*'\;y) \]
     so $!_A$ is a monoid morphism $(A,e,\_*'\_) \to (\{\star\},\star,\_*\_)$.
-    \item We cannot put a monoid structure on $\emptyset$, because a monoid requires a neutral element. But there is still an initial object of $\cat{Mon}$:
-    
-    [REDACTED until 09/04. \textit{Hint: what's the least amount of structure a monoid has to have?}]
+    \item We cannot put a monoid structure on $\emptyset$, because a monoid requires a neutral element. But there is still an initial object of $\cat{Mon}$. Actually, the terminal object is also initial! The terminal monoid has $\{\star\}$ as its carrier set, and $\star$ is specified to be the neutral element. But the definition of monoid morphism requires that neutral elements be sent to neutral elements. So, for any other monoid $(A,e,\_*'\_)$, the function sending $\star$ to $e$ is a monoid morphism, but no other function $\{\star\}\to A$ is. Therefore there is a unique monoid morphism $(\{\star\},\star,\_*\_)\to (A,e,\_*'\_)$, i.e. $(\{\star\},\star,\_*\_)$ is initial.
   \end{itemize}
 \end{Answer}
 
@@ -487,8 +485,21 @@ Inspired by $\List$ we define the notion of a functor in general: given categori
 $F : \cat{C}(A,B) \to \cat{D}(F\,A,F\,B)$ that preserves identities $F\,\id_A = \id_{F\,A}$ and composition $F\,(f \circ g) = (F\,f) \circ (F\,g)$.
 
 \begin{Exercise}
-  Show that every functor preserves isomorphisms. That is if $\phi : A \to B$ is an isomorphism then so is $F\,\phi : F\,A \to F\,B$.
+  Show that every functor $F\colon\cat{C}\to\cat{D}$ preserves isomorphisms. That is if $\phi : \homC{C}{A}{B}$ is an isomorphism then so is $F\,\phi : \homC{D}{F\,A}{F\,B}$.
 \end{Exercise}
+\begin{Answer}
+  Let $\phi\inv:\homC{C}{B}{A}$ be the inverse of $\phi$, i.e. $\phi\circ\phi\inv=\id$ and $\phi\inv\circ\phi=\id$. We need an inverse for $F\,\phi$, and the obvious choice is $F(\phi\inv)\colon\homC{D}{F\,B}{F\,A}$. Check that either composition is the identity:
+  \begin{align*}
+    F(\phi\inv)\circ F(\phi)
+      &= F(\phi\inv\circ\phi) \tag{functoriality}\\
+      &= F(\id) \tag{assumed}\\
+      &= \id \tag{functoriality}\\
+    F(\phi)\circ F(\phi\inv)
+      &= F(\phi\circ\phi\inv) \tag{functoriality}\\
+      &= F(\id) \tag{assumed}\\
+      &= \id \tag{functoriality}
+  \end{align*}
+\end{Answer}
 
 We note that functors between preorder categories are simply monotone maps, i.e. correspond to morphisms in $\cat{Pre}$ and functors between monoids are monoid morphisms, i.e. correspond to morphisms in $\cat{Mon}$. Given these observations above it may appear a good idea to define a category of categories with functors as morphisms. You find this definition in many classical text books. We will not do this because it isn't clear what equality of functors is, they do not form a set in our sense.
 \footnote{We can however, define the category of strict categories, i.e. categories whose objects form a set. Because in this case equality of functors is a proposition and hence functors form a set.}
@@ -562,22 +573,36 @@ To express that $\alpha$ is a natural transformation we write:
 
 \begin{Exercise}\hfill
 
-  \begin{enumerate}
-  \item 
+  \Question
     Show that $\Maybe : \Set \to \Set$ where $\Maybe\,A$ is given by the constructors:
     \begin{align*}
       &\nothing && : \Maybe\,A \\
       &\just && : A \to \Maybe\,A
     \end{align*}
    is a functor.
-  \item Show that the function $\hd : \Pi_{A:\Set}\List\,A \to \Maybe\,A$ which is defined as
+  \Question Show that the function $\hd : \Pi_{A:\Set}\List\,A \to \Maybe\,A$ which is defined as
     \begin{align*}
       &\hd\,[] && = \nothing \\
       &\hd\,  [a_0,a_1,\dots,a_{n-1}]  && = a_0
     \end{align*}
     is a natural transformation (i.e. $\hd : \int_{A:\Set}\List\,A \to \Maybe\,A$).
-  \end{enumerate}
+
 \end{Exercise}
+\begin{Answer}
+  \Question
+    First, we need to define the morphism part, $\Maybe\,f\colon \Maybe\,A \to \Maybe\,B$ for each function $f\colon A\to B$. We define this by cases:
+    \begin{align*}
+      &\Maybe\;f\;\nothing &&= \nothing\\
+      &\Maybe\;f\;(\just a) &&= \just(f\;a)
+    \end{align*}
+    Then check functoriality:
+    \begin{align*}
+      \Maybe\;\id\;\nothing &= \nothing = \id\;\nothing\\
+      \Maybe\;\id\;(\just\;a) &= \just(\id\;a) = \just(a) = \id(\just\;a)\\
+      \Maybe\;(g\circ f)\;\nothing &= \nothing\\ &= \Maybe\;g\;(\Maybe\;f\;\nothing)\\ &= ((\Maybe\;g)\circ(\Maybe\;f))\;\nothing\\
+      \Maybe\;(g\circ f)\;(\just\;a) &= \just((g\circ f)\;a)\\ &= \just(g(f(a)))\\ &=  \Maybe\;g\;(\Maybe\;f\;(\just a))\\ &= ((\Maybe\;g)\circ(\Maybe\;f))\;(\just\;a)
+    \end{align*}
+\end{Answer}
 
 Functors between any two categories $\cat{C},\cat{D}$ and natural transformations form a category, the functor category $\cat{C}\cat{\to}\cat{D}$. It's objects are functors $F : \cat{C} \to \cat{D}$ and given two functors $F,G$ the homset is the set
 \footnote{This is a set in our sense because two natural transformations are equal when they are pointwise equal (and we don't need to talk about equality of objects). However, they are not necessarily small. The natural transformations between two endofunctors on $\cat{\Set_i}$ are not in $\Set_i$ because we quantify over all small sets.}
