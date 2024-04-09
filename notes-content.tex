@@ -893,6 +893,38 @@ Sometimes we need the Yoneda lemma for covariant functors but this is no problem
 %   Define explicitely the category of presheaves $\PSh\,\cat{C}$ and the Yoneda embedding $\Y: \cat{C} \to \PSh\,\cat{C}$ and check all the laws.
 % \end{Exercise}
 
+\subsection{Ends and coends}
+\label{sec:ends-coends}
+
+Since I have introduced the notation $\int_{A : \obj{\cat{C}}} \cat{D}(F\,A,G\,A)$ to define natural transformations, you are maybe wondering what the general meaning of these \emph{integrals} are. It is clear that $\cat{D}(F\,A,G\,A)$ is an function from
+$\obj{\cat{C}}$ but it is neither co- nor contravariant. However, it is a profunctor that is a functor of the type $F : \cat{C}^\op\times\cat{C} \to \cat{\Set}$\footnote{Here $\cat{C}\times\cat{D}$ is the product of categories: the objects are pairs of objects: $\obj{\cat{C}\times\cat{D}}=\obj{\cat{C}}\times\obj{\cat{D}}$ and the morphisms are pairs of morphisms: $\homC{C \times D}{(C_0,D_0)}{(C_1,D_1)}=\homC{C}{C_0}{C_1}\times\homC{D}{D_0}{D_1}$.} where we define it as $F(A^{-},A^{+})= \cat{D}(F\,A^{-},G\,A^{+})$.
+\begin{Exercise}
+  Fill in the morphism part of $F$.
+\end{Exercise}
+Now given a profunctor $F : \cat{C}^\op\times\cat{C} \to \Set$ we define its end $\int_{X: \cat{C}}F(X,X)$ as a subset of the dependent function type $\alpha:\Pi_{X : \obj{\cat{C}}}F(X,X)$ such the following diagram commutes for any $f : \homC{C}{A}{B}$ in $\cat{Set}$:
+\[\begin{tikzcd}
+  & \bf{1} \arrow[dl,"\alpha_A" left=5]\arrow[dr,"\alpha_B"]\\
+  F(A,A) \arrow[dr, "F(A {,} f)" left= 5] & & F(B,B) \arrow[dl,"F(f {,} B)"]\\  
+  & F(A,B) 
+\end{tikzcd}
+\]
+That is we define
+\[ \int_{X:\cat{C}} F(X,X) = \{ \alpha : \Pi_{X : \obj{\cat{C}}}F(X,X) \mid
+  \forall {f : \homC{C}{A}{B}} . F(A,f)\,\alpha_A) = F(f,B)\,\alpha_B \}\]
+\begin{Exercise}
+  Show that instantiating the definition of ends given here gives rise to the definition of natural transformations given previously.
+  That is $\int_{A : \obj{\cat{C}}} \cat{D}(F\,A,G\,A)$ is the set of natural transformations.
+\end{Exercise}
+
+Dually we define coends $\int^{X:\cat{C}} F(X,X)$ as a quotient of a $\Sigma$-type. That is we consider
+$\Sigma_{X : \obj{\cat{C}}}F(X,X) / \sim$ where for any  $z : F(B,A)$ and $f: \homC{C}{A}{B}$ and $z : F(B,A)$ ,
+$(A,F(A,f)\,z) \sim (B,F(f,B)\,z)$. We can use coends to interpret the concept of an abstract datatype.
+
+  % insert example
+
+To remember when to use subscripts or superscripts we notice that in the case of ends the index is closer to the end of the page while for coends it is closer to the \emph{coend}, i.e. the beginning, of the page.
+
+
 \section{Products, coproducts and exponentials}
 \label{sec:prod-copr-expon}
 
