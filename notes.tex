@@ -1,11 +1,12 @@
 
 \documentclass{article}
 
-\ifcsname ifsol\endcsname
-\else
+\makeatletter
+\@ifundefined{ifsol}{%
   \newif\ifsol
   \solfalse
-\fi
+}{}
+\makeatother
 
 \ifsol
 \usepackage[noanswer,lastexercise]{exercise}
