@@ -1,20 +1,4 @@
-
 \documentclass{article}
-
-\makeatletter
-\@ifundefined{ifsol}{%
-  \newif\ifsol
-  \solfalse
-}{}
-\makeatother
-
-\ifsol
-\usepackage[noanswer,lastexercise]{exercise}
-\else
-\usepackage[lastexercise]{exercise}
-\fi
-
-% \input{notes-content}
 
 
 \usepackage{amsmath}
@@ -69,8 +53,6 @@
 \newcommand{\PSh}{\mathbf{PSh}}
 \newcommand{\pair}[2]{[#1,#2]}
 \newcommand{\inj}{\mathrm{inj}}
-\newcommand{\inl}{\mathrm{inl}}
-\newcommand{\inr}{\mathrm{inr}}
 \newcommand{\case}[2]{{\setlength{\arraycolsep}{1pt}
    \renewcommand{\arraystretch}{0.6}\left[\begin{array}{c}#1\\#2\end{array}\right]}}
 \newcommand{\Fin}{\mathrm{Fin}}
@@ -90,20 +72,11 @@
 \newcommand{\from}{\mathrm{from}}
 \newcommand{\Eq}[2]{\mathrm{Eq}(#1,#2)}
 \newcommand{\eq}[1]{\mathrm{eq}(#1)}
-\newcommand{\const}[1][]{\mathrm{const}_{#1}}
-\newcommand{\inv}{^{-1}}
 
 %\newcommand{\exp}[2]{\expC{}{#1}{#2}}
 
-
-\renewcommand{\ExerciseHeader}{{\noindent\textbf{
-\ExerciseName\ \ExerciseHeaderNB\ExerciseHeaderTitle
-\ExerciseHeaderOrigin\;}}}
-\renewcommand{\AnswerHeader}{\noindent{\textit{\textbf{Solution\ \ExerciseHeaderNB:}}\;}}
-\renewcommand{\ExerciseSkipAfter}{8pt}
-\renewcommand{\AnswerSkipAfter}{8pt}
-
-\newtheorem{question}[Exercise]{Question}
+\newtheorem{exercise}{Exercise}
+\newtheorem{question}[exercise]{Question}
 
 \title{Categories for the lazy functional programmer\\
 Part 1}
@@ -149,38 +122,11 @@ We borrow Agda's convention to write mixfix operations by using $\_$ where the a
 We start with the standard example of a category: the category of sets $\cSet$. To define a category we need a type of objects which is $\Set$
 %\footnote{So really we have categories of sets on every level $\cat{\Set_i}$.}%
 . We write $\obj{\cSet} = \Set$. 
-Given two objects $A,B : \Set$ we define the set of morphisms which in this case is the set of functions, $\cSet(A,B) = A \to B$. For every object $A : \Set$ we have an identity function $\id_A : A \to A$ which is defined as $\id_A\,a = a$, given functions $f : B \to C$ and $g : A \to B$ we define function composition $f \circ g : A \to C$ as $(f\circ g)\,a = f\,(g\,a)$. The strange order of arguments in composition is a consequence of the fact that we write function application this way around, hence there is no change of direction in the definition of $\circ$. We observe that there are a number of laws for function composition: identity is neutral, that is given $f : A \to B$ we have that $\id_B \circ f = f$ and $f \circ \id_A = f$ and moreover it is associative, that is given three composable function $h : C \to D, g : B \to C, f : A \to B$ we have that $h \circ (g \circ f) = (h \circ g) \circ f$.
+Given two objects $A,B : \Set$ we define the set of morphisms which in this case is the set of functions, $\cSet(A,B) = A \to B$. For every object $A : \Set$ we have an identity function $\id_A : A \to A$ which is defined as $\id_A\,a = a$, given functions $f : B \to C$ and $g : A \to B$ we define function composition $f \circ g : A \to C$ as $(f\circ g)\,a = f\,(g\,a)$. The strange order of arguments in composition is a consequence of the fact that we write function application this way around, hence there is no change of direction in the definition of $\circ$. We observe that there are a number of laws for function composition: identity is neutral, that is given $f : A \to B$ we have that $\id_B \circ f = f$ and $f \circ \id_A = f$ and moreover it is associative, that is given three composable function $f : C \to D, g : B \to C, h : A \to B$ we have that $f \circ (g \circ h) = (f \circ g) \circ h$.
 
-\begin{Exercise}
+\begin{exercise}
   Write down the proofs that identity is neutral and composition is associative in detail.
-\end{Exercise}
-\begin{Answer}
-  We use the principle of \emph{function extensionality}: for functions $f,f':A\to B$, if $f(a)=f'(a)$ for all $a:A$, then $f=f'$.
-
-  First we prove that the identity function is neutral, i.e. that $\id_B\circ f=f$ and $f\circ\id_A=f$ for any $f\colon A\to B$. Pick arbitrary $a:A$. Then
-  \begin{align*}
-    (\id_B \circ f)(a) 
-      &= \id_B(f(a)) \tag{Defn. of $\circ$}\\
-      &= f(a) \tag{Defn. of $\id_B$} 
-  \end{align*}
-  So $\id_B\circ f = f$. Also,
-  \begin{align*}
-    (f\circ id_A)(a) 
-      &= f(\id_A(a)) \tag{Defn. of $\circ$}\\
-      &= f(a) \tag{Defn. of $\id_A$} 
-  \end{align*}
-  so $f\circ\id_A = f$.
-
-  Now to prove associativity. Pick composable function $h : C \to D, g : B \to C, f : A \to B$ and arbitrary $a:A$. Then,
-  \begin{align*}
-    (h \circ (g \circ f))(a)
-      &= h((g\circ f)(a)) \tag{Defn. $\circ$}\\
-      &= h(g(f(a))) \tag{Defn. $\circ$}\\
-      &= (h\circ g)(f(a)) \tag{Defn. $\circ$}\\
-      &= ((h\circ g)\circ f)(a) \tag{Defn. $\circ$}\\
-  \end{align*}
-  so $h \circ (g \circ f) = (h \circ g) \circ f$.
-\end{Answer}
+\end{exercise}
 
 We abstract from this example to define what is a category: A category $\cat{C}$ is given by a type of objects $\obj{\cat{C}}$ and given two objects $A,B: \obj{\cat{C}}$, a set of morphisms $\homC{C}{A}{B} : \Set$ called the \emph{homset}. 
 %Inspired by the set example we also write $A \to_{\cat{C}} B$ for this.
@@ -233,24 +179,9 @@ We say that two objects $A,B$ are \emph{isomorphic} if there are morphisms $f : 
   A \arrow[r, bend left, "f"]  \arrow[loop left,"\id_A"] & B \arrow[l,bend left ,"g"]\arrow[loop right,"\id_B"] 
 \end{tikzcd}\]
 We call $f$ and $g$ \emph{isomorphisms}. We write $f : A \cong B$ or omitting the witness we write $A \cong B$ to express that $A$ and $B$ are isomorphic. 
-\begin{Exercise}
+\begin{exercise}
   Show that inverses are unique, i.e. if $(f,g)$ and $(f,g')$ are an isomorphisms then $g = g'$. 
-\end{Exercise}
-\begin{Answer}
-  Unfolding the definition of ``isomorphism'', we know the following:
-  \begin{alignat*}{2}
-    f\circ g &= \id_B \qquad g\circ f&&=\id_A\\
-    f\circ g' &= \id_B \qquad g'\circ f&&=\id_A
-  \end{alignat*}
-  and we want to show $g=g'$. We do so by the following chain of equations:
-  \begin{align*}
-    g &= \id_A \circ g \\
-      &= (g'\circ f) \circ g\\
-      &= g' \circ (f\circ g)\\
-      &= g' \circ \id_B\\
-      &= g'.
-  \end{align*}
-\end{Answer}
+\end{exercise}
 
 Now given two terminal objects $\bf{1},\bf{1'}$ we have $!'_{\bf{1}} : \bf{1} \to \bf{1'}$ and $!_{\bf{1'}} : \bf{1} \to \bf{1'}$. There compositions are the identity because for example $!_{\bf{1'}} \circ !_{\bf{1'}} : \bf{1} \to \bf{1}$ but there is also the identity $\id_{\bf{1}} : \bf{1} \to \bf{1}$ and since we said that there is exactly one morphism from any object to the terminal object it must be that $!_{\bf{1'}} \circ !_{\bf{1'}} = !_{\bf{1}} = \id_{\bf{1}}$. The same reasoning shows that the other composition is also the identity.
 
@@ -263,17 +194,9 @@ There is also a dual concept: the empty set is an \emph{initial object} $\bf{0}$
 this exists trivially because we don't have to say what the functions returns since there are no elements in its domain. In this case we are lucky there is only one way to write the initial object. We can make the symmetry precise by introducing the concept of a dual category: given a category $\cat{C}$ the opposite category $\cat{C}^\op$ has the same objects as $\cat{C}$ but the homsets are given by reversing the order $\cat{C}^\op(A,B) = \cat{C}(B,A)$ and consequently composition also reverses order $f \circ^{\cat{C}^\op} g = g \circ^{\cat{C}} f$. We can now say that an initial object is a terminal object in the opposite category, or vice versa a terminal object is an initial object in the opposite 
 category. We use the syllable \emph{co-} in this situation, we could say that an initial object is a co-terminal object or that a terminal object is a co-initial object (but nobody says this).
 
-\begin{Exercise}
+\begin{exercise}
   Prove explicitly that initial objects are unique upto isomorphism.
-\end{Exercise}
-\begin{Answer}
-  This is a simple dualisation of the argument for terminal objects above. Suppose we had two initial objects $\bf{0}$ and $\bf{0'}$. Then the two triangles below commute.
-  \[\begin{tikzcd}
-      \bf{0} \arrow{r}{?_{\bf{0'}}} \arrow[swap]{d}{\id_{\bf 0}} & \bf{0'} \arrow{d}{\id_{\bf 0'}} \arrow{dl}{?'_{\bf{0}}} \\
-      \bf{0} \arrow[swap]{r}{?_{\bf{0'}}} & \bf{0'}
-  \end{tikzcd}\]
-  We know that $?'_{\bf 0}\circ ?_{\bf 0'}=\id_{\bf 0}$ (the upper left triangle) because both $?'_{\bf 0}\circ ?_{\bf 0'}$ and $\id_{\bf 0}$ are elements of $\cat{C}({\bf 0}, {\bf 0})$, but by the initiality of $\bf{0}$ there must be a \emph{unique} such morphism. By similar reasoning, we know that there is a unique element of $\cat{C}({\bf 0'}, {\bf 0'})$, so the lower right triangle commutes, i.e. $?_{\bf 0'}\circ ?'_{\bf 0}=\id_{\bf 0'}$. Thus we have shown that $(?_{\bf 0'},?'_{\bf 0})$ is an isomorphism.
-\end{Answer}
+\end{exercise}
 
 When I say that a category has a terminal or initial object this also indicates that I assume that we have chosen one which I indicate by $1$ or $0$ respectively. The same principle applies to all categorical constructs we are going to introduce. We will later discuss the concept of univalent categories which entails that categorical constructions are unique.
 
@@ -282,74 +205,31 @@ When I say that a category has a terminal or initial object this also indicates 
 
 Let us look at some other examples of categories. We can use the natural numbers to define some categories: The category $\cat{\omega}$ has as objects the natural numbers and morphisms are given as $\homC{\omega}{m}{n} = m \leq n$. This is a category because $\leq$ is reflexive and transitive and those properties give rise to identity and composition. The laws hold trivial because there is at most one element of a proposition. This category is an example of a degenerate case of a category: it is a \emph{preorder}, i.e. a relation that is reflexive and transitive. 
 
-\begin{Exercise}
-  Does this category have an initial or a terminal object? 
-\end{Exercise}
-\begin{Answer}
-  It does have an initial object: 0. For all $n\colon\Nat$, we know $0\leq n$, so we get a morphism in $\homC{\omega}{0}{n}$. Since all the hom-sets are $\Prop$'s, we know that this morphism must be unique. This is an instance of a more general fact: if we view any preorder as a category (as we've done for the preorder $(\Nat,\leq)$ here), then an initial object in this category (if there is one) is a \emph{least element} in the preorder.
-
-  Dually, a terminal object in $\cat{\omega}$ would be a \emph{greatest element} in the preorder $(\Nat,\leq)$. But we know that there is no greatest natural number, hence there is no terminal object in $\cat{\omega}$. If we added a ``point at infinity'' greater than all natural numbers, i.e. considered the preorder $\omega+1$, then this \emph{would} have a greatest element and the corresponding category would have a terminal object. 
-\end{Answer}
+\begin{question}
+  Has this category an initial or a terminal object? 
+\end{question}
 
 % An interesting preorder is the category of propositions $\cat{\Prop}$ whose objects are propositions and whose morphisms are implications that is $P \to Q : \Prop$ with $P,Q : \Prop$. 
 
 Another category we can be build from natural numbers has only one object and its morphisms are the natural numbers. The identity morphism is $0$ and composition is given by addition. The laws follow from the fact that $0$ is neutral ($n+0 = n = 0+n$) and associative $(l+m)+n = l+(m+n)$. Here we exploit the algebraic properties of $+$, namely that it is a \emph{monoid}; hence categories with one object correspond to monoids.
 
-\begin{Exercise}
-  Does this category have an initial or a terminal object? 
-\end{Exercise}
-\begin{Answer}
-  No. If an object $X$ is either initial or terminal, then this implies that $\cat{C}(X,X)$ must be the singleton set $\{\id_X\}$. But there is not one morphism from this object to itself, there are infinitely many.
-\end{Answer}
+\begin{question}
+  Has this category an initial or a terminal object? 
+\end{question}
 
 In Mathematics we are also interested in equivalence relations (preorders that are symmetric) and groups (monoids that have a inverses), like the integers $\Int$ with addition on negation). We can also do this for categories by saying that a category is a \emph{groupoid}, if for every morphism $f : A \to B$ there is an inverse $f^{-1} : B \to A$ such that $f \circ f^{-1} = \id$ and $f^{-1} \circ f = \id$. A groupoid whose homsets are propositions is an equivalence relation and a groupoid with one object is a group.
 
-\begin{Exercise}
-  Let $\Set^{\cong}$ be the category whose objects are sets but whose morphisms are just the $\Set$-\emph{isomorphisms}. Show that this is a category, and moreover a groupoid. 
-\end{Exercise}
-\begin{Answer}
-  First, to check that this is a category. The identity functions are isomorphisms in $\Set$, since they are self-inverse, so $\cat{\Set^{\cong}}$ has identity morphisms. Moreover, $\cat{\Set^{\cong}}$ ``inherits'' the composition operation: if $f\colon A\to B$ and $g\colon B\to C$ are functions, with inverses $f\inv$ and $g\inv$ respectively, then $g\circ f : A \to C$ is their composite. This is also an isomorphism in $\cat{\Set}$, with inverse $f\inv\circ g\inv$ (check that this composition makes sense):
-  \begin{align*}
-    (f\inv\circ g\inv)\circ (g\circ f) 
-      &= f\inv \circ (g\inv\circ g)\circ f\\ 
-      &= f\inv \circ \id\circ f \\
-      &= f\inv \circ f \\
-      &= \id\\
-    (g\circ f)\circ (f\inv\circ g\inv)
-      &= g\circ (f\circ f\inv)\circ g\inv\\
-      &= g\circ \id \circ g\inv\\
-      &= g\circ g\inv\\
-      &= \id.
-  \end{align*}
-  So $g\circ f$ is indeed a morphism of $\cat{Set^{\cong}}$. The associativity and unit laws are also inherited from $\cat{\Set}$.
-
-  This is also a groupoid: each morphism $f$, by virtue of being a $\cat{Set}$-isomorphism, comes equipped with an inverse $f\inv$, which is also its inverse in $\cat{Set^{\cong}}$. So every morphism is an iso, i.e. this is a groupoid.
-\end{Answer}
+\begin{exercise}
+  Show that  sets with isomorphisms are a groupoid. Here the objects are sets and the homsets are isomorphisms. First you need to show that this is indeed a category.
+\end{exercise}
 
 A rich source of categories are sets with structure. For example we define the category of preorders $\cat{Pre}$: Its objects are preorders that is a set $A$ together with a relation $R : A \to A \to \Prop$ which is reflexive and transitive. Given preorders $(A,R)$ and $(B,S)$ a morphism is a function $f : A \to B$ which preserves the relation that is if $R\,a\,a'$ then $S\,(f\,a)\,(f\,a')$. We use identity and composition as in $\cat{Set}$, we need to check that identity is a preorder morphism and that the composition of preorder morphisms is a preorder morphism.
 
 Another example is the category of monoids $\cat{Mon}$: Its objects are monoids, that is a set $A$ with a neutral element $e:A$ and a binary operation $\_*\_$ such that the laws of a monoid hold ($x*e=x, e*x=x, x*(y*z) = (x*y)*z$). A morphism between monoids $(A,e, \_*\_)$ and $(B,e',\_*'\_)$ is a function $f : A \to B$ which preserves the structure, i.e. $f\,e = e'$ and $f\,(x * y) = (f\,x) *' (f\, y)$. Again we only have to show that identity is a morphism and that morphisms are closed under composition to see that this is a category.
 
-\begin{Exercise}
+\begin{question}
   Do the categories $\cat{Pre}$ and $\cat{Mon}$ have initial and terminal objects?
-\end{Exercise}
-\begin{Answer}
-  Yes, both categories have both initial and terminal objects. 
-  
-  $\cat{Pre}$ gets its initial and terminal objects from $\cat{Set}$:
-  \begin{itemize}
-    \item The intial object of $\cat{Set}$, the empty set $\emptyset$, has a trivial preorder relation on it (we don't need to specify anything to define a relation $\emptyset \to \emptyset \to \Prop$). For any preorder $(A,R)$, the unique map $\emptyset \to A$ is a preorder morphism---again, there's nothing to check.
-    \item The terminal object of $\cat{Set}$, a singleton set $\{\star\}$, can only have one preorder relation $T$ on it: reflexivity requires that $T\;\star\;\star$, and that entirely determines $T\colon\{\star\}\to\{\star\}\to\Prop$. For any preorder $(A,R)$, the unique map $!_A\colon A\to\{\star\}$ is indeed a preorder morphism: for any $x,y\colon A$, it's the case that $!_A(x)=!_A(y)=\star$, so the requirement that $R\;x\;y$ implies $T\;(!_A(x))\;(!_A(y))$ is satisfied automatically.
-  \end{itemize}
-
-  $\cat{Mon}$ also gets its \emph{terminal} object from $\cat{Set}$, but not \emph{initial}:
-  \begin{itemize}
-    \item The singleton set $\{\star\}$ can only have one monoid structure, namely the one where $\star * \star = \star$ and $\star$ as the neutral element. For any other monoid $(A,e,\_*'\_)$, the unique map $!_A$ indeed sends the netural element $e$ to the neutral element $\star$, and, for $x,y\colon A$,
-    \[ !_A(x)\;*\;!_A(y) \quad=\quad \star * \star \quad=\quad \star \quad=\quad !_A(x\;*'\;y) \]
-    so $!_A$ is a monoid morphism $(A,e,\_*'\_) \to (\{\star\},\star,\_*\_)$.
-    \item We cannot put a monoid structure on $\emptyset$, because a monoid requires a neutral element. But there is still an initial object of $\cat{Mon}$. Actually, the terminal object is also initial! The terminal monoid has $\{\star\}$ as its carrier set, and $\star$ is specified to be the neutral element. But the definition of monoid morphism requires that neutral elements be sent to neutral elements. So, for any other monoid $(A,e,\_*'\_)$, the function sending $\star$ to $e$ is a monoid morphism, but no other function $\{\star\}\to A$ is. Therefore there is a unique monoid morphism $(\{\star\},\star,\_*\_)\to (A,e,\_*'\_)$, i.e. $(\{\star\},\star,\_*\_)$ is initial.
-  \end{itemize}
-\end{Answer}
+\end{question}
 
 \subsection{Monos and epis}
 \label{sec:monos-epis}
@@ -368,48 +248,10 @@ On the other hand a surjective function can be cancelled on the right hand side.
 A \arrow[r,twoheadrightarrow,"e"]  & B
 \end{tikzcd}
 \]
-\begin{Exercise}
+\begin{exercise}
   Show that the monos in $\cat{Set}$ are exactly the injective functions and the epis are exactly the surjective functions.
 % \footnote{It seems that the implication epi $\to$ surjective needs impredicativity, i.e. $\Prop_i : \Set_i$.} -- not true
-\end{Exercise}
-\begin{Answer}
-  First, we show that a function $i\colon A\to B$ is injective if and only if it's a monomorphism in the category $\cat{\Set}$.
-  \begin{enumerate}
-    \item[($\Rightarrow$)] Suppose $i$ is injective, i.e. for all $a,a'\colon A$, if $i(a)=i(a')$ then $a=a'$. To show it's a mono, pick arbitrary $f,g\colon C\to A$ such that $i\circ f = i\circ g$. To show $f=g$, pick some $x\colon C$. Then we know $(i\circ f)(x)=(i\circ g)(x)$, i.e.
-    \[ i(f(x)) = i(g(x)). \]
-    But by the injectivity of $i$, we know that $f(x)=g(x)$. Since $x$ was arbitrary, conclude $f=g$. Thus $i$ is mono.
-    \item[($\Leftarrow$)] Now suppose $i\colon A\to B$ is a mono. Given $a,a'$ such that $i(a)=i(a')$, we want to show that $a=a'$. Now consider the functions $\const[a]$ and $\const[a']$ from the singleton set $\bf{1}$ to $A$, which send the single element to $a$ and $a'$, respectively.
-    \[ \begin{tikzcd}[column sep=large] \bf{1} \arrow[shift left=2]{r}{\const[a]} \arrow[swap,shift right=2]{r}{\const[a']} & A \arrow{r}{i} & B \end{tikzcd} \]
-    The equation $i(a)=i(a')$ is equivalently written $i\circ\const[a]=i\circ\const[a']$. But since $f$ is a mono, this tells us that $\const[a]=\const[a']$, i.e. that $a=a'$. So conclude $i$ is injective.
-  \end{enumerate}
-
-  Now, the proof that $e\colon A \to B$ is surjective iff it's an epimorphism in $\cat{Set}$.
-  \begin{enumerate}
-    \item[($\Rightarrow$)] Suppose $e$ is surjective, that is, for all $b\colon B$, there is some $a\colon A$ such that $e(a)=b$. Now take arbitrary $f,g\colon B\to C$ such that $f\circ e=g\circ e$ and show $f=g$. By function extensionality, it suffices to pick arbitrary $b\colon B$ and show $f(b)=g(b)$. By surjectivity, obtain some $a\colon A$ such that $e(a)=b$. Since $f\circ e=g\circ e$, we know
-    \[ f(e(a)) = g(e(a)) \qquad\text{that is,}\qquad f(b)=g(b),\]
-    as desired.
-    \item[($\Leftarrow$)] The opposite direction, that $e$ epic implies $e$ surjective requires more work. We need to call to mind two other notions we'll use in the construction. The first is that of the \emph{disjoint union} of two sets: if $X$ and $Y$ are sets, we'll write $X+Y$ for the set
-    \[  \{\inl(x) \mid x\colon X\} \cup \{\inr(y)\mid y\colon Y\}. \]
-    So $X+Y$ contains a copy of the set $X$ (tagged with ``$\inl$'') and a copy of $Y$ (tagged with ``$\inr$''). We can also regard $\inl$ as a function $X\to X+Y$ and likewise $\inr\colon Y\to X+Y$.
-    
-    We'll also use \emph{set quotients}. Given a set $X$ and an equivalence relation $\_\sim\_$ on $X$ (that is, a reflexive, symmetric, and transitive relation), we can define the set $X/\sim$ of $\sim$-equivalence classes: for each $x\colon X$, the set $[x]_\sim \colon X/\sim$ consists of all the $x'\colon X$ such that $x\sim x'$. So it's the case that $[x]_\sim = [x']_\sim$ if and only if $x\sim x'$ (prove this, by the properties of equivalence relations). We have a canonical function $\eta\colon X\to X/\sim$, sending each $x$ to $[x]_\sim$.
-
-    Now, let's combine these to prove that an epi $e:A\to B$ in $\cat{Set}$ must be a surjection. Define an equivalence relation $\sim$ to be the \emph{least equivalence relation} on the set $B+B$ such that:
-    \[ \inl(b) \sim \inr(b') \quad\text{iff}\quad \exists a\colon A. b=e(a)=b'. \]
-    In other words, we declare that $\inl(b)\sim\inr(b')$ when there's such an $a\colon A$, and then relate those pairs (and only those pairs) we need to in order to make this an equivalence relation.
-    
-    Define $f:B\to (B+B)/\sim$ to be $\eta\circ\inl$ and $g$ to be $\eta\circ\inr$. To use the fact that $e$ is an epimorphism, we want to prove that $f\circ e = g\circ e$. By function extensionality, pick arbitrary $a\colon A$. By the definition of $\sim$ (instantiating both $b$ and $b'$ to $e(a)$), it must be the case that
-    \[ \inl(e(a)) \sim \inr(e(a)) \]
-    because there is some $a\colon A$ such that $e(a)=e(a)=e(a)$, namely $a$ itself. Since $\inl(e(a))$ is $\sim$-related to $\inr(e(a))$, they must have the same $\sim$-equivalence classes, i.e.
-    \[ \eta(\inl(e(a))) = \eta(\inr(e(a))). \]
-    Since $a$ was arbitrary, conclude $\eta\circ\inl\circ e = \eta\circ\inr\circ e$, that is, $f\circ e = g\circ e$. 
-    
-    Then apply the fact that $e$ is an epimorphism: $f\circ e = g\circ e$ tells us that $f=g$. So, for any $b\colon B$, $\eta(\inl(b))=\eta(\inr(b))$, i.e.
-    \[ [\inl(b)]_\sim = [\inr(b)]_\sim. \]
-    But we know this is the case if and only if $\inl(b)\sim\inr(b)$. But, by the definition of $\sim$, this tells us that there must exist some $a$ such that $b=e(a)=b$. So we have succeeded in proving surjectivity of $e$: we took an arbitrary $b$ and found some $a$ such that $e(a)=b$.
-  \end{enumerate}
-\end{Answer}
-
+\end{exercise}
 If a function $f : A \to B$ has a left inverse $l : B \to A$ with $l \circ f = \id$ then it is mono, because  
 \begin{align*}
 f \circ g = f \circ h 
@@ -418,27 +260,27 @@ f \circ g = f \circ h
 & \implies &\id \circ g & = \id \circ h \\
 & \implies & g & = h 
 \end{align*}
-\begin{Exercise}
+\begin{exercise}
   Explicitly prove the dual construction: if $f : A \to B$ has a left inverse $r : B \to A$ with $f \circ r = \id$ then it is an epi.
-\end{Exercise}
+\end{exercise}
 Since $\half \circ \double = \id$ we can conclude that $\double$ is a mono (because it has a left inverse) and $\half$ is an epi (because it has a right inverse). On the other hand $\swap$ is self inverse that is $\swap \circ \swap = \id$ hence it has both a left and a right inverse (itself) and hence it is both a mono and an epi. 
  Indeed it is isomorphism and from the above it is easy to see that isomorphisms are always monos and epis. 
 
 In $\cat{\Set}$ the inverse direction is also true: 
-\begin{Exercise}
+\begin{exercise}
   Show that in $\cat{\Set}$ a morphism that is both mono and epi (i.e. bijections) is an isomorphism.
 \footnote{One direction uses the principle of unique choice, that is for $R : A \to B \to \Prop$~
 \[(\forall x:A.\exists! y:B .R\,x\,y) \to \exists f :A \to B . \forall x:A.R\,x\,(f\,x) \]
 where $\exists!$ means there exists unique, i.e. $\exists! x:A.\phi\,x = \exists x:A.\phi\,x \wedge \forall y:A.\phi\,y \to x=y$. This principle is provable from univalence in Homotopy Type Theory.} 
-\end{Exercise}
+\end{exercise}
 However, this is not true in general: consider the embedding $i : \Nat \to \Int$, this is a monoid morphism $i : \cat{Mon}((\Nat,\_+\_,0),(\Int,\_+\_,0))$. 
-\begin{Exercise}
+\begin{exercise}
   Show that $i$ is both an epi and a mono. But it cannot be an iso. Why?
-\end{Exercise}
+\end{exercise}
 However, if we know that the function is a mono and an epi because of inverses (we say it is a split mono and a split epi) that it is always an isomorphism:
-\begin{Exercise}
+\begin{exercise}
   Show that in any category a function that has both an left and a right inverse is always an isomorphism.
-\end{Exercise}
+\end{exercise}
 
 
 % \subsection{Lambda terms and substitutions}
@@ -452,9 +294,9 @@ However, if we know that the function is a mono and an epi because of inverses (
 
 % Yet another example for a category is $\cat{\Lambda}$ a category derived from simply typed $\lambda$-calculus. Here objects are contexts, that is  a sequence of typing assumptions for variables $x_0:\sigma_0,\dots,x_{n-1}:\sigma_{n-1}$ and morphisms between contexts 
 % $\Gamma$ and $\Delta = x_0:\sigma_0,\dots,x_{n-1}:\sigma_n$ are parallel substitutions of the form $x_0 \mapsto t_0, \dots x_{n-1} \mapsto t_{n-1}$ with $\Gamma \vdash t_i : \sigma_i$ for $0 \leq i < n$. 
-% \begin{Exercise}
+% \begin{exercise}
 %   Complete the definition of this category: Define the application of a substitution of a term, that is if $\vec{t} : \cat{\Lambda}(\Gamma,\Delta)$ and $\Delta\vdash u : \sigma$ then $\Gamma \vdash u[\vec{t}] : \sigma$. Using this define composition of substitutions and define the identity substitution. Show that the laws of a category hold upto $\alpha$-conversion. If you want to avoid $\alpha$-conversion and capture-avoiding substitution use de Bruijn indices instead.
-% \end{Exercise}
+% \end{exercise}
 
 % Relations
 % univalent categories
@@ -500,22 +342,9 @@ More formally the proofs proceed by list induction.
 Inspired by $\List$ we define the notion of a functor in general: given categories $\cat{C}$ and $\cat{D}$ a functor $F : \cat{C} \to \cat{D}$ is given by a map on objects $F : \obj{\cat{C}} \to \obj{\cat{D}}$ and a map on morphisms 
 $F : \cat{C}(A,B) \to \cat{D}(F\,A,F\,B)$ that preserves identities $F\,\id_A = \id_{F\,A}$ and composition $F\,(f \circ g) = (F\,f) \circ (F\,g)$.
 
-\begin{Exercise}
-  Show that every functor $F\colon\cat{C}\to\cat{D}$ preserves isomorphisms. That is if $\phi : \homC{C}{A}{B}$ is an isomorphism then so is $F\,\phi : \homC{D}{F\,A}{F\,B}$.
-\end{Exercise}
-\begin{Answer}
-  Let $\phi\inv:\homC{C}{B}{A}$ be the inverse of $\phi$, i.e. $\phi\circ\phi\inv=\id$ and $\phi\inv\circ\phi=\id$. We need an inverse for $F\,\phi$, and the obvious choice is $F(\phi\inv)\colon\homC{D}{F\,B}{F\,A}$. Check that either composition is the identity:
-  \begin{align*}
-    F(\phi\inv)\circ F(\phi)
-      &= F(\phi\inv\circ\phi) \tag{functoriality}\\
-      &= F(\id) \tag{assumed}\\
-      &= \id \tag{functoriality}\\
-    F(\phi)\circ F(\phi\inv)
-      &= F(\phi\circ\phi\inv) \tag{functoriality}\\
-      &= F(\id) \tag{assumed}\\
-      &= \id \tag{functoriality}
-  \end{align*}
-\end{Answer}
+\begin{exercise}
+  Show that every functor preserves isomorphisms. That is if $\phi : A \to B$ is an isomorphism then so is $F\,\phi : F\,A \to F\,B$.
+\end{exercise}
 
 We note that functors between preorder categories are simply monotone maps, i.e. correspond to morphisms in $\cat{Pre}$ and functors between monoids are monoid morphisms, i.e. correspond to morphisms in $\cat{Mon}$. Given these observations above it may appear a good idea to define a category of categories with functors as morphisms. You find this definition in many classical text books. We will not do this because it isn't clear what equality of functors is, they do not form a set in our sense.
 \footnote{We can however, define the category of strict categories, i.e. categories whose objects form a set. Because in this case equality of functors is a proposition and hence functors form a set.}
@@ -587,61 +416,24 @@ F\,B \arrow[r,"\alpha_B" below] & F\,B
 To express that $\alpha$ is a natural transformation we write:
 \[ \alpha : \int_{A : \obj{\cat{C}}} \cat{D}(F\,A,G\,A)\]
 
-\begin{Exercise}\hfill
+\begin{exercise}\hfill
 
-  \Question
+  \begin{enumerate}
+  \item 
     Show that $\Maybe : \Set \to \Set$ where $\Maybe\,A$ is given by the constructors:
     \begin{align*}
       &\nothing && : \Maybe\,A \\
       &\just && : A \to \Maybe\,A
     \end{align*}
    is a functor.
-  \Question Show that the function $\hd : \Pi_{A:\Set}\List\,A \to \Maybe\,A$ which is defined as
+  \item Show that the function $\hd : \Pi_{A:\Set}\List\,A \to \Maybe\,A$ which is defined as
     \begin{align*}
       &\hd\,[] && = \nothing \\
-      &\hd\,  [a_0,a_1,\dots,a_{n-1}]  && = \just\,a_0
+      &\hd\,  [a_0,a_1,\dots,a_{n-1}]  && = a_0
     \end{align*}
     is a natural transformation (i.e. $\hd : \int_{A:\Set}\List\,A \to \Maybe\,A$).
-
-\end{Exercise}
-\begin{Answer}
-  \Question
-    First, we need to define the morphism part, $\Maybe\,f\colon \Maybe\,A \to \Maybe\,B$ for each function $f\colon A\to B$. We define this by cases:
-    \begin{align*}
-      &\Maybe\;f\;\nothing &&= \nothing\\
-      &\Maybe\;f\;(\just a) &&= \just(f\;a)
-    \end{align*}
-    Then check functoriality:
-    \begin{align*}
-      \Maybe\;\id\;\nothing &= \nothing = \id\;\nothing\\
-      \Maybe\;\id\;(\just\;a) &= \just(\id\;a) = \just(a) = \id(\just\;a)\\
-      \Maybe\;(g\circ f)\;\nothing &= \nothing\\ &= \Maybe\;g\;(\Maybe\;f\;\nothing)\\ &= ((\Maybe\;g)\circ(\Maybe\;f))\;\nothing\\
-      \Maybe\;(g\circ f)\;(\just\;a) &= \just((g\circ f)\;a)\\ &= \just(g(f(a)))\\ &=  \Maybe\;g\;(\Maybe\;f\;(\just a))\\ &= ((\Maybe\;g)\circ(\Maybe\;f))\;(\just\;a)
-    \end{align*}
-  \Question
-    The definition above defines a function $\hd_A\colon\List\,A\to\Maybe\,A$ for each set $A$. So to verify this is a natural transformation, we just need to verify that, for all $f\colon A\to B$, the naturality square
-    \[ \begin{tikzcd} \List\,A \arrow{r}{\hd_A}\arrow[swap]{d}{\List\,f} & \Maybe\,A \arrow{d}{\Maybe\,f}\\
-        \List\,B \arrow[swap]{r}{\hd_B} & \Maybe\,B
-     \end{tikzcd} \]
-     commutes. This is done by function extensionality, as usual, i.e. proving that any $L\colon\List\,A$ is sent to the same element of $\Maybe\,B$ by either route. As with the definition of $\hd$, we break into two cases: $L=[]$ and $L=[a_0,\ldots]$.
-     \begin{align*}
-        (\hd_B\circ\List\,f)\;[]
-          &= \hd_B(\List\,f\,[])\\
-          &= \hd_B\,[]\\
-          &= \nothing\\
-          &= \Maybe\,f\,\nothing\\
-          &= \Maybe\,f\,(\hd_A\,[])\\
-          &= (\Maybe(f)\circ\hd_A)\,[]\\
-        (\hd_B\circ\List\,f)\;[a_0,\ldots]
-            &= \hd_B(\List\,f\,[a_0,\ldots])\\
-            &= \hd_B\,[f(a_0),\ldots]\\
-            &= \just(f(a_0))\\
-            &= \Maybe\,f\,(\just\,a_0)\\
-            &= \Maybe\,f\,(\hd_A\,[a_0,\ldots])\\
-            &= (\Maybe(f)\circ\hd_A)\,[a_0,\ldots]
-     \end{align*}
-     So conclude $\hd_B\circ\List(f) = \Maybe(f)\circ\hd_A$, as required.
-\end{Answer}
+  \end{enumerate}
+\end{exercise}
 
 Functors between any two categories $\cat{C},\cat{D}$ and natural transformations form a category, the functor category $\cat{C}\cat{\to}\cat{D}$. It's objects are functors $F : \cat{C} \to \cat{D}$ and given two functors $F,G$ the homset is the set
 \footnote{This is a set in our sense because two natural transformations are equal when they are pointwise equal (and we don't need to talk about equality of objects). However, they are not necessarily small. The natural transformations between two endofunctors on $\cat{\Set_i}$ are not in $\Set_i$ because we quantify over all small sets.}
@@ -650,9 +442,9 @@ of natural transformations $\int_{X:C} \homC{D}{F\,X}{G\,X}$, the identity natur
 & (\beta \circ \alpha) : \int_{X:C} \homC{D}{F\,X}{H\,X}\\
 & (\beta \circ \alpha)_X = \beta_X \circ \alpha_X
 \end{align*}
-\begin{Exercise}
+\begin{exercise}
   Check that these are indeed natural transformations and that the laws for a category hold.
-\end{Exercise}
+\end{exercise}
 
 \subsection{Adjunctions}
 \label{sec:adjunctions}
@@ -662,13 +454,13 @@ An important class of functors are the forgetful functors which just \emph{forge
 Is there an interesting functor in the other direction, that is $F : \cat{\Set} \to \cat{Mon}$? Indeed there is: we can use the fact that lists form a monoid with append $\_\app\_ : \List\,A \to \List\,A \to \List\,A$ and $[] : \List\,A$, hence on objects we can define
 \[ F\,A = (\List\,A, [], \_\app\_) \]
 We have already observed that $\List$ is a functor but to show that $F$ is a functor we also need that $\List\,f$ is a monoid morphism:
-\begin{Exercise}
+\begin{exercise}
   Show that for any $f:A \to B$, $\List\,f : \List\,A \to \List\,B$ is a monoid morphism, that is
   \begin{align*}
     \List\,f\,[] & = [] \\
     \List\,f\,(l \app m) & = (\List\,f\,l) \app (\List\,f\,m)
   \end{align*}
-\end{Exercise}
+\end{exercise}
 Hence we can define $F\,f = \List\,f$, the functor laws follow because $\List$ is a functor on $\cat{\Set}$.
 
 The monoid constructed with lists is special, it is the \emph{free monoid} over a given set. Here free means that it only satisfies the laws of a monoid but is not subject to any other laws. There are other functors with the type $\cat{\Set} \to \cat{Mon}$ for example the finite multisets or the finite sets over a given set. These do satisfy additional laws, the counterpart to the append operation is commutative in the case of multisets $l \app m = m \app l$ and idempotent in the case of finite sets $l \app l = l$, hence they are not free over monoids.
@@ -686,21 +478,11 @@ Let's go through this in detail, a monoid morphism $f:\cat{Mon}(F\,A,M)$ is give
 On the other hand given a function $g : A \to |M|$ we can define a function $\psi_{A,M}\,g : \List\,A \to |M|$ using
 \begin{align*}
   \psi\,g\,[] & = e \\
-  \psi\,g\, [a_0,a_1,\dots,a_{n-1}] & = (g\,a_0) * (g\,a_1) * \dots * (g\,a_{n-1})
+  \psi\,g\, [a_0,a_1,\dots,a_{n-1}] & = (g\,a_0) * (g\,a_1) * \dots * (g\,a_n)
 \end{align*}
-\begin{Exercise}
+\begin{exercise}
   Show that $\psi\,g$ is a monoid morphism, i.e. $\phi\,g : \cat{Mon}(F\,A,M)$
-\end{Exercise}
-\begin{Answer}
-  $\psi\,g$ preserves the neutral element: it sends $[]$ to $e$. As for preserving the monoid operation, observe:
-  \begin{align*}
-      &\psi\,g\,([a_0,a_1,\dots,a_{n-1}]\app[b_0,b_1,\dots,b_{m-1}])\\
-        &= (g\,a_0) * (g\,a_1) * \dots * (g\,a_{n-1}) * (g\,b_0) * (g\,b_1) * \dots * (g\,b_{m-1})\\
-        &= ((g\,a_0) * (g\,a_1) * \dots * (g\,a_{n-1})) * ((g\,b_0) * (g\,b_1) * \dots * (g\,b_{m-1}))\\
-        &= (\psi\,g\,[a_0,a_1,\dots,a_{n-1}]) * (\psi\,g\,[b_0,b_1,\dots,b_{m-1}])
-  \end{align*}
-  so this is indeed a monoid morphism.
-\end{Answer}
+\end{exercise}
 Hence we have constructed functions:
 \[\begin{tikzcd}[column sep = large]
 \cat{Mon}(F\,A,M) \arrow[r,"\phi_{A,M}",bend right] & \cat{\Set}(A,U\,M) \arrow[l,"\psi_{A,M}",bend right]
@@ -746,29 +528,13 @@ The other direction is a bit more interesting: to show that $\psi \circ \phi = \
 & = (\id\,f)\,[a_0,a_1,\dots,a_{n-1}] 
 \end{align*}
 
-\begin{Exercise}
+\begin{exercise}
   Verify that $\phi$ is a natural transformation, that is for any $f : \cat{Set}(B,A)$ and $g:\cat{Mon}(M,N)$ the following diagram commutes:
   \[\begin{tikzcd}[row sep = large]
     \cat{Mon}(F\,A,M) \arrow[r,"\phi_{A,M}"] \arrow[d,"\lambda h. g\circ h \circ (F\,f)"] & \cat{\Set}(A,U\,M)  \arrow[d,"\lambda k. (U\,g)\circ k \circ f"] \\
     \cat{Mon}(F\,B,N) \arrow[r,"\phi_{B,N}" below]  & \cat{\Set}(B,U\,N)  
 \end{tikzcd}\]
-\end{Exercise}
-\begin{Answer}
-  Pick arbitrary $h\colon\homC{Mon}{F\,A}{M}$. Then the down-then-right trip around the square gives
-  \[ \phi\,(g\circ h\circ F(f)) \colon \homC{Set}{A}{U\,N} \]
-  this function sends $a\colon A$ to $g(h(\List\,f\,[a)))$, that is, $g(h\,[f\,a])$ by definition of $\phi$ and $F$.
-  
-  The right-then-down path takes $h$ to $(U\,g)\circ (\phi\,h)\circ f$. Calculating this at $a:A$, we get:
-  \begin{align*}
-    ((U\,g)\circ (\phi\,h)\circ f)\,a 
-      &= (U\,g)\,(\phi\,h\,(f\,a))\\
-      &= (U\,g)\,(h\,[f\,a])\\
-      &= g(h\,[f\,a]).
-  \end{align*}
-  This is the same expression we got by the other direction. Since $a$ was arbitrary, conclude
-  \[ \phi\,(g\circ h\circ F(f)) = (U\,g)\circ (\phi\,h)\circ f,\]
-  which is naturality.
-\end{Answer}
+\end{exercise}
 \begin{question}
   Why don't we need to verify that $\psi$ is a natural transformation?
 \end{question}
@@ -793,12 +559,12 @@ In this case we say that $L$ is left adjoint to $R$ (or that $R$ is right adjoin
 \cat{D} \arrow[u,bend left = 50,"L" left, ]
 \end{tikzcd}\]
 
-We can actually obtain the list functor as the composition of the forgetful and the free functor: $\List = U \circ F$. We will return to this observation later, because functors which are obtained by composing a free and a forgetful functor are always monads and indeed List is a monad.
+We can actually obtain the list functor as the composition of the forgetful and the free functor: $\List = F \circ U$. We will return to this observation later, because functors which are obtained by composing a free and a forgetful functor are always monads and indeed List is a monad.
 
-\begin{Exercise}
+\begin{exercise}
 \label{ex:free-preorder}
   There is also a forgetful functor from the category of preorders to the category of endorelations $U : \cat{Pre} \to \cat{Rel}$, which is defined just as for preorders but without any conditions, i.e. the objects are sets $X:\Set$ with a relation $R : X\to X\to\Prop$ and morphisms are defined as functions that preserve the relation (as for $\cat{Pre}$). Now $U$ doesn't do anything but it just forgets that the relation is a preorder. Can you find a left adjoint $F : \cat{Rel} \to \cat{Pre}$ which constructs the free preorder over a given relation?
-\end{Exercise}
+\end{exercise}
 
 There are many ways to define adjunctions, the one I have given here is maybe not the best, especially the naturality conditions are quite complicated. A popular alternative is to observe that we can obtain two natural transformations from the natural equivalence, which are called the unit and the counit of an adjunction:
 \begin{align*}
@@ -819,11 +585,11 @@ R\,B \arrow[rd,equal] \arrow[r,"\eta_{R\,B}"] &   R\,(L\,(R\,B)) \arrow[d,"R\,\e
 \end{tikzcd}
 \]
 
-\begin{Exercise}
+\begin{exercise}
  Give explicit definitions of $\eta$ and $\epsilon$ for the adjunction between $\cat{Mon}$ and $\cat{\Set}$ we have defined.
-\end{Exercise}
+\end{exercise}
 
-\begin{Exercise}
+\begin{exercise}
   Show that the two definitions of an adjunctions between two functors $L : \cat{C} \to \cat{D}$ and $R : \cat{D} \to \cat{C}$ are equivalent: 
   \begin{itemize}
   \item An adjunction is given by a natural isomorphism 
@@ -835,7 +601,7 @@ R\,B \arrow[rd,equal] \arrow[r,"\eta_{R\,B}"] &   R\,(L\,(R\,B)) \arrow[d,"R\,\e
     \end{align*}
     s.t. $\epsilon_{L\,A} \circ L\,\eta_A = \id_{L\,A}$ and $R\,\epsilon_B \circ \eta_{R\,B} = \id_{R\,B}$.
   \end{itemize}
-\end{Exercise}
+\end{exercise}
 
 \subsection{The Yoneda lemma}
 \label{sec:yoneda-lemma}
@@ -855,17 +621,17 @@ Let $F$ be a functor $\cat{C}^\op \to \cat{\Set}$ this is called \emph{a preshea
 &\homC{C}{f}{A} : \homC{C}{C}{A} \to \homC{C}{B}{A} \\
 &\homC{C}{f}{A} \,g =  g \circ f
 \end{align*}
-\begin{Exercise}
+\begin{exercise}
   Check that $\homC{C}{\_}{A}$ satisfies the functor laws.
-\end{Exercise}
+\end{exercise}
 Indeed, since we already learnt that functors and natural transformations form a category, preshaves over $\cat{C}$ form a category which we denote as $\PSh\,\cat{C}$. Now using the other input of the homset of $\cat{C}$ we can form a functor $\Y : \cat{C} \to \PSh\,\cat{C}$, called the \emph{Yoneda embedding}, which is defined on objects as $\Y\,A = \homC{C}{\_}{A}$. To define the morphism part assume $f:\homC{C}{A}{B}$:
 \begin{align*}
 & \Y\,f :  \int_{X:\cat{C}}\homC{C}{X}{A} \to \homC{C}{X}{B} \\
 & (\Y\,f)_X\,g = f \circ g
 \end{align*}
-\begin{Exercise}
+\begin{exercise}
   Check that $Y\,f$ is a natural transformation and that $Y$ satisfies the functor laws.
-\end{Exercise}
+\end{exercise}
 Maybe you wondered why presheaves are defined as contravariant functors. The reason is that this way the Yoneda embedding is covariant (otherwise it could be hardly called an embedding).
 
 For any presheaf $F : \cat{C}^\op\to\Set$ we can use its morphism part to define
@@ -874,9 +640,9 @@ For any presheaf $F : \cat{C}^\op\to\Set$ we can use its morphism part to define
             & :  F\,X \to \int_{Y : \cat{C}} \cat{C}(Y,X) \to F\,Y \\
 \end{align*}
 as $\phi_X\,x\,f = F\,f\,x$. 
-\begin{Exercise}
+\begin{exercise}
   Check that $\phi$ is natural in $X:\cat{C}$.
-\end{Exercise}
+\end{exercise}
 
 Now the Yoneda lemma says that this is a natural isomorphism. It is easy to define the inverse (fixing $X:\cat{C}$):
 \begin{align*}
@@ -929,13 +695,13 @@ Hence $(\phi \circ \psi)\,\alpha\,f = \alpha\,f$ and using extensionality we can
 .%We should also check naturality but the naturality of $\psi$ is true by construction and this is sufficient. 
 
 % This completes the proof of the Yoneda lemma, actually if we are in a really nitpicking mood we better check naturality:
-% \begin{Exercise}
+% \begin{exercise}
 % Show the isomorphism is natural, i.e. for any $f : \cat{C}(Z,X)$
 % \[\begin{tikzcd}[row sep = large]
 %     F\,X \arrow[r,"\phi_X"] \arrow[d,"F\,f"] & \int_{Y : \cat{C}} \cat{C}(Y,X) \to F\,Y\arrow[d,"\lambda Y\,g. \alpha_Y (f \circ g)"] \\
 %     F\,Z \arrow[r,"\phi_Z" below]  & \int_{Y : \cat{C}} \cat{C}(Y,Z) \to F\,Y
 % \end{tikzcd}\]
-% \end{Exercise}
+% \end{exercise}
 
 An important corollary of the Yoneda lemma is that the Yoneda embedding is full and faithful, that is the effect of the functor on morphisms is both injective (faithful) and surjective (full) which is a good reason why it deserves the name \emph{embedding}. We can see this by applying the Yoneda lemma to $Y\,Z$
 \begin{align*}
@@ -958,9 +724,9 @@ We can expand the isomorphism further:
          & : \int_{X:\cat{C}} \homC{C}{X}{Z} \cong \int_{Y : \cat{C}} \homC{C}{Y}{X}\to \homC{C}{Y}{Z}
 \end{align*}
 We know that every functor preserves isomorphisms, a functor which is full and faithful also \emph{reflects} them. That is if $Y\,f$ is an isomorphism then $f$ is one. 
-\begin{Exercise}
+\begin{exercise}
   Proof that every full and faithful functor reflects isomorphisms. 
-\end{Exercise}
+\end{exercise}
 This gives rise to a useful corollary: to show that $f : \homC{C}{A}{B}$ is an isomorphism it is enough to show that $\Y\,A$ and $\Y\,B$ are naturally isomorphic, i.e.
 \[ \int_{X:\cat{C}} \homC{C}{A}{X} \cong \homC{C}{B}{X} ,\]
 and this is often easier because we can just calculate with natural isomorphisms.
@@ -969,52 +735,20 @@ Sometimes we need the Yoneda lemma for covariant functors but this is no problem
 \[ \int_{X:\cat{C}} \homC{C}{X}{A} \cong \homC{C}{X}{B}. \]
 
 % Maybe you are puzzled why we use contravariant functors $\cat{C}^\op \to \cat{\Set}$, i.e. presheaves, and not just $\cat{C} \to \cat{\Set}$. This is completely equivalent because  $\cat{C} \to \Set$ becasue all we need to do is to apply the Yoneda lemma for presheaves to the opposite of our category. Still this is a nice (even though easy) exercise:
-% \begin{Exercise}
+% \begin{exercise}
 %   Explicitely prove the Yoneda lemma for covariant presheaves $F: \cat{C} \to \cat{\Set}$:
 %   \[F\,X \cong \int_{Y : \cat{C}} \cat{C}(X,Y) \to F\,Y\] 
-% \end{Exercise}
+% \end{exercise}
 % But back to the question. First of all we haven't mentioned it but functors and natural transformations form a category, in particular the category of presheaves $\PSh\,\cat{C}$ over a given category $\cat{C}$. Now using homsets we can define a functor called the Yoneda embedding:
 % \begin{align*}
 % \Y : \cat{C} \to \PSh\,\cat{C} \\
 % \Y\,A = \lambda X.\cat{C}(X,A)
 % \end{align*}
 % This functor embeds a category into its category of presheaves and it has a number of interesting and useful properties (it is the unit of a higher adjunction) and this makes only sense if it is covariant but then presheaves have to be contravariant.
-% \begin{Exercise}
+% \begin{exercise}
 %   Define explicitely the category of presheaves $\PSh\,\cat{C}$ and the Yoneda embedding $\Y: \cat{C} \to \PSh\,\cat{C}$ and check all the laws.
-% \end{Exercise}
+% \end{exercise}
 
-\subsection{Ends and coends}
-\label{sec:ends-coends}
-
-Since I have introduced the notation $\int_{A : \obj{\cat{C}}} \cat{D}(F\,A,G\,A)$ to define natural transformations, you are maybe wondering what the general meaning of these \emph{integrals} are. It is clear that $\cat{D}(F\,A,G\,A)$ is an function from
-$\obj{\cat{C}}$ but it is neither co- nor contravariant. However, it is a profunctor that is a functor of the type $F : \cat{C}^\op\times\cat{C} \to \cat{\Set}$\footnote{Here $\cat{C}\times\cat{D}$ is the product of categories: the objects are pairs of objects: $\obj{\cat{C}\times\cat{D}}=\obj{\cat{C}}\times\obj{\cat{D}}$ and the morphisms are pairs of morphisms: $\homC{C \times D}{(C_0,D_0)}{(C_1,D_1)}=\homC{C}{C_0}{C_1}\times\homC{D}{D_0}{D_1}$.} where we define it as $F(A^{-},A^{+})= \cat{D}(F\,A^{-},G\,A^{+})$.
-\begin{Exercise}
-  Fill in the morphism part of $F$.
-\end{Exercise}
-Now given a profunctor $F : \cat{C}^\op\times\cat{C} \to \Set$ we define its end $\int_{X: \cat{C}}F(X,X)$ as a subset of the dependent function type $\alpha:\Pi_{X : \obj{\cat{C}}}F(X,X)$ such the following diagram commutes for any $f : \homC{C}{A}{B}$ in $\cat{Set}$:
-\[\begin{tikzcd}
-  & \bf{1} \arrow[dl,"\alpha_A" left=5]\arrow[dr,"\alpha_B"]\\
-  F(A,A) \arrow[dr, "F(A {,} f)" left= 5] & & F(B,B) \arrow[dl,"F(f {,} B)"]\\  
-  & F(A,B) 
-\end{tikzcd}
-\]
-That is we define
-\[ \int_{X:\cat{C}} F(X,X) = \{ \alpha : \Pi_{X : \obj{\cat{C}}}F(X,X) \mid
-  \forall {f : \homC{C}{A}{B}} . F(A,f)\,\alpha_A) = F(f,B)\,\alpha_B \}\]
-\begin{Exercise}
-  Show that instantiating the definition of ends given here gives rise to the definition of natural transformations given previously.
-  That is $\int_{A : \obj{\cat{C}}} \cat{D}(F\,A,G\,A)$ is the set of natural transformations.
-\end{Exercise}
-
-Dually we define coends $\int^{X:\cat{C}} F(X,X)$ as a quotient of a $\Sigma$-type. That is we consider
-$\Sigma_{X : \obj{\cat{C}}}F(X,X) / \sim$ where for any  $z : F(B,A)$ and $f: \homC{C}{A}{B}$ and $z : F(B,A)$ ,
-$(A,F(A,f)\,z) \sim (B,F(f,B)\,z)$. We can use coends to interpret the concept of an abstract datatype.
-
-  % insert example
-
-To remember when to use subscripts or superscripts we notice that in the case of ends the index is closer to the end of the page while for coends it is closer to the \emph{coend}, i.e. the beginning, of the page.
-
-\newpage
 \section{Products, coproducts and exponentials}
 \label{sec:prod-copr-expon}
 
@@ -1079,9 +813,9 @@ As for terminal and initial objects we can show that products are unique up to i
 % do this explicitly?
 
 We have only defined binary products, what about ternary products? There are at least two ways to derive them from binary propducts $A \times (B\times C)$ and $(A\times B)\times C$. 
-\begin{Exercise}
+\begin{exercise}
   Show that $A \times (B\times C) \cong (A\times B)\times C$. 
-\end{Exercise}
+\end{exercise}
 
 This suggests that we can indeed derive all non-empty products from binary products. The only things which is missing is the \emph{empty product}, which corresponds to the terminal object. Hence we say that a category has finite products if it has a terminal object and binary products. Note that this also means that we chose a particular terminal object $1$ and for any pair of object $A$ and $B$ another object $A\times B$.
 
@@ -1101,9 +835,9 @@ This is the unique function which makes the following diagram commute:
 A \arrow[r,"\inj_1" below] \arrow[ur,"f"] & A + B \arrow[u,dashrightarrow,"\case{f}{g}" right] & B \arrow[l,"\inj_2"] \arrow[ul,"g" above]
 \end{tikzcd}\]
 Moreover this assignment is natural, i.e. $h \circ \case{f}{g} = \case{h\circ f}{h\circ g}$.
-\begin{Exercise}
+\begin{exercise}
   Verify unicity and naturality of $\case{f}{g}$.
-\end{Exercise}
+\end{exercise}
 
 This leads directly to the definition of binary coproducts in a category $\cat{C}$, a coproduct $A+B$ of $A$ and $B$ is given by injections:
 $\inj_1 : \homC{C}{A}{A+B}$ for and $\inj_2\,b : \homC{C}{B}{A+B}$ and for any pair of morphisms $f : \homC{C}{A}{C}$ and 
@@ -1121,9 +855,9 @@ Moreover this assignment is natural, i.e. $h \circ \case{f}{g} = \case{h\circ f}
 As for produts we say that a category has all finite coproducts if it has an initial object and all binary coproducts.
 
 In $\Set$ and actually in many categories products and coproducts are very different, but this is not always the case. We have already seen that in $\cat{Mon}$ ths initial object and the terminal object coincide. For the following consider the category of commutative monoids $\cat{CMon}$ which is like monoids but with the additional property that $x * y = y * x$ for any object $(A,e,\_*\_)$. Given two commutative monoids  $(A,e,\_*\_),  (B,z,\_+\_)$ we define $A \oplus B$ as $(A\times B,(e,z),\_ \bullet \_)$ where $(a,b) \bullet (a',b') = (a * a',b + b')$. It is easy to see that this is a commutative monoid again.
-\begin{Exercise}
+\begin{exercise}
 Show that $A \oplus B$ is both a product and a coproduct of $A$ and $B$.
-\end{Exercise}
+\end{exercise}
 \begin{question}
   What happens if we give up commutativity, i.e. if we consider $\cat{Mon}$ instead.
 \end{question}
@@ -1131,22 +865,22 @@ Show that $A \oplus B$ is both a product and a coproduct of $A$ and $B$.
 Products and coproducts can also be defined as an adjunction: Given a category $\cat{C}$ we write $\cat{C^2} = \cat{C}\times\cat{C}$
 \footnote{Yes, this is a product in the category of categories which is not a category in our sense. We already develop a taste for higher categories\dots}
 whose objects are pairs of objects and whose morphsims are pairs of morphisms in $\cat{C}$. There is a functor $\Delta : \cat{C} \to \cat{C^2}$ (called the diagonal functor) which just copies, that is $\Delta\,A = (A,A)$ and the same on morphisms. Now if $\cat{C}$ has binary products and coproducts resepctively we also have $\_\times\_, \_+\_ : \cat{C^2} \to \cat{C}$
-\begin{Exercise}
+\begin{exercise}
   Define the morphism parts of these functors using only the properties of products / coproducts.
-\end{Exercise}
+\end{exercise}
 Moreover, they are left and right adjoint to $\Delta$:
 \[\begin{tikzcd}[row sep=large]
 \cat{C} \arrow[d,"\Delta" near start] \\ 
 \cat{C^2} \arrow[u,bend left = 60,"\_+\_" left,"\dashv" right=5 ] \arrow[u,bend right = 60,"\_\times\_" right,"\dashv" left = 5]
 \end{tikzcd}\]
-\begin{Exercise}
+\begin{exercise}
   Verify these adjunctions, i.e. show that
   \begin{align*}
     \cat{C}(X,Z) \times \cat{C}(Y,Z) \cong \cat{C}(X + Y,Z) \\
     \cat{C}(Z, X\times Y) \cong \cat{C}(Z,X) \times \cat{C}(Z,Y)
   \end{align*}
   are natural isomorphisms. 
-\end{Exercise}
+\end{exercise}
 
 \subsection{Exponentials}
 \label{sec:exponentials}
@@ -1162,26 +896,26 @@ where
   &\psi_{A,B,C} : (A\to(B \to C)) \to (A\times B \to C) \\
   &\psi\,g = \lambda p.g\,(\pi_1\,p)\,(\pi_2\,p)
 \end{align*}
-\begin{Exercise}
+\begin{exercise}
   Verify that $\phi$ and $\psi$ are inverse to each other.
-\end{Exercise}
+\end{exercise}
 If we fix $B$ this looks like an adjunction, namely the functors $\_\times B, B \to \_ : \Set \to \Set$ form an adjunction. All that is left is to check naturality:
-\begin{Exercise}
+\begin{exercise}
   Derive the morphism part of $\_\times B$ and $B \to \_$ and
   check that $\phi_{A,B,C}$ is natural in $A,C$, that is given $f : A \to A'$ and $g : C \to C'$
 \[\begin{tikzcd}[row sep = large]
    A\times B \to C \arrow[r,"\phi_{A,B,C}"] \arrow[d,"\lambda h. g\circ h \circ (f \times B)"] & A\to(B \to C) \arrow[d,"\lambda k. (B \to g)\circ k \circ f"] \\
    A'\times B \to C'  \arrow[r,"\phi_{A',B,C'}" below]  & A'\to(B \to C') 
 \end{tikzcd}\]  
-\end{Exercise}
+\end{exercise}
 
 This directly leads to the definition of \emph{exponentials (aka function objects)} for a category $\cat{C}$ with products, we say that for a fixed object $B:\obj{\cat{C}}$ an exponential $\expC{}{B}{\_}$ or $(\_)^B$ is the right adjoint to $\_ \times B$. We can compare $\expC{}{\_}{\_}$ with homsets $\homC{C}{\_}{\_}$ both take two objects as input but the first one returns an object while the latter returns a set. This is why exponentials are also called internal homs. Only on $\Set$ the two are actually the same.
 
 By definition $\expC{\cat{C}}{B}{\_}$ is a covariant functor $\cat{C} \to \cat{C}$ but exponentials also give rise to a contravariant functor:
-\begin{Exercise}
+\begin{exercise}
 Show that $\expC{\cat{C}}{\_}{C}$ is a contravariant functor, i.e. 
 \[\expC{}{\_}{C} : \cat{C}^\op \to \cat{C}.\]     
-\end{Exercise}
+\end{exercise}
 %Actually $\expX{\_}{\_} : \cat{C}^\op \times \cat{C} \to \cat{C}$ is a bifunctor.
 
 A category which has all finite products and exponentials is called a \emph{a cartesian closed category} (CCC) if it is also has coproducts it is a \emph{Bicartesian closed category (BiCCC)}. As we have already observed $\Set$ is cartesian closed and has finite coproducts hence it is a bicartesian closed category. 
@@ -1205,9 +939,9 @@ exponentials & $m \to n = n^m$\\\hline
 % \item[exponentials] $m^n$.
 % \end{description}
 
-\begin{Exercise}
+\begin{exercise}
 Verify that these definitions indeed have the required properties.
-\end{Exercise}
+\end{exercise}
 
 Another standard example for a bicartesian closed category is the category of propositions $\cat{\Prop}$: its objects are propositions and its homsets are given by implication (which correspond to functions): $\cat{\Prop}(P,Q) = P \to Q$. This category is a preorder (because all its homs are propositions) and it has (given $P,Q : \Prop$) :
 
@@ -1220,9 +954,9 @@ products & $P \wedge Q$ \\\hline
 exponentials & $P \to Q$\\\hline
 \end{tabular}
 
-\begin{Exercise}
+\begin{exercise}
 Verify that these definitions indeed have the required properties.
-\end{Exercise}
+\end{exercise}
 A bicartesian closed category which is a preorder is called a \emph{Heyting algebra}, it is a model for intuitionistic propositional logic.
 
 % In bicartesian closed categories we can show distributivity, that is 
@@ -1252,9 +986,9 @@ The easiest way to show this is to use the corollary from the Yoneda lemma: to s
 \end{align*}
 and hence $(B + C)\times A \cong B\times A + C \times A$.
 In each line we only used the adjunctions defining $\times$, $+$ and $\expC{}{}{}$.
-\begin{Exercise}
+\begin{exercise}
   Prove the first isomorphism $0 \times A \cong 0$ using the same idea. Note that $\homC{C}{0}{A} \cong 1$
-\end{Exercise}
+\end{exercise}
 
 Not every category with products and coproducts is distributive. A counterexample is $\cat{Mon}$ where the terminal object and the initial object agree, i.e. $0 \cong 1$. hence we can just use the first isomorphism to show that every object is isomorphic to the initial object (and the terminal):
 \begin{align*}
@@ -1264,18 +998,18 @@ A & \cong 1 \times A \\
 \end{align*}
 But this is certainly not true in $\cat{Mon}$, hence we can conclude that $\cat{Mon}$ is not cartesian closed. 
 
-\begin{Exercise}
+\begin{exercise}
   Is $\cat{\omega}$ (bi)cartesian closed? What about $\cat{\omega}^\op$?
-\end{Exercise}
+\end{exercise}
 
 An important example for a bicartesian closed category is the category of presheaves of a given category $\PSh\,\cat{C}$. Its objects are functors $F : \cat{C}^\op \to \Set$ and its morphisms are natural transformations. Products (and coproducts) are calculated \emph{pointwise}: That is given $F,G : \cat{C}^\op \to \Set$
 \begin{align*}
   (F \times G)\,A = F\,A \times G\,A \\
   (F + G)\, A = F\,A + G\,A
 \end{align*}
-\begin{Exercise}
+\begin{exercise}
   Verify that these are indeed products and coproducts in $\PSh\,\cat{C}$.
-\end{Exercise}
+\end{exercise}
 
 But what about exponentials? We cannot have $(\expC{\PSh\,\cat{C}}{F}{G})\,A = F\,A \to G\,A$ because this wouldn't be a contravariant functor since $F$ appears on the left hand side of the exponential. The construction of the exponential is actually a nice application of the Yoneda lemma: 
 If we assume that the exponential exists we have then 
@@ -1292,7 +1026,7 @@ So the last line is a candidate for the exponential but in this case we do need 
 (\expC{\PSh\,\cat{C}}{F}{G})\,A & = \int_{X:\cat{C}}C(X,A)\to F\,X \to G\,X
 \end{align*}
 % We also need to check that this definition actually satisfies the universal property:
-% \begin{Exercise}
+% \begin{exercise}
 %   Show that the above definition of $\expC{\PSh\,\cat{C}}{F}{G}$ satisfies the universal property of exponentials, i.e. for $H : \PSh\,\cat{C}$
 %   \[ \PSh\,\cat{C}(H \times F,G) \simeq \PSh\,\cat{C}(H, \ex But what about exponentials? We cannot have $(\expC{\PSh\,\cat{C}}{F}{G})\,A = F\,A \to G\,A$ because this wouldn't be a contravariant functor since $F$ appears on the left hand side of the exponential. The construction of the exponential is actually a nice application of the Yoneda lemma: 
 % If we assume that the exponential exists we have then 
@@ -1309,13 +1043,13 @@ So the last line is a candidate for the exponential but in this case we do need 
 % (\expC{\PSh\,\cat{C}}{F}{G})\,A & = \int_{X:\cat{C}}C(X,A)\to F\,X \to G\,X)
 % \end{align*}
 We also need to check that this definition actually satisfies the universal property:
-\begin{Exercise}
+\begin{exercise}
   Show that the above definition of $\expC{\PSh\,\cat{C}}{F}{G}$ satisfies the universal property of exponentials, i.e. for $H : \PSh\,\cat{C}$
   \[ \PSh\,\cat{C}(H \times F,G) \simeq \PSh\,\cat{C}(H, \expC{\PSh\,\cat{C}}{F}{G})\]
   i.e.
   \[ \int_{X:\cat{C}}H\,X \times F\,X \to G\,X \simeq
     \int_{X:\cat{C}}H\,X \to (\expC{\PSh\,\cat{C}}{F}{G})\,X\]
-\end{Exercise}
+\end{exercise}
 
 This shows that the category or presheaves over a small category (i.e. a category with a small type of objects) is cartesian closed. However, it does for example not imply that the category of presheaves over $\Set$, i.e. functors $\cat{\Set}^\op \to \cat{\Set}$ is cartesian closed. 
 
@@ -1324,9 +1058,9 @@ Given a preorder, that is $|R|:\Set$ and $\_R\_ : |R| \to |R| \to \Prop$ that is
 This is a bicartesian closed category the constructions are simplified versions of the ones for set valued presehaves, in particular 
 \[(\expX{P}{Q})\,x = \forall y:|R|.y\,R\,x\to P\,y \to Q\,y \]
 These categories are called \emph{Kripke models} and the fact that they are bicartesian closed corresponds to the fact that they model intuitionistic propositional logic.
-\begin{Exercise}
+\begin{exercise}
   Use Kripke models to show that the law of the excluded middle $P \vee \neg P$ is not derivable in intuitionistic logic. 
-\end{Exercise}
+\end{exercise}
 
 % Indeed they are complete
 % \footnote{However, while completeness for the cartesian closed part is straightforward, the construction for coproducts relies on the decidabily of propositional logic and doesn't carry over to predicate logic. this issues can be adressed by using sheaf models instead.}
@@ -1338,23 +1072,23 @@ natural in $C$.
 
 An example for such a \emph{symmetric cartesian closed category} is the category of booleans which is similar to the category of propositions, but we use booleans instead of propositions. In particular, the type of objects is $\Bool$ and the homsets are given as 
 $\homC{\Bool}{p}{q} = \T\,p \to \T\,q$ where $\T : \Bool \to \Prop$ is defined as $\T\,b = (b = \true)$. We can define products, coproducts and exponentials as for $\Prop$, i.e. by using the usual truthtable semantics. Subtraction can be defines as $p-q = p \wedge \neg q$.
-\begin{Exercise}
+\begin{exercise}
   Check that $\cat{\Bool}$ is a symmetric cartesian closed category.
-\end{Exercise}
+\end{exercise}
 You may notice that this example is a preorder. This is no accident because all symmetric cartesian closed categories are preorders. This is because in such a category also the dual form of distributivity hold:
 \begin{align*}
   1 +  A & \cong 1 \\
   (B \times C) + A & \cong (B + A) \times (C + A)
 \end{align*}
 The first one is already suspicious because it implies in particular that $1+1 = 1$, which basically says that $\true = \false$ in $\Bool$. Moreover:
-\begin{Exercise}
+\begin{exercise}
   In a bicartesian closed category with $1 = 1+1$ all morphisms are equal (i.e. it is a preorder). 
-\end{Exercise}
+\end{exercise}
 You may wonder wether symmetry already implies excluded middle $P \vee \neg P$, which certainly holds in $\cat{\Bool}$. The answer is no, because we can extend Kripke semantics to the symmetric logic (using boolean valued presheaves over finite preorders) and uses this to show that excluded middle isn't implied. 
 
-\begin{Exercise}
+\begin{exercise}
   Show that the category $\cat{1+\omega}$ is a symmetric cartesian closed category. It's definition is similar to $\cat{\omega}$ its objects are the natural numbers and a top element $\omega$ such that $i \leq \omega$ for all elements.
-\end{Exercise}
+\end{exercise}
 
 \section{Initial algebras and terminal coalgebras}
 \label{sec:init-algebr-term}
@@ -1429,9 +1163,9 @@ We can derive the addition function exploiting also cartesian closure. We choose
 & s\,f\,n = \suc\,(f\,n)
 \end{align*}
 We can now define $\_+\_ = \It_{\Nat\to\Nat}\,z\,s : \Nat \to (\Nat \to \Nat)$.
-\begin{Exercise}
+\begin{exercise}
   Convince yourself that this computes the same function as the previous definition of $\_+\_$ using pattern maching.
-\end{Exercise}
+\end{exercise}
 
 We can prove that $n + 0 = 0$ using the unicity of $\It$ instead of induction. We observe that both $\id_\Nat$ and $\_+0 : \Nat \to \Nat$ make the following diagram commute:
 \[\begin{tikzcd}[row sep = large]
@@ -1442,9 +1176,9 @@ We can prove that $n + 0 = 0$ using the unicity of $\It$ instead of induction. W
 \end{tikzcd}\]  
 And hence by uniqueness $\id_\Nat = \_+0$, by applying both sides to $n:\Nat$ we obtain 
 $n = \id\,n = (\_ + 0)\,n = n + 0$. 
-\begin{Exercise}
+\begin{exercise}
   Verify the claim that both functions make the diagram commute.
-\end{Exercise}
+\end{exercise}
 
 One basic function on natural numbers is the \emph{predecessor}, i.e. the inverse to the successor. Initially we may think that we should define a function $\pred : \Nat \to \Nat$ with $\pred\,(\suc\,n) = n$. But what should $\pred\,0$ be? We could arbitrarily set $\pred\,0 = 0$ but this seems a very unprincipled move. It seems better to say that $\pred$ should return an \emph{error} when applies to $0$. That is as well known in functional programming, we should use the \emph{Maybe}-monad
 \footnote{Even though we don't actually know yet what a monad is}
@@ -1459,9 +1193,9 @@ However, we cannot translate this definition directly into an application of $\I
 \pred\,(\suc\,n) & = \case{\inj_2\,0}{\inj_2 \circ \suc}
 \end{align*}
 The idea is that the 2nd definition computes the predeccessor by delaying the constructors by one step.
-\begin{Exercise}
+\begin{exercise}
 Verify in detail that both definitions of $\pred$ compute the same function.                     
-\end{Exercise}
+\end{exercise}
 The second definition can be translated into 
 \begin{align*}
 & \pred : \Nat \to 1+\Nat \\
@@ -1474,13 +1208,13 @@ $\pred$ is the inverse of the constructors $0$ and $\suc$. We can make this prec
 & \inn = \case{0}{\suc} 
 \end{align*}
 This is an instance of Lambek's lemma which we will verify in the general case later. 
-\begin{Exercise}
+\begin{exercise}
   Prove by induction or by using initiality that $\pred$ and $\inn$ are an isomorphism, i.e.
   \begin{align*}
     \pred \circ \inn & = \id_{1+\Nat} \\
     \inn \circ \pred & = \id_\Nat
   \end{align*}
-\end{Exercise}
+\end{exercise}
 
 \subsection{Initial algebras}
 \label{sec:initial-algebras}
@@ -1502,9 +1236,9 @@ T\,B \arrow[r,"g"] & B \\
 \end{tikzcd}\]  
 Identity and composition is given by identity and composition in $\cat{C}$, it is easy to see that the corresponding diagrams commute. 
 
-\begin{Exercise}
+\begin{exercise}
 Show that $\Nat$ is the initial $T_\Nat$ algebra with $T_\Nat : \Set \to \Set$ defined as $T_\Nat\,X = 1+X$. 
-\end{Exercise}
+\end{exercise}
 
 We can understand the type of lists in a similar fashion. $\List$ are given by two constructors (pronounced nil and cons):
 \begin{align*}
@@ -1521,21 +1255,21 @@ and then merging them into one function using coproducts:
 1 + A \times \List\,A & \to \List\,A
 \end{align*}
 Hence $\List\,A$ is the initial algebra of the functor $T_{\List\,A}:\cat{\Set} \to \cat{\Set}$ with $T_{\List\,A}\,X = 1 + A \times X$.
-\begin{Exercise}
+\begin{exercise}
 Define the function $\rev_A : \List\,A \to \List\,A$ using only the iterator. \emph{Hint:} it is useful to define an auxilliary function 
 $\mathrm{snoc} : A \times\List\,A \to A$ that appends a single element at the end of a list using the iterator. 
 
 Show that this function is idempotent, that is $\rev_A \circ \rev_A = \id_{\List\,A}$ using only initiality. 
-\end{Exercise}
+\end{exercise}
 
-\begin{Exercise}
+\begin{exercise}
 What are the functors defining 
 \begin{enumerate}
 \item unlabelled binary trees,
 \item binary trees whose leaves are labelled with $A:\Set$,
 \item binary trees whose nodes  are labelled with $A:\Set$,
 \end{enumerate}
-\end{Exercise}
+\end{exercise}
 
 Since we already know that $\List$ is a functor, what is the initial algebra of the list functor? This has a constructor
 \begin{align*}
@@ -1544,11 +1278,11 @@ Since we already know that $\List$ is a functor, what is the initial algebra of 
 Indeed, this is the type of finitely branching trees, that is any node has a list of subtrees. We don't need to include leaves explicitely because we can have a node with an empty list of subtrees. This type is also called \emph{rose trees}.
 
 We can also construct infinitely branching trees which are the initial algebra of the functor $T\,X = 1 + \Nat \to X$. Here a node is given by a function that assigns to every natural number a subtree. This raises the question wether every functor on sets should have an initial algebra. We note that obviously paradoxical cases like $T\,X = X \to X$ are ruled out because they don't give rise to a functor. However, depending on our foundations even positive hence functorial definitions like $T\,X = (X \to \Bool) \to \Bool$ are problematic. If we work in a classical setting then this is obviously paradoxical because it gives us a fixpoint of the double powerset functor and from this we can derive a contradiction using diagonalisation.
-\begin{Exercise}
+\begin{exercise}
 Show that having an initial algebra of $T : \Set \to \Set$ with $T\,X = (X \to \Bool) \to \Bool$ leads to a contradiction if we assume $\Prop = \Bool$ (classical logic). Assume that $\inn_T : T (\mu\,T) \to \mu\,T$ is an isomorphism
 \footnote{We are going to prove this in the next section.}.
 \emph{Hint:} Derive a retraction, i.e. a function $\phi : (\mu\,T \to \Bool) \to \mu\,T$ that has a left inverse. Show that such a retract cannot exists using Cantor's diagonalisation.
-\end{Exercise}
+\end{exercise}
 
 \subsection{Lambek's lemma}
 \label{sec:lambeks-lemma}
@@ -1624,9 +1358,9 @@ $\Stream$ is a functor, that is given a function $f:A \to B$ we can define
 \head\,(\Stream\,f\,\vec{a}) & = f\,(\head\,a) \\
 \tail\,(\Stream\,f\,\vec{a}) & = \Stream\,f\,(\tail\,\vec{a})
 \end{align*}
-\begin{Exercise}
+\begin{exercise}
   Define $\Stream\,f$ using only the coiterator.
-\end{Exercise}
+\end{exercise}
 % The dual of induction is coinduction. This is usually formulated using the concept of a bisimulation: A relation 
 % $\_R\_ \subseteq \Stream\,A \times \Stream\,A$ is called a bisimulation if given $\vec{a} R \vec{b}$ then 
 % $\head\,\vec{a} = \head\,\vec{b}$ and $\tail\,\vec{a} R \tail\,\vec{b}$. Coinduction states that bisimilar streams are equal, i.e. if $\vec{a} R \vec{b}$ then $\vec{a} = \vec{b}$.
@@ -1655,9 +1389,9 @@ We observe that
 \end{align*}
 That is both side are equal to $\CoIt\,\suc\,\suc$ and hence equal due to uniqueness. 
 
-\begin{Exercise}
+\begin{exercise}
   Prove that $\Stream\,A$ is isomorphic to $\Nat \to A$.
-\end{Exercise}
+\end{exercise}
 
 \subsection{Terminal coalgebras}
 \label{sec:terminal-coalgebras}
@@ -1678,21 +1412,21 @@ As for algebras, Identity and composition is given by identity and composition i
 
 It is clear that $\Stream\,A$ is the terminal coalgebra of the functor $T_{\Stream\,A}\,X = A \times X$. We can look at initial algebras and terminal coalgebras for the same functor. In the case of $T_{\Stream\,A}$  this is not very interesting because the initial algebra is just the empty set. However, natural numbers $T_\Nat\,X = 1+X$ and lists $T_{\List\,A}\,X = 1 + A \times X$ are more interesting: here the terminal coalgebras are called the conatural numbers and colists: they include both finite elements and infinite elements. 
 
-\begin{Exercise}
+\begin{exercise}
   Show that the initial algebra of $T_{\Stream\,A}\,X = A \times X$ is isomorphic to the empty set
-\end{Exercise}
+\end{exercise}
 
-\begin{Exercise}
+\begin{exercise}
   Define addition for conatural numbers ($\Nat^\infty = \nu X.1+X$) using only the coiterator.
-\end{Exercise}
+\end{exercise}
 
-\begin{Exercise}
+\begin{exercise}
   Show explicitely that Lambek's lemma hold for terminal coalgebras.
-\end{Exercise}
+\end{exercise}
 
-% \begin{Exercise}
+% \begin{exercise}
 %   Show that there is always a monomorphism from the initial algebra to the terminal coalgebra.
-% \end{Exercise}
+% \end{exercise}
 \newpage
 \section{Limits and colimits}
 \label{sec:limits-colimits}
@@ -1744,9 +1478,9 @@ D \arrow[rrd,bend left = 40,"h"] \arrow[ddr,bend right = 40,"k" below]
 &  B \arrow[r,"g" below] &C 
 \end{tikzcd}\]
 
-\begin{Exercise}
+\begin{exercise}
   What happens if we don't demand $f \circ h = g \circ k$? Can we still obtain $\pair{h}{k} : D \to E$?
-\end{Exercise}
+\end{exercise}
 
 The general definition of a pullback is the straightforward generalisation. A pullback in a category $\cat{C}$ for $f : \homC{C}{A}{C}$ and $g : \homC{C}{B}{C}$ is given by an object $f \times_C g :\obj{\cat{C}}$ together with morphisms $\pi_1 : \homC{C}{f \times_C g}{A}$ and $\pi_2 : \homC{C}{f \times_C g}{B}$ which makes the square commute and for every other such triple (this is called a \emph{cone}): $D : \obj{\cat{C}}, h : \homC{C}{D}{A}, k :  \homC{C}{D}{B}$ such that the outer square commutes, there is a unique morphism $\pair{h}{k} : \homC{C}{f \times_C g}$ such that all the triangles commute.
 
@@ -1757,9 +1491,9 @@ My notation for pullbacks is motivated by the observation that pullbacks are act
 \end{tikzcd}\]
 commutes.
 
-\begin{Exercise}
+\begin{exercise}
   Show that the pullback $f \times_C g$ is the product of $f$ and $g$ in the slice category $\cat{C}/C$.
-\end{Exercise}
+\end{exercise}
 
 \subsubsection*{Equalizers}
 \label{sec:equalizers}
@@ -1782,13 +1516,13 @@ The universal property is; given any other set $C$ together with a function $h :
   \Eq{f}{g} \arrow[r,"e" below] & A \arrow[r,"f",shift left] \arrow[r,"g" below,shift right]& B 
 \end{tikzcd}\]
 
-\begin{Exercise}
+\begin{exercise}
   Spell out the definition of an equalizer in an arbitrary category $\cat{C}$
-\end{Exercise}
+\end{exercise}
 
-\begin{Exercise}
+\begin{exercise}
   Show that  $e : \Eq{f}{g} \to A$ is a mono.
-\end{Exercise}
+\end{exercise}
 
 \subsubsection*{Finite limits}
 \label{sec:finite-limits}
@@ -1824,13 +1558,13 @@ we can construct the pullback as the equalizer
 \end{tikzcd}\]
 using $e$ composed with the product projections for the projections of the pullback.
 
-\begin{Exercise}
+\begin{exercise}
   Carry out the constructions in detail, using only the universal properties.
-\end{Exercise}
+\end{exercise}
 
-\begin{Exercise}
+\begin{exercise}
   Show that we can't get a terminal object from equalizers and binary products.
-\end{Exercise}
+\end{exercise}
 % the empty category
 
 \subsection{Pushouts and coequalizers}
