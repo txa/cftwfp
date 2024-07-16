@@ -1,0 +1,37 @@
+
+\makeatletter
+\@ifundefined{ifsol}{%
+  \newif\ifsol
+  \soltrue
+}{\soltrue}
+\makeatother
+
+\ifsol
+\usepackage[lastexercise]{exercise}
+\else
+\usepackage[noanswer,lastexercise]{exercise}
+\fi
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{proof}
+\usepackage{tikz}
+\usetikzlibrary{cd}
+
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true, %set true if you want colored links
+    linktoc=all,     %set to all if you want both sections and subsections linked
+    linkcolor=blue,  %choose some color if you want links to stand out
+}
+
+
+
+\renewcommand{\ExerciseHeader}{{\noindent\textbf{
+\ExerciseName\ \ExerciseHeaderNB\ExerciseHeaderTitle
+\ExerciseHeaderOrigin\;}}}
+\renewcommand{\AnswerHeader}{\noindent{\textit{\textbf{Solution\ \ExerciseHeaderNB:}}\;}}
+\renewcommand{\ExerciseSkipAfter}{8pt}
+\renewcommand{\AnswerSkipAfter}{8pt}
+
+\newtheorem{question}[Exercise]{Question}
