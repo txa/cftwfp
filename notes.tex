@@ -5,13 +5,13 @@
 \@ifundefined{ifsol}{%
   \newif\ifsol
   \solfalse
-}{}
+}{\soltrue}
 \makeatother
 
 \ifsol
-\usepackage[noanswer,lastexercise]{exercise}
-\else
 \usepackage[lastexercise]{exercise}
+\else
+\usepackage[noanswer,lastexercise]{exercise}
 \fi
 
 % \input{notes-content}
@@ -1072,16 +1072,58 @@ A & A \times B \arrow[r,"\pi_2"] \arrow[l,"\pi_1"]& B
 Moreover this assignment is natural, i.e. $\pair{f}{g} \circ h = \pair{f\circ h}{g\circ h}$.
 
 \begin{question}
-  Has the category $\cat{\omega}$, which corresponds to $\leq$ on natural numbers, got products? In general what are products for a preorder?
+  Does the category $\cat{\omega}$, which corresponds to $\leq$ on natural numbers, have products? In general what are products for a preorder?
 \end{question}
 
 As for terminal and initial objects we can show that products are unique up to isomorphism. This also implies that  $A\times B \cong B \times A$ because it is easy to see that $B\times A$ is a product of $A$ and $B$.
 % do this explicitly?
 
-We have only defined binary products, what about ternary products? There are at least two ways to derive them from binary propducts $A \times (B\times C)$ and $(A\times B)\times C$. 
+We have only defined binary products, what about ternary products? There are at least two ways to derive them from binary products $A \times (B\times C)$ and $(A\times B)\times C$. 
 \begin{Exercise}
   Show that $A \times (B\times C) \cong (A\times B)\times C$. 
 \end{Exercise}
+\begin{Answer}
+  We'll call these morphisms $\phi\colon A \times (B\times C) \to (A\times B)\times C$ and $\phi\inv$ the other way around.
+
+  To define $\phi$, notice that its codomain is the product of two objects: $(A\times B)$ and $C$. To define a morphism \emph{into} a product, we need to give a pair of morphisms:
+  \[ \phi=[f,g] \text{ for } f\colon A\times(B\times C)\to (A\times B)\text{ and }g\colon A\times(B\times C)\to C\]
+  But $f$ itself goes into a product, so to define $f$, we also need a pair of functions $f=[p,q]$, where $p\colon A\times(B\times C)\to A$ and $q\colon A\times(B\times C)\to B$. Now we can define these explicitly:
+
+  \begin{tabular}{@{} lll @{}}
+    $p := \pi_1$
+        &\hspace{2cm}\;&   \begin{tikzcd}
+          A\times(B\times C) \arrow{r}{\pi_1} & A
+            \end{tikzcd}    \\
+    $q := \pi_1\circ\pi_2$
+        &&   \begin{tikzcd}
+          A\times(B\times C) \arrow{r}{\pi_2} & B\times C \arrow{r}{\pi_1} & B
+            \end{tikzcd}    \\
+    $g := \pi_2\circ\pi_2$
+        &&   \begin{tikzcd}
+          A\times(B\times C) \arrow{r}{\pi_2} & B\times C \arrow{r}{\pi_2} & C
+            \end{tikzcd}    
+    \end{tabular}
+  So then $\phi=[[p,q],g]\colon A\times(B\times C) \to (A\times B)\times C$
+
+  We do likewise in the opposite direction: to get
+  \[ \phi\inv \colon (A\times B)\times C \to A\times(B\times C) \]
+  we put $\phi\inv=[h,[r,s]]$ where
+
+  \begin{tabular}{@{} lll @{}}
+    $h := \pi_1\circ\pi_1$
+        &&   \begin{tikzcd}
+          (A\times B)\times C \arrow{r}{\pi_1} & A\times B \arrow{r}{\pi_1} & A
+            \end{tikzcd}    \\
+    $r := \pi_2\circ\pi_1$
+        &&   \begin{tikzcd}
+          (A\times B)\times C \arrow{r}{\pi_1} & A\times B \arrow{r}{\pi_2} & B
+            \end{tikzcd} \\
+    $s := \pi_2$
+        &\hspace{2cm}\;&   \begin{tikzcd}
+          (A\times B)\times C \arrow{r}{\pi_2} & C
+            \end{tikzcd}       
+    \end{tabular}
+\end{Answer}
 
 This suggests that we can indeed derive all non-empty products from binary products. The only things which is missing is the \emph{empty product}, which corresponds to the terminal object. Hence we say that a category has finite products if it has a terminal object and binary products. Note that this also means that we chose a particular terminal object $1$ and for any pair of object $A$ and $B$ another object $A\times B$.
 
@@ -1102,7 +1144,7 @@ A \arrow[r,"\inj_1" below] \arrow[ur,"f"] & A + B \arrow[u,dashrightarrow,"\case
 \end{tikzcd}\]
 Moreover this assignment is natural, i.e. $h \circ \case{f}{g} = \case{h\circ f}{h\circ g}$.
 \begin{Exercise}
-  Verify unicity and naturality of $\case{f}{g}$.
+  Verify uniqueness and naturality of $\case{f}{g}$.
 \end{Exercise}
 
 This leads directly to the definition of binary coproducts in a category $\cat{C}$, a coproduct $A+B$ of $A$ and $B$ is given by injections:
@@ -1124,6 +1166,54 @@ In $\Set$ and actually in many categories products and coproducts are very diffe
 \begin{Exercise}
 Show that $A \oplus B$ is both a product and a coproduct of $A$ and $B$.
 \end{Exercise}
+\begin{Answer}
+  \Question
+    To prove that this is a product, we need to do several things.
+    \begin{itemize}
+      \item \textbf{Construct the projections and prove they're morphisms}
+
+        To define a monoid morphism, we must (a) supply a function on the underlying sets; (b) prove that this function sends the netural element of the domain to the neutral element of the codomain; and (c) prove that the function respects the operations. The functions we need are of the form $A\times B\to A$ and $A\times B\to B$, so we'll just use the same projections from products in $\cat{Set}$: $\pi_1(a,b)=a$ and $\pi_2(a,b)=b$.
+
+        These satisfy the two conditions for monoid morphisms: $\pi_1$ and $\pi_2$ send the netural element $(e,z)$ to the netural elements $e$ and $z$, respectively. They also preserve the monoid operations: if I pick any $(a,b)$ and $(a',b')$, then
+        \[ \pi_1((a,b)\bullet(a',b')) = \pi_1(a * a',b + b') = a * a' = \pi_1(a,b) * \pi_1(a',b') \]
+        and likewise $\pi_2((a,b)\bullet(a',b'))=\pi_2(a,b) + \pi_2(a',b')$. 
+      \item \textbf{Define $[\_,\_]$ as an operation on morphisms}
+
+      Given some other commutative monoid $(X,d,\_\diamond\_)$ and some monoid morphisms
+      \[ \begin{tikzcd}  A & X \arrow[swap]{l}{f} \arrow{r}{g} & B \end{tikzcd}  \]
+      we need to construct a function $X\to A\times B$ which is a monoid morphism from $(X,d,\_\diamond\_)$ to $(A,e,\_*\_)\oplus(B,z,\_+\_)$. Again, we copy from the products in $\cat{Set}$:
+      \[  [f,g]\;x = (f\,x, g\,x). \]
+      This is a monoid morphism: since $f$ and $g$ are monoid morphisms, they must send the netural element $d$ to the netural elements $e$ and $z$, respectively. So $[f,g]\,d=(e,z)$, the netural element of $A\oplus B$. Likewise for preservation of monoid operations:
+      \begin{align*}
+        [f,g]\;(x\diamond x')
+          &= (f(x\diamond x'), g(x\diamond x')) \tag{Defn. $[f,g]$}\\
+          &= (f(x) * f(x'),g(x\diamond x')) \tag{$f$ is a morphism}\\
+          &= (f(x) * f(x'),g(x) + g(x')) \tag{$g$ is a morphism}\\
+          &= (f(x),g(x)) \bullet (f(x'),g(x')) \tag{Defn. $\bullet$}\\
+          &= [f,g](x) \bullet [f,g](x') \tag{Defn. $[f,g]$}
+      \end{align*}
+      \item \textbf{Prove that $[f,g]$ makes the triangles commute}
+      Now we need that $[f,g]$ makes these two triangles commute:
+      \[ \begin{tikzcd}[sep=large]
+          & X \arrow[swap,bend right=7]{dl}{f} \arrow[bend left=7]{dr}{g} \arrow{d}{[f,g]}\\
+          A & A\times B \arrow{l}{\pi_1}\arrow[swap]{r}{\pi_2} & B
+      \end{tikzcd} \]
+      To prove $\pi_1\circ [f,g]=f$, by function extensionality we take arbitrary $x:X$ and then
+      \[ (\pi_1\circ[f,g])\,x = \pi_1(f\,x, g\,x) = f(x) \]
+      so $\pi_1\circ [f,g]=f$. Likewise for $\pi_2$.
+      \item \textbf{Prove the uniqueness of $[f,g]$}
+      Finally, we must prove that $[f,g]$ is the \emph{only} morphism $k\colon X\to A\times B$ such that $\pi_1\circ k = f$ and $\pi_2\circ k=g$. Note that there could be many morphisms $X\to A\times B$: we want to prove that this is the only one \emph{making these two triangles commute}.
+      
+      Suppose $k\colon X\to A\times B$ is such that $\pi_1\circ k = f$ and $\pi_2\circ k=g$. To show $k$ must be $[f,g]$, we pick arbitrary $x:X$ and show $k(x)=[f,g](x)$. Then,
+      \begin{align*}
+        k(x)
+          &= (\pi_1(k\,x),\pi_2(k\,x))\\
+          &= (f(x),\pi_2(k\,x)) \tag{$\pi_1\circ k=f$}\\
+          &= (f(x),g(x)) \tag{$\pi_2\circ k=g$}\\
+          &= [f,g](x).
+      \end{align*}
+    \end{itemize}
+\end{Answer}
 \begin{question}
   What happens if we give up commutativity, i.e. if we consider $\cat{Mon}$ instead.
 \end{question}
