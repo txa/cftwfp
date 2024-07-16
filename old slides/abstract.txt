@@ -1,0 +1,15 @@
+Category Theory
+
+This is an introductory taster course introducing some basic concepts
+of caetgory theory relevant in Computer Science. The course
+essentially depends on the participants doing exercises and attending
+exercise sessions. The following topics are covered to some degree:
+- Categories
+- Functors and natural transformations
+- Adjunctions
+- Products and coproducts
+- Exponentials
+- Limits and colimits
+- Initial algebras and terminal coalgebras
+- Monads and comonads
+

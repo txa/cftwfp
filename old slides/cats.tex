@@ -1,0 +1,1898 @@
+%\documentclass{beamer}
+\documentclass[handout]{beamer}
+%\usepackage{graphics}
+%\usepackage{epsf}
+
+\usepackage{xypic}
+\xyoption{curve}
+\usepackage{url}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{stmaryrd}
+
+\input{defs}
+
+\input{prooftree}
+\newcommand{\ru}[2]{\vspace{1ex}
+\begin{prooftree}
+#1 \justifies #2
+\end{prooftree}\vspace{1ex}}
+\newcommand{\ax}[1]{
+\ru{}{#1} }
+\newcommand{\Ru}[3]{\vspace{1ex}
+\begin{prooftree}
+#1 \justifies #2 \using{\rm{#3}}
+\end{prooftree}\vspace{1ex}}
+\newcommand{\Ax}[2]{
+\Ru{}{#1}{#2} }
+
+\mode<presentation>
+{
+  \usetheme[secheader]{Boadilla}
+%  \usetheme{Warsaw}
+%  \usetheme{Madrid}
+%  \usetheme{Copenhagen}
+%  \usetheme[compress]{Berlin}
+  \setbeamercovered{invisible}
+}
+
+
+\usepackage[english]{babel}
+\usepackage[latin1]{inputenc}
+
+\usepackage{times}
+\usepackage[T1]{fontenc}
+
+\author{Thorsten Altenkirch}
+
+\institute[Nottingham] % (optional, but mostly needed)
+{
+  School of Computer Science\\
+  University of Nottingham\\
+}
+
+%\beamerdefaultoverlayspecification{<+->}
+
+\title[MGS 2009] 
+{Categories\\ for the\\ Lazy Functional Programmer}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\section{Intro}
+\label{sec:intro}
+
+\begin{frame}{Intro}
+%  \frametitle{Intro}
+
+  \begin{center}
+    \begin{tabular}{cc}
+    \pgfimage[interpolate=true,height=0.4\textheight]{MacLane} &
+    \pgfimage[interpolate=true,height=0.4\textheight]{Eilenberg}
+    \\
+    Saunders MacLane
+     &
+     Samuel Eilenberg\\
+      (1909 - 2005)
+      &  (1913 - 1998)
+    \end{tabular}
+  \end{center}
+
+  \pause
+  \begin{itemize}
+  \item<+-> Originally: tool for
+    algebraic topology. 
+
+  \item<+-> Relevance for Computer Science (Lambek's obs)\\
+    E.g. \emph{Cartesian Closed Cats}
+    $\approx$ \emph{Simply Typed $\lambda$-calculus}
+
+  \item<+->  Categorical concepts in Haskell: \texttt{Functor},
+    \texttt{Monad}, \dots
+
+  \item<+->  Is Category Theory \emph{Abstract Nonsense} ?
+
+  \item<+->  Is Category Theory an alternative to Set Theory?
+  \end{itemize}
+  
+\end{frame}
+
+\begin{frame}{Books}
+  
+    \begin{center}
+    \begin{tabular}{ccc}
+    \pgfimage[interpolate=true,height=0.5\textheight]{cwm} &
+    \pgfimage[interpolate=true,height=0.5\textheight]{pierce} &
+    \pgfimage[interpolate=true,height=0.5\textheight]{awodey}\\
+    MacLane &
+    Pierce &
+    Awodey
+    \end{tabular}
+
+  \end{center}
+  
+
+\end{frame}
+
+\begin{frame}{Overview}
+
+  \setcounter{tocdepth}{1}
+  \tableofcontents
+  
+\end{frame}
+
+\section{Categories}
+\label{sec:categories}
+
+\subsection{What is a category?}
+
+\begin{frame}
+
+  \begin{block}{The category $\SET$}
+
+  \begin{description}
+  \item<+->[Objects:] Sets\vspace{-2ex} 
+    \[|\SET| = \Set\]
+
+  \item<+->[Morphisms :] Functions, given $A,B\in|\SET|$\vspace{-1ex} 
+    \[ \SETh{A}{B} = A \to B \]
+
+  \item<+->[Identity:] Given $A \in \Set$\vspace{-3ex} 
+    \begin{eqnarray*}
+        \id_A & \in & \SETh{A}{A}\\
+        \id_A & = & \lambda a.a       
+    \end{eqnarray*}
+
+  \item<+->[Composition:]
+    Given $f\in \SETh{B}{C},g\in\SETh{A}{B}$:\vspace{-1ex} 
+    \begin{eqnarray*} 
+      f \circ g & \in & \SETh{A}{C} \\
+      f \circ g & = & \lambda a.f\,(g\,a)
+    \end{eqnarray*}
+  \item<+->[Laws:] \vspace{-4ex} 
+    \begin{eqnarray*}
+      f \circ \id & = & f \\
+      \id \circ f & = & f \\
+      (f \circ g) \circ h & = & f \circ (g \circ h)
+    \end{eqnarray*}
+  \end{description}
+  \end{block}
+\end{frame}
+
+\begin{frame}
+  \begin{exercise}
+    Derive the laws for $\SET$ using only the equations of the simply
+    typed $\lambda$-calculus, i.e.
+    \begin{description}
+    \item[$\beta$] $(\lambda x.t)u  = t[x:=u]$
+
+    \item[$\eta$] $\lambda x.t\,x = t$ if $x\notin \mathrm{FV}\,t$
+
+    \item[$\xi$] $\ru{t = u}{\lambda x.t = \lambda x.u}$
+    \end{description}
+  \end{exercise}
+  
+\end{frame}
+
+
+\begin{frame}
+  \begin{block}
+    {Definition: $\cat{C}$ is a category}
+    \begin{description}
+    \item<+->[A (large) set of objects:] \vspace{-1ex}
+      \[|\cat{C}| \in \Set_1\]
+
+    \item<+->[Morphisms:] For every $A,B\in|\cat{C}|$ a \emph{homset}\vspace{-1ex}
+      \[\hom{C}{A}{B} \in \Set\]
+
+    \item<+->[Identity:] For any $A\in|\cat{C}|$:\vspace{-1ex}
+      \[\id_A \in \hom{C}{A}{A}\]
+
+    \item<+->[Composition:] For $f\in
+      \hom{C}{B}{C},g\in\hom{C}{A}{B}$:\vspace{-1ex}
+      \[ f \circ g \in \hom{C}{A}{C} \]
+    \item<+->[Laws:]\vspace{-3ex}
+      \begin{eqnarray*}
+        f \circ \id & = & f \\
+        \id \circ f & = & f \\
+        (f \circ g) \circ h & = & f \circ (g \circ h)
+      \end{eqnarray*}
+    \end{description}
+
+          
+  \end{block}
+  
+\end{frame}
+
+\begin{frame}{Size matters}
+
+  \pause
+  \begin{itemize}
+  \item<+-> I assume as given a predicative hierarchy of set-theoretic
+    universes:
+    \[ \Set = \Set_0 \in \Set_1 \in \Set_2 \in \dots \]
+    which is cummulative
+    \[ \Set_0 \subseteq \Set_1 \subseteq \Set_2 \subseteq \dots \]
+
+  \item<+-> To accomodate categories like $\SET$ we allow that the objects are
+    a large set ($|\cat{C}| \in \Set_1$) but require the hom\textbf{sets} to be proper sets 
+    $\hom{C}{A}{B} \in \Set = \Set_0$.
+
+  \item<+-> A category is \emph{small}, if the objects are a set $|\cat{C}| \in \Set$
+
+  \item<+-> We can repeat this definition at higher levels, a category at level $n$
+    has as objects $|\cat{C}|\in\Set_{n+1}$ and homsets  $\hom{C}{A}{B} \in \Set_n$
+    
+  \end{itemize}
+  
+\end{frame}
+
+\begin{frame}
+  \begin{block}{Dual category}
+    Given a category $\cat{C}$ there is a dual category $\cat{C}^\op$ 
+    with
+    \begin{description}
+    \item[Objects] $|\cat{C}^\op| = |\cat{C}|$
+    \item[Homsets] $\hom{\cat{C}^\op}{A}{B} = \hom{C}{B}{A}$
+    \end{description}
+    and composition defined backwards.
+  \end{block}
+
+  \pause
+  \begin{block}{Notation}
+    For $n\in\Nat$ we define
+    \[ \bar{n} = \{ i < n \} \]
+  \end{block}
+
+  \pause
+  \begin{block}{Question}
+    How many elements are in $\SETh{\bar{2}}{\bar{3}}$ and in $\hom{SET^\op}{\bar{2}}{\bar{3}}$?
+  \end{block}
+  
+\end{frame}
+
+\subsection{Isos}
+
+\begin{frame}
+
+  \begin{block}{Isomorphism}
+    An isomorphism between $A,B \in |\cat{C}|$ is given by two
+    morphisms $f\in \hom{C}{A}{B}$ and $f^{-1}\in\hom{C}{B}{A}$ such
+    that $f\circ f^{-1} = \id$, $f^{-1} \circ f = \id$:
+    \[\xymatrix{ A \ar@(ul,dl)[]_{\id} \ar@/^/[rr]^f
+      &&  B  \ar@/^/[ll]^{f^{-1}} \ar@(dr,ur)[]_{\id}\\
+    }\]
+    We say that $A$ and $B$ are isomorphic $A\simeq B$.
+  \end{block}
+
+  \pause
+  \begin{itemize}
+  \item<+-> Isomorphic sets are the same upto a \emph{renaming} of elements.
+  \item<+-> Concepts in category theory are usually defined \emph{up to isomorphism}.
+  \end{itemize}
+
+%   \begin{block}{Groupoid}
+%     A category where all morphisms are isomorphisms is called a groupoid.
+%   \end{block}
+
+\end{frame}
+
+\begin{frame}
+  \begin{exercise}
+  Which of the following isomorphisms hold in $\SET$:
+  \begin{eqnarray*}
+    \bar{2} + \bar{2} & \simeq & \bar{4} \\
+    \bar{2} \times \bar{2} & \simeq & \bar{4} \\
+    \bar{2} \to \bar{2} & \simeq & \bar{4} \\
+    \Nat + \Nat & \simeq & \Nat \\
+    \Nat \times \Nat & \simeq & \Nat \\
+    \Nat \to \Nat & \simeq & \Nat
+  \end{eqnarray*}
+\end{exercise}
+
+  $A\times B$ is cartesian product
+  \[ A \times B = \{ (a,b) \mid a\in A, b\in B \} \]
+  $A+B$ is disjoint union
+  \[ A + B = \{ \inl\, a \mid a\in A\} \cup \{ \inr\,b \mid b\in B \}\]
+
+%   defined as:\\
+%   \ru{a\in A\quad b\in B}
+%   {(a,b) \in A \times B}
+%   \quad
+%   \ru{\a\in A}
+%   {\inl\,a\in A+B}}
+%   \quad
+%   \ru{\b\in B}
+%   {\inr\,a\in A+B}
+
+\end{frame}
+
+\subsection{Monos and epis}
+
+\begin{frame}
+  \begin{block}{Monomorphism}
+    $f \in\hom{C}{B}{C}$ is a monomorphism (short \emph{mono}), if
+    for all $g,h \in \hom{C}{A}{B}$
+    \[ \ru{f \circ g = f \circ h}{g = h} \]
+  \end{block}
+  \pause
+  \begin{itemize}
+  \item<+-> In $\SET$ monos are precisely the injective functions.
+  \item<+-> We draw monos as $\xymatrix@1{A\ \ar@{>->}[r] & B}$
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}
+  \begin{block}{Epimorphism}
+    $f \in\hom{C}{A}{B}$ is a epimorphism (short \emph{epi}), if
+    for all $g,h \in \hom{C}{B}{C}$
+    \[ \ru{g \circ f = h \circ f}{g = h} \]
+  \end{block}
+  \pause
+  \begin{itemize}
+  \item<+-> In $\SET$ epis are precisely the surjective functions.
+  \item<+-> We draw epis as $\xymatrix@1{A\ar@{->>}[r] & B}$
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}
+%   \begin{exercise}
+%     Show that monos and epis are closed under composition.
+%   \end{exercise}
+
+  \begin{exercise}
+    Show that every iso is both mono and epi.
+  \end{exercise}
+
+  \begin{exercise}
+    Show that the bijections (i.e. functions that are both mono and epi) in $\SET$ are precisely the isos.
+  \end{exercise}
+
+  \begin{exercise}
+    Show that in $\SET$ every morphism $f \in A \to B$ can be
+    written as a composition of an epi and a mono:
+    \[\xymatrix{B \\ & \ar@{>->}[ul]_m C  \\ 
+        A \ar[uu]_f \ar@{->>}[ur]^e}\]
+  \end{exercise}
+  % C = Image(f) = { f a : B | a : A }
+
+\end{frame}
+
+\subsection{Monoids and preorders}
+
+\begin{frame}{Monoids}
+
+  \begin{block}{Definition: Monoid}
+    A monoid $(M,e,*)$ is given by $M\in\Set$, $e\in M$ and 
+    $(*) \in M \to M \to M$ such that:
+    \begin{eqnarray*}
+      x * e & = & x\\
+      e * x & = & x\\
+      (x * y) * z & = & x * (y * z)
+    \end{eqnarray*}
+  \end{block}
+
+  \pause
+  \begin{block}{Example}
+    $(\Nat,0,+)$ is a (commutative) monoid.
+  \end{block}
+ 
+  \pause
+  \begin{block}{Question}
+    Give an example of a non-commutative monoid.
+  \end{block}
+
+\end{frame}
+
+\begin{frame}
+
+  \begin{itemize}
+  \item Monoids correspond to categories with one object.
+  \end{itemize}
+
+  \pause
+  \begin{block}{Monoid as a category}
+    Every monoid $(M,e,*)$ gives rise to a category $\cat{M}$
+    \begin{description}
+    \item[Objects:] $|\cat{M}| = \{ () \}$
+
+    \item[Morphisms] $\hom{M}{()}{()} = M$
+    \end{description}
+    $e$ is the identity, $*$ is composition.
+  \end{block}
+\end{frame}
+
+\begin{frame}
+
+  \begin{block}{Preorder}
+    $(A,\sqsubseteq)$ with $A\in\Set$ and $(\sqsubseteq)\in A\to A\to\Prop$ is a preorder 
+    if $R$ is
+    \begin{description}
+    \item[reflexive] $\forall a\in A.a \sqsubseteq a$
+    \item[transitive] $\forall a,b,c\in A.a \sqsubseteq b \to b
+      \sqsubseteq c \to a \sqsubseteq c$
+    \end{description}
+  \end{block}
+
+  \pause
+  \begin{block}{Example}
+    $(\Nat,\leq)$ is a preorder.
+  \end{block}
+
+  \pause
+  \begin{itemize}
+  \item $(\Nat,\leq)$ is a partial order, because it also satisfies
+    \[ \ru{m\leq n \qquad n \leq m}{m=n} \]
+  \end{itemize}
+
+  \pause
+  \begin{question}
+    Give an example of a preorder, which is not a partial order.
+  \end{question}
+  % NxN (m,n) <= (m',n') if m <= m'
+  % e.g. Given k, n <= m if n mod k <= m mod k
+  % 4 mod 2 <= 2 mod 2 and 2 mod 2 <= 4 mod 2 but 2!=4
+
+\end{frame}
+
+\begin{frame}
+  \begin{itemize}
+  \item Preorders correspond to categories where the homsets have at most one element.
+  \end{itemize}
+  
+  \pause
+  \begin{block}{A preorder as a category}
+    A preorder $(A,\sqsubseteq)$ can be viewed as a category $\cat{A}$:
+    \begin{description}
+    \item[Objects] $|\cat{A}| = A$
+
+    \item[Homsets] $\hom{A}{a}{b} = 
+      \left\{ \begin{array}{ll}
+          \{()\} & \mbox{if}\,a\sqsubseteq b \\
+          \{\} & \mbox{otherwise} \end{array} \right.$
+    
+    \end{description}
+  \end{block}
+
+  \pause
+  \begin{itemize}
+  \item Monoids and preorders are degenerate categories.
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Categories of sets with structure}
+
+  \begin{block}{The category of Monoids: $\cat{Mon}$}
+    \begin{description}
+    \item<+->[Objects:] Monoids $(M,e,*)$
+
+    \item<+->[Morphisms] $\hom{Mon}{(M,e,*)}{(M',e',*')}$ is given 
+      by $f\in M \to M'$ such that $f\,e = e'$ and 
+      $f\,(x * y) = (f\,x) *' (f\,y)$.
+
+    \end{description}
+    \end{block}
+    
+    \pause
+    \begin{block}{Example}
+      The embedding $i \in \hom{Mon}{(\Nat,0,+)}{(\Int,0,+)}$
+      with $i\,n = n$
+    \end{block}
+  
+    \pause
+    \begin{exercise}
+      Show that $i$ is a mono and an epi but not an iso in $\cat{Mon}$.
+    \end{exercise}
+    % f(-n) = f(-n) + g(n) + g(-n) = f(-n) + f(n) + g(-n) = g(-n)
+
+    \begin{exercise}
+      Define the category $\cat{Pre}$ of preorders and monotone functions.
+    \end{exercise}
+%   \begin{block}{The category of preorders: $\cat{Pre}$}
+%     \begin{description}
+%     \item[Objects:] Preorder $(A,\sqsubseteq)$
+
+%     \item[Morphisms] $\hom{Mon}{(A,\subseteq)\,(B,\sqsubseteq')$ is given 
+%       by $f\in A \to B$ such that $a \sqsubseteq b$ implies $f\,a
+%       \sqsubseteq' f\, b$.
+%     \end{description}
+    
+\end{frame}
+
+\subsection{A menagerie of categories}
+
+\begin{frame}{Finite Sets}
+
+  \begin{block}{FinSet}
+    \begin{description}
+    \item[Objects:] Finite Sets
+    \item[Morphisms:] Functions 
+    \end{description}
+  \end{block}
+  \pause
+  \begin{itemize}
+  \item $\cat{FinSet}$ is a full subcategory of $\cat{Set}$.
+  \end{itemize}
+  \pause
+  \begin{block}{FinSetSkel}
+    \begin{description}
+    \item[Objects:] $\Nat$
+    \item[Morphisms:] $\hom{FinSetSkel}{m}{n} = \bar{m} \to \bar{n}$
+    \end{description}
+  \end{block}
+  \pause
+  \begin{itemize}
+  \item $\cat{FinSetSkel}$ is skeletal, any isomorphic objects are
+    equal.
+  \item<+-> $\cat{FinSet}$ and $\cat{FinSetSkel}$ are equivalent (in the
+    appropriate sense).
+  \end{itemize}
+  
+\end{frame}
+
+\begin{frame}{Computational Effects}
+
+  \begin{block}{Error}
+    Given a set of Errors $E\in\Set$
+    \begin{description}
+    \item[Objects:] Sets
+    \item[Morphisms:] $\hom{Error}{A}{B} = A \to B+E$
+    \end{description}
+  \end{block}
+
+  \pause
+  \begin{block}{State}
+    Given a set of states: $S\in\Set$
+    \begin{description}
+    \item[Objects:] Sets
+    \item[Morphisms:] $\hom{State}{A}{B} = A\times S \to B\times S$
+    \end{description}
+  \end{block}
+%   \begin{itemize}
+%   \item Both categories are related to monads in functional programming,
+%     the error monad $F_{\mathrm{Error}}\,X = X+E$ and the state monad
+%     $F_{\mathrm{State}}\,X = S \to X\times S$.
+%  \end{itemize}
+
+  \pause
+  \begin{exercise}
+    Define identity and composition for both categories.
+  \end{exercise}
+
+\end{frame}
+
+\begin{frame}{$\lambda$-terms}
+
+  \begin{block}{Lam}
+   \begin{description}
+   \item[Objects:] Finite sets of variables
+    \item[Morphisms:] 
+      $\hom{Lam}{X}{Y} = Y \to \mathrm{Lam}\,X$
+      where $\mathrm{Lam}\,X$ is the set of $\lambda$-terms whose free
+      variables are in $X$.
+     \end{description}
+  \end{block}
+
+  \pause
+  \begin{exercise}
+    \begin{enumerate}
+    \item Define identity and composition.
+    \item Extend the definition to typed $\lambda$-calculus.
+    \end{enumerate}
+  \end{exercise}
+
+\end{frame}
+
+\begin{frame}
+  \begin{block}{Product categories}
+    Given categories $\cat{C},\cat{D}$ we define $\cat{C}\times\cat{D}$:
+    \begin{description}
+   \item[Objects:] $\cat{C}\times \cat{D}$
+     
+    \item[Morphisms:] $\hom{\cat{C}\times\cat{D}}{(A,B)}{(C,D)}
+      = \hom{C}{A}{C} \times \hom{D}{B}{D}$
+     \end{description}
+     We abbreviate $\cat{C}^2 = \cat{C}\times\cat{C}$
+  \end{block}
+
+
+    \pause
+  \begin{block}{Slice categories}
+    Given a category $\cat{C}$ and an object $A\in|\cat{C}|$ we define
+    $\cat{C}/A$ as:
+   \begin{description}
+   \item[Objects:] $|\cat{C/A}|= \Sigma B\in|\cat{C}|.\hom{C}{B}{A}$
+%$\xymatrix@1{B \ar[r]_f& A}$ in $\cat{C}$
+     
+    \item[Morphisms:] $\hom{C/A}{(B,f)}{(C,g)}$:
+      \[\xymatrix{B \ar[dr]_f \ar[rr]^h && \ar[dl]^g C \\
+        & A & }\]
+     \end{description}
+  \end{block}
+
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Computable sets}
+  
+    \begin{block}{$\omega$-Set}
+   \begin{description}
+   \item[Objects:] A Set $A$ and a relation $\Vdash_A \subseteq \Nat
+      \times A$ such that $\forall a\in A.\exists i\in\Nat.i \Vdash_A a$.
+    \item[Morphisms:] 
+      \begin{align*}
+        &\hom{\omega\!-\!Set}{(A,\Vdash_A)}{(B,\Vdash_B)}\\
+        &= \{ f \in A\to B \mid \exists i\in \Nat.
+      \forall j,a.j \Vdash_A a \\
+       &\qquad \to\exists k.\{i\}j
+      \downarrow k \wedge k \Vdash_B f\,a \}
+      \end{align*}
+       where $\{i\}j\downarrow k$ means the $i$th Turing machine applied
+       to input $j$ terminates and returns $k$.
+     \end{description}
+  \end{block}
+ %  \begin{itemize}
+%   \item $\cat{\omega}-Set$ is used to construct models for
+%     constructive set theories.
+%   \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Partial computations}
+  
+  \begin{block}{$\omega$-CPO}
+   \begin{description}
+   \item[Objects:] $(A,\sqsubseteq_A,\bigsqcup_A)$ such that
+     $(A,\sqsubseteq_A)$ is a partial order, and 
+     \[ \bigsqcup_A \in 
+     \{ f \in \Nat \to A \mid \forall i.f i \sqsubseteq_A f (i+1)\} \to A \]
+     is the least upper bound of a chain, i.e.
+     $\forall i.f\,i \sqsubseteq  \bigsqcup_A\,f$
+     and $(\forall i.f\,i \sqsubseteq a) \to \bigsqcup_A\,f\sqsubseteq a$.
+    \item[Morphisms:] 
+      $\hom{\omega\!-\!CPO}{(A,\sqsubseteq_A,\bigsqcup_A)}{(B,\sqsubseteq_B,\bigsqcup_B)}$
+      is given by functions $f\in A \to B$ which are:
+      \begin{description}
+      \item[monotone] $\ru{a \sqsubseteq_A b}{f\,a \sqsubseteq f\,b}$
+
+      \item[continuous] $f (\bigsqcup_A h) = \bigsqcup_B\,(f \circ h)$
+      \end{description}
+ 
+    \end{description}
+  \end{block}
+\end{frame}
+
+\section{Functors and natural transformations}
+\label{sec:funct-natur-transf}
+
+\subsection{Functors}
+
+\begin{frame}
+  \begin{block}{Definition: Functor}
+    Given categories $\cat{C},\cat{D}$ a functor $F\in \Func{\cat{C}}{\cat{D}}$ is given by
+    \begin{description}
+    \item[a map on objects] $F \in |\cat{C}| \to |\cat{D}|$
+
+    \item[maps on morphisms] Given $f\in \hom{C}{A}{B}$,
+      $F\,f \in \hom{D}{F\,A}{F\,B}$
+    \end{description}
+    such that \vspace{-3ex}
+    \begin{eqnarray*}
+      F \,\id_A & = & \id_{F\,A}\\
+      F \,(f \circ g) & = & (F\,f) \circ (F\, g)
+    \end{eqnarray*}
+  \end{block}
+  \begin{itemize}
+  \item A functor $F\in \Func{\cat{C}}{\cat{C}}$ is called an \emph{endofunctor}.
+  \end{itemize}
+
+  \begin{block}{Example}
+    $\List : \Func{\SET}{\SET}$, the list functor on morphisms is given by 
+    \textrm{map}
+    \begin{eqnarray*}
+      \mathrm{map}\,f\,[] & = & [] \\
+      \mathrm{map}\,f\,(a:as) & = & f\,a : \mathrm{map}\,f\,as
+    \end{eqnarray*}
+    We just write $\List\,f = \mathrm{map}\,f$.
+  \end{block}
+
+\end{frame}
+
+\begin{frame}
+  \begin{exercise}
+    Show that $\List$ satisfies the functor laws.
+  \end{exercise}
+
+  \begin{block}{Question}
+    We consider endofunctors on $\SET$, given maps on objects:
+    \begin{enumerate}
+    \item Is $F_1\,X = X \to \Nat$ a functor?
+
+    \item Is $F_2\,X = X \to X$ a functor?
+
+    \item Is $F_3\,X = (X \to \Nat) \to \Nat$ a functor?
+    \end{enumerate}
+  \end{block}
+
+  \begin{itemize}
+  \item All type expressions with only positive occurences of a set
+    variable give rise to (covariant) functors in $\Func{\SET}{\SET}$.
+
+  \item All type expressions with only negative occurences of a set
+    variable give rise to (contravariant) functors in $\Func{\SET^\op}{\SET}$.
+  \end{itemize}
+  \begin{exercise}
+    Is there a type-expression which is not positive but still gives
+    rise to a covariant endofunctor on $\SET$?
+  \end{exercise}
+
+\end{frame}
+
+\subsection{Natural transformations}
+
+
+\begin{frame}
+  \begin{block}{Definition: natural transformation}
+    Given functors $F,G \in \Func{\cat{C}}{\cat{D}}$ a natural
+    transformation $\alpha : \Nattfn{F}{G}$ is given by a family of maps
+    \[ \alpha \in \Pi_{A\in|\cat{C}|} \hom{D}{F\,A}{G\,A} \]
+    such that for any $f\in \hom{C}{A}{B}$
+    \xymatrix{
+      F\,A \ar[r]^{\alpha_A} \ar[d]_{F\,f}  & G\,A \ar[d]_{G\,f}\\
+      F\,B \ar[r]_{\alpha_B} & G\,B
+      }
+  \end{block}
+  \begin{exercise}
+    \begin{enumerate}
+    \item Show that $\mathrm{reverse} \in \Pi X\in\Set.\List\,X \to
+      \List\, X$ is a natural transformation.
+      
+    \item Give a family of maps with the same type, which is not
+      natural.
+    \end{enumerate}
+  \end{exercise}
+
+\end{frame}
+
+\subsection{Presheaves}
+
+\begin{frame}
+
+  \begin{block}{Functor categories}
+    Given categories $\cat{C},\cat{D}$ the functor category $\FUNC{\cat{C}}{\cat{D}}$ is given by:
+    \begin{description}
+    \item[Objects:] Functors $F\in \Func{\cat{C}}{\cat{D}}$
+
+    \item[Morphisms] Given $F,G \in \Func{\cat{C}}{\cat{D}}$, a morphism
+      is a natural transformation $\alpha \in \Nattfn{F}{G}$
+    \end{description}
+  \end{block}
+  
+  \begin{itemize}
+  \item If $\cat{C}$ is small, the functor category 
+     \[\PSh{\cat{C}} = \FUNC{\cat{C}^\op}{\SET} \]
+    is called \emph{the category of presheaves over $\cat{C}$}.
+%  \item Presheaf categories are important for models of set theory.
+  \end{itemize}
+
+  \begin{exercise}
+    Spell out the details of the objects and morphisms
+    of $\PSh{(\Nat,\leq)}$.    
+  \end{exercise}
+
+\end{frame}
+
+\subsection{The Yoneda lemma}
+
+\begin{frame}
+
+  \begin{block}{}
+    We define a functor $Y$, the Yoneda embedding:
+        \begin{align*}
+      & Y \in \cat{C} \to \PSh{\cat{C}}\\
+      & Y\,A = \lambda X.\hom{C}{X}{A}
+    \end{align*}
+  \end{block}
+
+  \begin{exercise}
+    Show that $Y$ is a functor.
+  \end{exercise}
+
+  \begin{block}{The Yoneda Lemma}
+    Given $F\in\PSh{\cat{C}}$ the following are naturally isomorphic
+    in $A\in|\cat{C}|$
+    \[ \hom{\PSh{\cat{C}}}{Y\,A}{F} \simeq F\,A\]
+  \end{block}
+
+  \begin{exercise}
+    Prove the Yoneda Lemma.
+  \end{exercise}
+\end{frame}
+
+\begin{frame}{The category of categories}
+
+  \begin{block}{$\CAT$}
+    The category of categories is given by:
+    \begin{description}
+    \item[Objects:] Categories
+
+    \item[Morphisms:] Functors
+%, i.e. 
+%      \[\hom{Cat}{\cat{C}}{\cat{D}} = \Func{\cat{C}}{\cat{D}} \]
+    \end{description}
+  \end{block}
+
+  \begin{itemize}
+  \item This is a category on level 1, $|\CAT| \in \Set_2$.
+
+  \item $\CAT$ is a 2-category because its homsets are categories themselves
+    and there is a horizontal composition of natural transformations.
+  \end{itemize}
+  
+\end{frame}
+
+\begin{frame}
+  \frametitle{Horizontal composition of natural transformations}
+      
+  If $\alpha \in F \to F', \beta \in G \to G'$ then
+  \begin{align*}
+    & \alpha \cdot \beta \in  F \circ G \to F' \circ G'\\
+    & (\alpha \cdot \beta)_A = \beta_{G\,A} \circ F\,(\alpha_A)
+  \end{align*}
+
+  \begin{question}
+    What is the difference between $rev \circ rev$ and $rev \cdot rev$?
+  \end{question}
+
+  \begin{question}
+    We could have defined $\alpha \cdot \beta$ as
+    \[ (\alpha \cdot \beta)_A = G' (\alpha_A) \circ \beta_{F A} \]
+    Why is this definition equivalent?
+  \end{question}
+\end{frame}
+
+
+
+\section{Adjunctions}
+
+\subsection{Free Monoids}
+
+\begin{frame}{Free Monoids}
+
+  \begin{itemize}
+  \item The forgetful functor:
+    \begin{align*}
+      & U \in \cat{Mon} \to \SET \\
+      & U\,(M,e,*) = M
+    \end{align*}
+
+  \item Can we go the other way?
+
+  \item The free functor:
+    \begin{align*}
+      & F \in \SET \to \cat{Mon}\\
+      & F\,A = (\List\,A,[],(++))
+    \end{align*}
+
+  \item How to specify that $F$ is \emph{free}?
+
+  \end{itemize}
+  
+\end{frame}
+
+\begin{frame}
+  
+  We construct two natural families of maps:
+  \[\xymatrix{
+    \hom{Mon}{F\,A}{(M,e,*)} \ar@/^/[rr]^\phi
+      &&  \SETh{A}{U\,(M,e,*)} \ar@/^/[ll]^{\phi^{-1}}
+  }\]
+
+  \begin{align*}
+    & \phi \in (\List\,A \to M) \to A \to M \\
+    & \phi\,f\,a = f\,[a]\\
+    & \phi^{-1}\in (A \to M) \to (\List\,A \to M)\\
+    & \phi^{-1}\,g\,[] = e \\
+    & \phi^{-1}\,g\,(a::as) = (g\,a) * (\phi^{-1}\,g\,as)
+  \end{align*}
+
+  \begin{exercise}
+    Show:
+    \begin{enumerate}
+    \item $\phi \circ \phi^{-1} = \id$
+      
+    \item $\phi^{-1}\circ\phi = \id$
+    \end{enumerate}
+  \end{exercise}
+
+%   \begin{block}{Question}
+%     We are saying that $\phi$,$\phi^{-1}$ are natural.
+%     What are the functors?
+%   \end{block}
+
+\end{frame}
+
+\subsection{Definition}
+
+\begin{frame}
+  \begin{block}{Definition: Adjunction}
+    Given functors:
+    \[\xymatrix{
+      \cat{C} \ar@/^/[rr]^U
+      &&  \cat{D} \ar@/^/[ll]^{F}}\]
+    we say that $F$ is left adjoint to $U$ ($F \dashv U$)\\
+    or $U$ is right adjoint to $F$\\
+    if there is a natural isomorphism
+    (in $A\in|\cat{D}|$,$B\in|\cat{C}|$)
+    \[\xymatrix{
+    \hom{C}{F\,A}{B} \ar@/^/[rr]^\phi
+      &&  \hom{D}{A}{U\,B}  \ar@/^/[ll]^{\phi^{-1}}
+    }\]
+
+  \end{block}
+\end{frame}
+
+\begin{frame}
+
+  A semilattice (with zero) is a monoid $(M,e,*)$ such that:
+  \begin{description}
+  \item[commutative], if for all $x,y\in M$:
+    \[x * y = y * x\]
+
+  \item[idempotent], if for all $x\in M$:
+    \[ x * x = x\]
+  \end{description}
+
+  \begin{itemize}
+  \item We define $\cat{SLat}$ as the category of semilattices with zero.
+  \item Morphisms and forgetful functors are defined as for $\cat{Mon}$ 
+  \end{itemize}
+
+  \begin{exercise}
+    Construct the free functor $F\in\SET\to\cat{SLat}$ and show that 
+    $F$ is left adjoint to $U\in\cat{SLat}\to\SET$.
+  \end{exercise}
+
+\end{frame}
+
+\section{Products and coproducts}
+
+\subsection{Products}
+
+\begin{frame}
+  \frametitle{Products in $\SET$}
+  
+  \[\xymatrix{
+    & C \ar[dl]^f \ar[dr]^g \ar@{-->}[d]^{<f,g>} \\
+%    \\
+    A & A\times B \ar[l]^{\pi_0} \ar[r]_{\pi_1} & B
+  }\]
+
+  \begin{align*}
+    & A \times B = \{ (a,b) \mid a\in A, b\in B \}\\
+    & \pi_0\,(a,b) = a \\
+    & \pi_1\,(a,b) = b \\
+    & <f,g>\,c = (f\,c,f\,c)
+  \end{align*}
+
+  Laws:\vspace{-2ex}
+  \begin{align*}
+    & \pi_0\circ <f,g> = f \\
+    & \pi_1\circ <f,g> = g \\
+    & \ru{\pi_0 \circ h = f \quad \pi_1 \circ h = g}
+    { h = <f,g> }
+  \end{align*}
+
+\end{frame}
+
+\begin{frame}
+  \begin{block}{Products}
+  Given objects $A,B\in|\cat{C}|$ we say that $A\times B$ is their product
+  if the morphisms $\pi_0,\pi_1$ exists and for every $f,g$ there is a morphism
+  $<f,g>$ so that the following diagram commutes:
+  \[\xymatrix{
+    & C \ar[dl]^f \ar[dr]^g \ar@{-->}[d]^{<f,g>} \\
+%    \\
+    A & A\times B \ar[l]^{\pi_0} \ar[r]_{\pi_1} & B
+  }\]
+  Moreover, the morphism $<f,g>$ is the unique morphism which makes
+  this diagram commute, i.e.
+  \begin{align*}
+    & \ru{\pi_0 \circ h = f \quad \pi_1 \circ h = g}
+    { h = <f,g> }
+  \end{align*}
+  \end{block}
+
+\end{frame}
+
+\begin{frame}
+  \begin{exercise}
+    Show that products in $\cat{C}$ give rise to a 
+    functor $(\times) \in \cat{C}^2 \to \cat{C}$.
+  \end{exercise}
+
+  \begin{exercise}
+    Show that the following equation holds
+    \[ <f,g> \circ h = <f \circ h,g \circ h> \]
+  \end{exercise}
+
+  \begin{exercise}
+    Show that the following isomorphism exist in all categories with products:
+    \[ A \times B \simeq B \times A \]
+    and that the assignment is natural in $A,B$.
+  \end{exercise}
+
+%   \begin{exercise}
+%     Show that the following isomorphism exist in all categories with products:
+%     \[ A \times (B \times C) \simeq (A\times B) \times C \]
+%     and that the assignment is natural in $A,B,C$.
+%   \end{exercise}
+
+\end{frame}
+
+\subsection{Coproducts}
+
+\begin{frame}
+  \frametitle{Coproducts in $\SET$}
+  
+  \[\xymatrix{
+    & C \\
+%    \\
+    A \ar[ur]^f \ar[r]_{\inl}& A + B \ar@{-->}[u]_{[f,g]}  & B \ar[l]^{\inr} \ar[ul]_g
+  }\]
+
+  \begin{align*}
+    &  A + B = \{ \inl\, a \mid a\in A\} \cup \{ \inr\,b \mid b\in B \}\\
+    & [f,g]\,(\inl\,a) = f\,a\\
+    & [f,g]\,(\inr\,b) = g\,b
+  \end{align*}
+
+  Laws:\vspace{-2ex}
+  \begin{align*}
+    & [f,g] \circ \inl = f \\
+    & [f,g] \circ \inr = g \\
+    & \ru{h \circ \inl = f \quad h \circ \inr = g}
+    { h = [f,g] }
+  \end{align*}
+
+\end{frame}
+
+\begin{frame}
+  \begin{block}{Coproducts}
+  Given objects $A,B\in|\cat{C}|$ we say that $A + B$ is their coproduct
+  if the morphisms $\inl,\inr$ exists and for every $f,g$ there is a morphism
+  $[f,g]$ so that the following diagram commutes:
+  \[\xymatrix{
+    & C \\
+%    \\
+    A \ar[ur]^f \ar[r]_{\inl}& A + B \ar@{-->}[u]_{[f,g]}  & B \ar[l]^{\inr} \ar[ul]_g
+  }\]
+  Moreover, the morphism $[f,g]$ is the unique morphism which makes
+  this diagram commute, i.e.
+  \begin{align*}
+    & \ru{h \circ \inl = f \quad h \circ \inr = g}
+    { h = [f,g] }
+   \end{align*}
+  \end{block}
+
+\end{frame}
+
+\subsection{Adjunction}
+
+\begin{frame}
+  
+  \begin{itemize}
+  \item Products and coproducts are dual concepts:\\
+    Products in $|\cat{C}|$ are coproducts in $|\cat{C}^\op|$ and vice versa.
+
+  \item Products and coproducts are left and right adjoints of the diagonal functor:
+    \begin{align*}
+      & \Delta \in \cat{C} \to \cat{C}^2 \\
+      & \Delta\,A = (A,A)
+    \end{align*}
+    \[
+    \xymatrix{
+      \cat{C} \ar[rr]|\Delta 
+      \ar @{.} @/^1pc/[rr] |{\bot}  
+      \ar @{.} @/_1pc/[rr] |{\bot}  
+      && \cat{C}^2 \ar@/^2pc/[ll]^{(\times)} \ar@/_2pc/[ll]_{(+)}
+      %\\
+      }\]
+  \end{itemize}
+
+\end{frame}
+
+\subsection{Terminal and initial objects}
+
+\begin{frame}
+
+%   \begin{itemize}
+%   \item There are also $0$-ary products and coproducts.
+%   \end{itemize}
+  
+  \begin{block}{Terminal objects}
+    $1\in|\cat{C}|$ is a terminal object, if for any object $A\in\cat{C}$
+    there is exactly one arrow $!_A$:
+    \[ \xymatrix@1{ A \ar@{-->}[r]_{!_A} & 1}\]
+  \end{block}
+
+  \begin{block}{Initial objects}
+    $0\in|\cat{C}|$ is an initial object, if for any object $A\in\cat{C}$
+    there is exactly one arrow $?_A$:
+    \[ \xymatrix@1{ 0 \ar@{-->}[r]_{?_A} & A}\]
+  \end{block}
+
+  \begin{question}
+    What are initial and terminal objects in $\SET$?
+  \end{question}
+
+  \begin{exercise}
+    Show that any two terminal objects are isomorphic.
+  \end{exercise}
+
+\end{frame}
+
+\begin{frame}{Global elements}
+
+  \begin{itemize}
+  \item In $\SET$ we have that
+    \[ \SETh{1}{A} \simeq A \]
+
+  \item Hence the elements of $\hom{C}{1}{A}$ are called \\
+    the \textbf{global elements} of $A$.
+
+  \item A category $\cat{C}$ is \emph{well pointed}, if for 
+    $f,g \in\hom{C}{A}{B}$ we have
+    \[\ru{\forall a\in \hom{C}{1}{A}. f\circ a = g \circ a}
+    {f = g}\]
+
+  \item $\SET$ is well pointed.
+
+  \end{itemize}
+
+  \begin{exercise}
+    Consider $\PSh{(\Nat,\leq)}$ again. What is the terminal
+    object and what are global elements?
+    Show that $\PSh{(\Nat,\leq)}$ is not well pointed.
+  \end{exercise}
+  % two morphisms alpha agree on global elements if they agree on 
+  % alpha_0 but they don't need to agree on other levels if the
+  % embeddings are not surjective.
+
+\end{frame}
+
+\subsection{Exercises}
+
+\begin{frame}
+  
+  \begin{exercise}
+    Construct the following isomorphism in $\SET$:
+    \[ A \times (B + C) \simeq A\times B + A \times C \]
+  \end{exercise}
+
+  \begin{exercise}
+    Show that $\cat{CMon}$ (the category of commutative monoids) has products and coproducts.
+  \end{exercise}
+  % biproducts!
+  % AxB = A+B 
+
+  \begin{exercise}
+    Give a counterexample for the isomorphism:
+    \[ A \times (B + C) \simeq A\times B + A \times C \]
+    in $\cat{CMon}$.
+  \end{exercise}
+  % A = 2, B=C=1 but A \~ A+A
+
+\end{frame}
+
+\section{Exponentials}
+
+\begin{frame}{Exponentials in $\SET$}
+  
+  \begin{itemize}
+  \item In $\SET$ we have the curry/uncurry isomorphism:
+    \[ A \times B \to C \simeq A \to (B \to C) \]
+
+  \item Indeed this is an adjunction $F \dashv G$ for
+    \begin{align*}
+      & F,G \in \SET \to \SET \\
+      & F\,X = X \times B \\
+      & G\,X = B \to X
+    \end{align*}
+    \[ \SETh{F\,A}{C} \simeq \SETh{A}{G\,C}\]
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}
+   \begin{block}{Exponentials}
+    Given a category $\cat{C}$ with products. We say that the object
+    $B\in|\cat{C}|$ is exponentiable, if the functor $F\,X=X\times B$
+    has a right adjoint $F\dashv G$, which we write as $G\,X = B \to
+    X$.
+
+    A category with products where all objects are exponentiable is called \textbf{cartesian
+    closed}.
+  \end{block}
+
+  \begin{itemize}
+  \item $B\to C$ is often written as $C^B$.
+  \end{itemize}
+
+  \begin{question}
+    What are the exponentials in $\cat{FinSetSkel}$?
+  \end{question}
+
+\end{frame}
+
+\begin{frame}
+  \begin{exercise}
+    Show that the category of typed $\lambda$-terms is cartesian closed.
+  \end{exercise}
+
+  \begin{itemize}
+  \item Indeed, this is the initial cartesian closed category (or the
+    classifying category).
+  \end{itemize}
+
+  \begin{exercise}
+    Show that in a cartesian closed category with coproducts we have that
+    \[ A \times (B + C) \simeq (A\times B) + (A \times C) \]
+  \end{exercise}
+
+  \begin{corollary}
+    $\cat{CMon}$ is not cartesian closed.
+  \end{corollary}
+\end{frame}
+
+\begin{frame}
+  \begin{exercise}
+    Show that the presheaf categories ($\PSh{\cat{C}}$) are cartesian
+    closed.
+  \end{exercise}
+
+  \begin{exercise}
+    Is there a cartesian closed category whose dual is also cartesian closed?
+  \end{exercise}
+
+\end{frame}
+
+
+% strong functors?
+
+\section{Limits and Colimits}
+
+\subsection{Pullbacks and pushouts}
+
+\begin{frame}{}
+  \begin{block}{Pullbacks}
+    Given arrows $f \in \hom{C}{A}{C}$ and $g \in \hom{C}{B}{C}$,
+% :
+%     \[\xymatrix{
+%       & A\ar[d]^f \\
+%       B \ar[r]_g & C
+%     }\]
+  $(f\times_C g,\pi_0,\pi_1)$ is their pullback, if 
+  the diagram below commutes and for every $(D,p_0,p_1)$ there
+  is a unique arrow $<p_0,p_1>$ such that the diagram commutes:
+  \[\xymatrix{
+    D \ar@/_/[ddr]_{p_1} \ar@/^/[drr]^{p_0} 
+    \ar@{-->}[dr] |(.45){<p_0,p_1>} \\ 
+    & f \times_C g \ar[r]_{\pi_0}\ar[d]_{\pi_1} & A \ar[d]^f \\
+    & B \ar[r]_g & C}\]
+  \end{block}
+
+  \begin{itemize}
+  \item Pullbacks in $\SET$:
+    \[ f \times_C g = \{ (a,b) \in A\times B \mid f\,a = g\,b \}\]
+  \end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}{}
+  \begin{block}{Pushouts}
+    Given arrows $f \in \hom{C}{A}{B}$ and $g \in \hom{C}{A}{C}$,
+    $(f+^A g,\inl,\inr)$ is their pushout, if 
+    the diagram below commutes and for every $(D,i_0,i_1)$ there
+    is a unique arrow $[p_0,p_1]$ such that the diagram commutes:
+    \[\xymatrix{
+      A \ar[r]^f \ar[d]_g & B \ar[d]^{\inl} \ar@/^/[ddr]^{i_1} \\
+      C \ar[r]_\inr \ar@/_/[drr]_{i_0} & f +^A g \ar@{-->}[dr] |{[i_0,i_1]} \\
+      && D}\]
+  \end{block}
+
+  \begin{exercise}
+    What are pushouts in $\SET$?
+  \end{exercise}
+
+\end{frame}
+
+\subsection{In general}
+
+\begin{frame}
+  \begin{block}{Limits and colimits}
+    Given a small category of diagrams $\cat{D}$, a $\cat{D}$-diagram
+    in $\cat{C}$ is given by a functor $F\in \cat{D}\to\cat{C}$. A
+    cone of a diagram is given by an object $D\in\cat{C}$ and a
+    natural transformation $\alpha \in \mathrm{K}_D \to F$ where
+    $\mathrm{K}_D\,X = D$ is a constant functor.
+
+    Morphisms between cones $(D,\alpha)$ and $(E,\beta)$ are given by
+    $f\in D \to E$ such that $\alpha \circ f = \beta$. 
+
+    The limit of $F$ is the terminal object in the category of cones.
+
+    Dually, a cocone is given by a natural transformation $\alpha \in
+    F \to\mathrm{K}_D$, and a morphism of cocones $(D,\alpha)$ and
+    $(E,\beta)$ are given by $f\in D \to E$ such that $f \circ \alpha
+    = \beta$.
+
+    The colimit of $F$ is the initial object in the category of cocones.
+  \end{block}
+\end{frame}
+
+\begin{frame}{Examples}
+
+  \begin{itemize}
+  \item Products are given by limits of 
+    \[\xymatrix@1{\bullet & \bullet}\]
+    Note that we are leaving out identity arrows.
+
+  \item Dually, coproducts are given by colimits of the same diagram.
+
+  \item Pullbacks are limits of 
+    \[ \xymatrix{
+       & \bullet \ar[d] \\
+       \bullet \ar[r] & \bullet
+     }\]
+
+   \item Pushouts are colimits of the dual diagram:
+    \[ \xymatrix{
+       \bullet \ar[r]\ar[d] & \bullet \\
+       \bullet  
+     }\]
+     
+  \end{itemize}
+  
+\end{frame}
+
+\begin{frame}
+  \begin{itemize}
+  \item Equalizers are limits of
+    \[ \xymatrix@1{ \bullet \ar@<1ex>[r] \ar@<-1ex>[r] & \bullet}\]
+
+  \item Dually, coequalizers are colimits of the same diagram.
+  \end{itemize}
+
+  \begin{exercise}
+    What are equalizers and coequalizers in $\SET$?
+  \end{exercise}
+
+  \begin{exercise}
+%    Show that equalizers can be constructed from pullbacks and terminal objects.
+    Show that pullbacks can be constructed from equalizers and products.
+  \end{exercise}
+  \begin{itemize}
+  \item Actually, all finite limits can be constructed from equalizers and
+    finite products (i.e. binary products and terminal objects).
+  \end{itemize}
+
+\end{frame}
+
+\subsection{Infinite (co)limits}
+
+\begin{frame}
+  \begin{itemize}
+  \item Diagrams of $(\Nat,\leq)$ are called $\omega$-chains:
+    \[ \xymatrix@1{ A\,0 \ar[r]_{a\,0} & A\,1 \ar[r]_{a\,1} & A\,2 \ar[r]_{a\,2} & \dots} \]
+    Note that we are leaving out the composites of arrows.
+
+  \item An $\omega$-chain in $\SET$ is given by
+    \begin{align*}
+      & A \in \Nat \to \Set \\
+      & a \in \Pi n\in\Nat.A\,n \to A\,(n+1)
+    \end{align*}
+
+  \item We write $\colim\,(A,a)$ for the colimit of an $\omega$-chain.
+
+  \end{itemize}
+  \begin{exercise}
+    What is the colimit of the following chain?
+    \begin{align*}
+      & A\, n = \bar{n} \\
+      & a\,n\,i = i
+    \end{align*}
+  \end{exercise}
+
+\end{frame}
+
+\begin{frame}{}
+  \begin{itemize}
+  \item Dually, Diagrams of $(\Nat,\geq)$ are called $\omega$-cochains:
+    \[ \xymatrix@1{ A\,0 & A\,1 \ar[l]_{a\,0} & A\,2 \ar[l]_{a\,1} & \dots \ar[l]_{a\,2} }\]
+ 
+  \item An $\omega$-cochain in $\SET$ is given by
+    \begin{align*}
+      & A \in \Nat \to \Set \\
+      & a \in \Pi n\in\Nat.A\,(n+1) \to A\,n
+    \end{align*}
+    
+  \item We write $\lim\,(A,a)$ for the limit of an $\omega$-cochain.
+
+  \end{itemize}
+
+  \begin{exercise}
+    Given a set $X\in\Set$. What is the limit of the following chain?
+    \begin{align*}
+      & A\, n = \bar{n}\to  X\\
+      & a\,n\,f = \lambda i.f\,i
+    \end{align*}
+  \end{exercise}
+
+\end{frame}
+
+\section{Initial algebras and terminal coalgebras}
+
+\subsection{Initial algebras}
+
+\begin{frame}
+  \begin{itemize}
+  \item Natural numbers $\Nat\in\Set$ are given by:
+    \begin{eqnarray*}
+      0 & \in & \Nat\\
+        & \simeq & 1 \to \Nat\\
+      \mathrm{S} & \in & \Nat \to \Nat
+    \end{eqnarray*}
+
+  \item We can combine the two constructors in one morphism:
+    \[ [0,\mathrm{S}] \in 1+\Nat \to \Nat \]
+
+  \item The functor $T\,X = 1+X$ is called the signature functor.
+
+  \item A pair $(A\in\Set,f\in 1+A \to A)$ is a $1+$-algebra.
+
+%   \item Given $T$-algebras $(A,f)$,$(B,g)$ a $T$-algebra morphism is
+%     a function $h\in A\to B$ such that
+%     \[ \xymatrix{T\,A \ar[r]_f\ar[d]_{T\,h} & A\ar[d]_h \\
+%                  T\,B \ar[r]_g & B } \]
+
+
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+
+  \begin{itemize}
+  \item For any $1+$-algebra $(A,f)$ there is a unique morphism
+    $\fold\,(A,f)$ such that the following diagram commutes:
+    \[ \xymatrix{1+\Nat \ar[r]^{[0,\mathrm{S}]} \ar[d]_{1+(\fold\,(A,f))} & \Nat \ar[d]^{\fold\,(A,f)} \\
+      1+A \ar[r]_f & A } \]
+    with
+    \begin{eqnarray*}
+      \fold\,(A,f)\,0 & = & f\,(\inl\,()) \\
+      \fold\,(A,f)\,(\mathrm{S}\,n) & = & f\,(\inr\,(\fold\,(A,f)\,n)) \\
+    \end{eqnarray*}
+  \end{itemize}
+
+
+  \begin{exercise}
+    Define addition $(+) \in \Nat \to \Nat \to \Nat$ using $\fold$.
+  \end{exercise}
+
+\end{frame}
+%($\cat{T\!-\!\mathrm{alg}}$) 
+\begin{frame}
+  \begin{block}{$T$-algebras}
+    Given an endofunctor $T\in\cat{C}\to\cat{C}$ the category 
+    of $T$-algebras is given by
+    \begin{description}
+    \item[Objects] $T$-algebras $(A,f)$ with
+      \[ \xymatrix@1{T\,A \ar[r]_f & A} \]
+
+    \item[Morphisms] Given $T$-algebras $(A,f)$,$(B,g)$ a T-algebra morphism
+      is a morphism $h\in\hom{C}{A}{B}$ such that
+      \[ \xymatrix{T\,A \ar[r]_f\ar[d]_{T\,h} & A\ar[d]_h \\
+        T\,B \ar[r]_g & B } \]
+      commutes.
+    \end{description}
+  \end{block}
+\end{frame}
+
+\begin{frame}{}
+  \begin{block}{Initial $T$-algebras}
+    The initial object (if it exists) in the category of $T$-algebras
+    is denoted as $(\mu T,\inn_T)$. For every $T$-algebra $(A,f)$ there is a unique 
+    morphism $\fold_T\,(A,f)$ such that
+    \[ \xymatrix{T\,(\mu\,T) \ar[r]^{\inn_T} \ar[d]_{T\,(\fold\,(A,f))} & \Nat \ar[d]^{\fold\,(A,f)} \\
+      T\,A \ar[r]_f & A } \]
+    commutes.
+  \end{block}
+
+\end{frame}
+
+\subsection{Terminal coalgebras}
+
+\begin{frame}
+  \begin{itemize}
+  \item Given $A\in\Set$ the set of streams over $A$: $\Stream{A}$ comes with two destructors
+    \begin{eqnarray*}
+      \mathrm{hd} & \in & \Stream{A} \to A\\
+      \mathrm{tl} & \in & \Stream{A} \to \Stream{A} 
+    \end{eqnarray*}
+
+  \item We can combine the two destructors in one morphism:
+    \[ <\mathrm{hd},\mathrm{tl}> \in \Stream{A} \to A\times \Stream{A} \]
+
+%  \item The functor $T\,X = A\times X$ is called the signature functor.
+
+  \item A pair $(X\in\Set,f\in X \to A\times X)$ is a $A\times$-coalgebra.
+
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+
+  \begin{itemize}
+  \item For any $A\times$-algebra $(X,f)$ there is a unique morphism
+    $\unfold\,(X,f)$ such that the following diagram commutes:
+    \[ \xymatrix{
+      X\ar[d]_{\unfold\,(X,f)} \ar[r]_f & A\times X\ar[d]^{A\times\unfold\,(X,f)} \\
+      \Stream{A} \ar[r]_{<\mathrm{hd},\mathrm{tl}>}  & A \times\Stream{A} 
+    } \]
+    with
+    \begin{eqnarray*}
+      \mathrm{hd}(\unfold\,(X,f)\,x) & = & \pi_0 (f\,x) \\
+      \mathrm{tl}(\unfold\,(X,f)\,x) & = & \unfold\,(X,f)\,(\pi_1\,(f\,x))
+    \end{eqnarray*}
+
+  \end{itemize}
+
+  \begin{exercise}
+    Define the function $\mathrm{from}\in \Nat \to \Stream{\Nat}$, which produces
+    the stream of natural numbers starting with a given number, using $\unfold$.
+    
+  \end{exercise}
+
+\end{frame}
+
+\begin{frame}
+  \begin{block}{$T$-coalgebras}
+    Dually, given an endofunctor $T\in\cat{C}\to\cat{C}$ the category 
+    of $T$-coalgebras is given by
+    \begin{description}
+    \item[Objects] $T$-coalgebras $(A,f)$ with
+      \[ \xymatrix@1{A \ar[r]_f & T\,A} \]
+
+    \item[Morphisms] Given $T$-coalgebras $(A,f)$,$(B,g)$ a T-coalgebra morphism
+      is a morphism $h\in\hom{C}{A}{B}$ such that
+      \[ \xymatrix{A \ar[r]^f\ar[d]_{h} & T\,A\ar[d]^{T\,h} \\
+        B \ar[r]_g & T\,B } \]
+      commutes.
+    \end{description}
+  \end{block}
+\end{frame}
+
+\begin{frame}{}
+  \begin{block}{Terminal $T$-coalgebras}
+    The terminal object (if it exists) in the category of $T$-coalgebras
+    is denoted as $(\nu T,\out_T)$. For every $T$-coalgebra $(A,f)$ there is a unique 
+    morphism $\unfold_T\,(A,f)$ such that
+    \[ \xymatrix{
+      A\ar[d]_{\unfold\,(A,f)} \ar[r]^f & T\,A\ar[d]^{T\,(\unfold\,(X,f))} \\
+      \nu\,T \ar[r]_{\out_T}  & T\,(\nu\,T) 
+    } \]
+  \end{block}
+\end{frame}
+
+\subsection{Lambek's lemma}
+
+\begin{frame}{Lambek's lemma}
+
+  \begin{itemize}
+  \item Initial algebras and terminal coalgebras are always isomorphisms.
+
+  \item We construct the inverse of $\inn_T\in \hom{C}{T\,(\mu\,T)}{\mu\,T}$ as 
+    \begin{align*}
+      & \inn_T^{-1} \in \hom{C}{\mu\,T}{T\,(\mu\,T)}\\
+      & \inn_T^{-1} = \fold_T\,(T\,(\mu\,T), T\,\inn_T)
+    \end{align*}
+
+  \item Dually, we construct an inverse to $\out_T$.
+  \end{itemize}
+
+  \begin{exercise}
+    Construct explicitely the inverses to $[0,\mathrm{S}]$ (for natural numbers) and
+    $<\mathrm{hd},\mathrm{tl}>$ (for streams).
+  \end{exercise}
+
+  \begin{exercise}
+    Prove Lambek's lemma, i.e. show that $\inn_T^{-1}$ is inverse to
+    $\inn_T$.
+  \end{exercise}
+  
+\end{frame}
+
+\subsection{Constructing \dots}
+
+
+\begin{frame}
+  \begin{itemize}
+ 
+  \item A functor $T$ is called $\omega$-cocontinous if it preserves
+    colimits of $\omega$-chains, that is
+    \[ T\,(\colim\,(A,a)) \simeq \colim\,(\lambda n.T\,(A\,n),\lambda n.T\,(a\, n)) \]
+
+  \item We can construct the initial $T$-algebra of an $\omega$-cocontinous functor $T$ by constructing the colimit of the following 
+    chain:
+    \[ \xymatrix@1{ 0 \ar[r]_{?} & T\,0 \ar[r]_{T\,?} & T^2\,0 \ar[r]_{T^2\,?} & \dots} \]
+ 
+  \end{itemize}
+
+  \begin{exercise}
+    Complete the construction, and show that the colimit is indeed an initial $T$-algebra.
+  \end{exercise}
+
+%   \begin{itemize}
+%   \item The dual construction gives a terminal algebra for an $\omega$-continous functor.
+
+%   \end{itemize}
+
+\end{frame}
+
+\begin{frame}
+  \begin{exercise}
+    Dualize the previous slide. What is an $\omega$-continous functor? How can we construct 
+    its terminal coalgebra?
+  \end{exercise}
+
+  \begin{exercise}
+    Which of the following endofunctors on $\Set$ are $\omega$-cocontinous, and
+    which are $\omega$-continous:
+    \begin{eqnarray*}
+      T_1\,X & = & X\times X \\
+      T_2\,X & = & \Nat \to X\\
+      T_3\,X & = & (X \to \Nat) \to \Nat
+    \end{eqnarray*}
+  \end{exercise}
+
+\end{frame}
+
+\section{Monads and Comonads}
+
+\subsection{Binary trees}
+
+\begin{frame}
+  
+  \begin{itemize}
+  \item We define the functor of binary trees with labelled leafs:
+    \begin{align*}
+      & BT \in \SET \to \SET\\
+      & BT\,X = \mu Y. X + Y\times Y
+    \end{align*}
+    We write $\mathrm{L} = \inn \circ \inl$ and $\mathrm{N} = \inn \circ \inr$ for the constructors.
+  \item The natural transformation $\eta$ constructs a leaf:
+    \begin{align*}
+      & \eta_A \in A \to BT\,A\\
+      & \eta_A = \lambda a.\mathrm{L}\,a
+    \end{align*}
+
+  \item We define a natural transformation \textrm{bind}, which replaces each leaf by a tree.
+  \begin{align*}
+      & \mathrm{bind}_{A,B}\in (A \to BT\,B) \to BT\,A \to BT\,B \\
+      & \mathrm{bind}_{A,B}\,f\,(\mathrm{L}\,a) = f\,a\\
+      & \mathrm{bind}_{A,B}\,f\, (\mathrm{N}\,(l,r)) = \mathrm{N}\,
+      (\mathrm{bind}_{A,B}\,f\,l,\mathrm{bind}_{A,B}\,f\,r)
+    \end{align*}
+
+  \item Haskell's $(>>=)$ can be defined as $a >>= f = \mathrm{bind}\,f\,a$.
+  \end{itemize}
+
+\end{frame}
+
+\subsection{Kleisli triples}
+
+\begin{frame}
+  \begin{block}{Monads (Kleisli triple)}
+    A monad on $\cat{C}$ is a triple $(T,\eta,\mathrm{bind})$ with
+    \begin{eqnarray*}
+      T & \in & \cat{C} \to \cat{C}\\
+      \eta & \in & \hom{C}{A}{T\,A}\\
+      \mathrm{bind} & \in & \hom{C}{A}{T\,B} \to \hom{C}{T\,A}{T\,B}
+    \end{eqnarray*}
+    such that 
+    \begin{eqnarray*}
+      \mathrm{bind}\,\etaxs &= & \id\\
+      \mathrm{bind}\,(f) \circ \eta &= & f\\
+      (\mathrm{bind}\,f) \circ (\mathrm{bind}\,g) &=& \mathrm{bind}\,((\mathrm{bind}\,f) \circ g)
+      \end{eqnarray*}
+
+  \end{block}
+
+  \begin{exercise}
+    Show that the operations on binary trees satisfy the laws of a monad.
+  \end{exercise}
+\end{frame}
+
+\begin{frame}
+    \begin{exercise}
+    Show that the following functors over $\SET$ give rise to monads
+    (assuming $E,S\in\Set$):
+    \begin{eqnarray*}
+      T_{\mathrm{Error}}\,X & = & E+X\\
+      T_{\mathrm{State}}\,X & = & S \to (X\times S)
+    \end{eqnarray*}
+  \end{exercise}
+\end{frame}
+
+\subsection{Monads}
+
+\begin{frame}
+  \begin{block}{Monad}
+    A monad on $\cat{C}$ is a triple $(T,\eta,\mu)$ with
+    \begin{eqnarray*}
+      T & \in & \cat{C} \to \cat{C}\\
+      \eta & \in & I \to T \\
+      \mu & \in & T^2 \to T
+    \end{eqnarray*}
+    (where $T^2 = T\circ T$) such that the following diagrams commute.
+    \[\xymatrix{
+      T \ar[r]^{\eta T} \ar[d]_{T\eta} \ar@{=}[dr]& T^2\ar[d]^\mu\\
+      T^2 \ar[r]_\mu & T}
+    \qquad
+    \xymatrix{
+      T^3 \ar[r]^{T \mu} \ar[d]_{\mu T} & T^2\ar[d]^\mu\\
+      T^2 \ar[r]_\mu & T}
+    \]
+  \end{block}
+  \begin{exercise}
+    Show that the two definitions are equivalent.
+  \end{exercise}
+\end{frame}
+
+\subsection{Comonads}
+
+\begin{frame}
+  \begin{itemize}
+  \item We define infinite, labelled binary trees:
+    \begin{align*}
+      & BT^\infty\in \SET \to \SET\\
+      & BT^\infty\,X = \nu Y. X \times (Y \times Y)
+    \end{align*}
+
+  \item The operation $\epsilon$ extracts the top label:
+    \begin{align*}
+      & \epsilon \in BT^\infty\,A \to A\\
+      & \epsilon\,(a,(l,r)) = a
+    \end{align*}
+
+  \item cobind relabels a tree recursively:
+    \begin{align*}
+      & \mathrm{cobind} \in (BT^\infty\,A \to B) \to  (BT^\infty\,A \to BT^\infty\,B) \\
+      & \mathrm{cobind}\,f\,t = (f\,t,\mathrm{cobind}\,f\,(\pi_2 t),\mathrm{cobind}\,f\,(\pi_3 t))
+    \end{align*}
+  \end{itemize}
+  \begin{exercise}
+    Show that $(BT^\infty,\epsilon,\mathrm{cobind})$ is a comonad, i.e. a monad
+    in $\SET^\op$.
+  \end{exercise}
+\end{frame}
+
+\subsection{Kleisli category}
+
+\begin{frame}
+  \begin{block}{Kleisli category}
+    Given a monad $(T,\eta,\mathrm{bind})$ on $\cat{C}$ we define the 
+    Kleisli category $\cat{C}_T$ as:
+    \begin{description}
+    \item[Objects:] $|\cat{C}|$
+    \item[Morphisms:] $\cat{C}_T\,A\,B = \hom{C}{A}{T\,B}$
+
+    \item[Identity:] $\eta \in \cat{C}_T\,A\,A$
+
+    \item[Composition:] Given $f\in \cat{C}_T\,B\,C$, $g\in\cat{C}_T\,A\,B$ we define
+      \[ f \circ_T g = (\mathrm{bind}\,f) \circ g\]
+    \end{description}
+  \end{block}
+
+  \begin{exercise}
+    Verify that that $\cat{C}_T$  is indeed a category.
+  \end{exercise}
+
+  \begin{exercise}
+    Explicitely construct the Kleisli-categories of $T_{\mathrm{Error}}$
+    and $T_{\mathrm{State}}$
+  \end{exercise}
+
+\end{frame}
+
+% \begin{frame}
+%   \begin{exercise}
+%     Explicitely construct the Kleisli-categories of the following monads over $\SET$
+%     (assuming $E,S\in\Set$):
+%     \begin{eqnarray*}
+%       T_{\mathrm{Error}}\,X & = & E+X\\
+%       T_{\mathrm{State}}\,X & = & S \to (X\times S)
+%     \end{eqnarray*}
+%   \end{exercise}
+% \end{frame}
+
+\begin{frame}
+  Given an adjunction $F \dashv U$
+  \[\xymatrix{
+    \hom{D}{F\,A}{B} \ar@/^/[rr]^\phi
+    &&  \hom{C}{A}{U\,B}  \ar@/^/[ll]^{\phi^{-1}}
+  }\]
+  we define:
+  \begin{eqnarray*}
+    \eta & \in & \hom{C}{A}{U\,(F\,A)}\\
+    \eta & = & \phi\,(\id_{F\,A})\\
+    \epsilon & \in & \hom{D}{F}{U\,B}{B}\\
+    \epsilon & = & \phi^{-1}\,(\id_{U\,B})
+  \end{eqnarray*}
+  this gives rise to a monad $(T,\epsilon,\mu)$ on $\cat{C}$ 
+  \begin{eqnarray*}
+    T & = & U F \\
+    \mu & = & U \epsilon F
+  \end{eqnarray*}
+
+\end{frame}
+
+\begin{frame}
+  \begin{exercise}
+    Spell out the constructed monad in the case where
+    $F\in\SET\to\cat{Mon}$ is the free monoid functor and
+    $U\in\cat{Mon}\to\SET$ the forgetful functor
+  \end{exercise}
+
+  \begin{exercise}
+    Verify the monad laws of the construction of a monad from an adjunction.
+  \end{exercise}
+
+\end{frame}
+
+\begin{frame}
+    \begin{itemize}
+    \item Using $\cat{C}_T$ we can also go the other way: $\cat{C}_T$ gives rise to an adjunction
+      $F_T \dashv U_T$ such that $T = U_T \circ F_T$:
+      \begin{align*}
+        & F_T \in \cat{C} \to \cat{C}_T \\
+        & F_T A = A \\
+        & F_T\,f = \eta \circ f \\
+        & U_T \in \cat{C}_T \to \cat{C} \\
+        & U_T\,A = T\,A \\
+        & U_T\,f = \mu \circ T\,f
+      \end{align*}
+  \end{itemize}
+  \vspace{-3ex}
+
+  \begin{exercise}
+    Verify that $F_T \dashv U_T$.
+  \end{exercise}
+
+  \begin{itemize}
+    \item This is not the only way to factor a monad into an
+      adjunction.  Another construction is the Eilenberg-Moore
+      category $\cat{C}^T$, indeed the two are initial and terminal objects in the
+      category of factorisations.
+  \end{itemize}
+
+\end{frame}
+
+% \begin{frame}
+%   \begin{itemize}
+%   \item Monads give rise to adjunctions.
+
+%   \item 
+%   \end{itemize}
+% \end{frame}
+
+\end{document}
