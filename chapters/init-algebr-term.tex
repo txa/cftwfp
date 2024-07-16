@@ -1,0 +1,338 @@
+\section{Initial algebras and terminal coalgebras}
+\label{sec:init-algebr-term}
+
+\subsection{Natural numbers}
+\label{sec:natural-numbers}
+
+Following Peano we define the natural numbers as inductively generated from $0:\Nat$ and $\suc : \Nat \to \Nat$. We can define functions like addition
+$\_+\_ : \Nat \to \Nat \to \Nat$ by recursion:
+\begin{align*}
+  0 + m & = m\\
+  \suc\,n + m & = \suc\,(n + m)
+\end{align*}
+and we can prove properties such that for all $n : \Nat$ we have that $n + 0 = n$ by induction:
+\begin{description}
+\item[$n=0$] $0 + 0 = 0$ follows from the definition of $\_+\_$.
+\item[$n = \suc\,m'$] we assume that the statement holds for $m$:
+  \begin{align*}
+    n + 0 
+    & = \suc\,m + 0 \\
+    & = \suc\,(m + 0) & \mbox{Defn of $\_+\_$}\\
+    & = \suc\,m & \mbox{Ind.hypothesis} \\
+    & = n
+  \end{align*}
+\end{description}
+
+To categorify natural numbers we observe that we have two morphisms
+\begin{align*}
+  0  & : 1 \to \Nat \\
+  \suc & : \Nat \to \Nat
+\end{align*}
+and given a set $A$ and $z:A$ or equivalently $z : 1 \to A$ and $s : A \to A$ we can define $\It_A\,z\,s : \Nat \to A$ as:
+\begin{align*}
+\It_A\,z\,s\,0 & = z\\
+\It_A\,z\,s\,(\suc\,n) & = s\,(\It_A\,z\,s\,n)
+\end{align*}
+this is the unique morphism that makes the following diagram commute
+\[\begin{tikzcd}[row sep = large]
+& A \arrow[r,"s"] & A \\
+1 \arrow[ur,"z"] \arrow[r,"0"] & \Nat \arrow[r,"\suc"] \arrow[u, dashrightarrow,"\It_A\,z\,s" right] & \Nat  \arrow[u, dashrightarrow,"\It_A\,z\,s" right]
+\end{tikzcd}\]  
+The uniqueness of $\It_A\,z\,s$ can be shown by induction. We assume that there is another function $h : \Nat \to A$ that makes the digram commute, i.e. 
+\begin{align*}
+h \circ 0 & = z\\
+h \circ \suc & = s \circ h
+\end{align*}
+We now show that $h = \It_A\,z\,s$. Using extensionality it is enough to show $h\,n = \It_A\,z\,s\,n$ for all $n:\Nat$. We show this by induction:
+\begin{description}
+\item[$n=0$] 
+  \begin{align*}
+    h\,0 & = h \circ 0 \\
+    & = z\\
+    & = \It_A\,z\,s\,0
+  \end{align*}
+\item[$n = \suc\,n'$] 
+  \begin{align*}
+    h\,(\suc\,n') & = (h \circ \suc) \, n' \\
+    & = (s \circ h)\,n' \\
+    & = s (h \, n')\\
+    & = s (\It_A\,z\,s\,n') & \mbox{by ind.hyp.} \\
+    & = \It_A\,z\,s\,(\suc\,n')
+  \end{align*}
+\end{description}
+
+This leads directly to the definition of a \emph{Natural Number Object (NNO)} in a category $\cat{C}$ with a terminal object: it is given by an object $\Nat : \obj{\cat{C}}$ and two morphisms $0 : \homC{C}{1}{\Nat}$ and $\suc : \homC{\cat{C}}{\Nat}{\Nat}$ such for any object $A$ and $z : \homC{C}{1}{A}$ and $s:\homC{C}{A}{A}$ there is a unique morphism $\It_A\,z\,s$ that makes the above diagram commute.
+
+We can derive the addition function exploiting also cartesian closure. We choose $A = \Nat \to \Nat$ and
+\begin{align*}
+& z : 1 \to (\Nat \to \Nat) \\
+& z\,()\,n = n \\
+& s : (\Nat \to \Nat) \to (\Nat \to \Nat) \\
+& s\,f\,n = \suc\,(f\,n)
+\end{align*}
+We can now define $\_+\_ = \It_{\Nat\to\Nat}\,z\,s : \Nat \to (\Nat \to \Nat)$.
+\begin{Exercise}
+  Convince yourself that this computes the same function as the previous definition of $\_+\_$ using pattern maching.
+\end{Exercise}
+
+We can prove that $n + 0 = 0$ using the unicity of $\It$ instead of induction. We observe that both $\id_\Nat$ and $\_+0 : \Nat \to \Nat$ make the following diagram commute:
+\[\begin{tikzcd}[row sep = large]
+& \Nat \arrow[r,"\suc"] & \Nat \\
+1 \arrow[ur,"0"] \arrow[r,"0"] & \Nat \arrow[r,"\suc"] \arrow[u, shift left,"\id_\Nat" left] 
+\arrow[u,shift right, "\_+0" right]
+& \Nat  \arrow[u,shift left,"\id_\Nat" left]\arrow[u,shift right,"\_+0" right]
+\end{tikzcd}\]  
+And hence by uniqueness $\id_\Nat = \_+0$, by applying both sides to $n:\Nat$ we obtain 
+$n = \id\,n = (\_ + 0)\,n = n + 0$. 
+\begin{Exercise}
+  Verify the claim that both functions make the diagram commute.
+\end{Exercise}
+
+One basic function on natural numbers is the \emph{predecessor}, i.e. the inverse to the successor. Initially we may think that we should define a function $\pred : \Nat \to \Nat$ with $\pred\,(\suc\,n) = n$. But what should $\pred\,0$ be? We could arbitrarily set $\pred\,0 = 0$ but this seems a very unprincipled move. It seems better to say that $\pred$ should return an \emph{error} when applies to $0$. That is as well known in functional programming, we should use the \emph{Maybe}-monad
+\footnote{Even though we don't actually know yet what a monad is}
+and use $\Maybe\,A = 1 + A$ as the result type. That is we define $\pred : \Nat \to 1 + \Nat$ as
+\begin{align*}
+\pred\,0 & = \inj_1\,() \\
+\pred\,(\suc\,n) & = \inj_2\,n
+\end{align*}
+However, we cannot translate this definition directly into an application of $\It$ since in the successor case we referred directly to $n$ while $\It$ just gives us the recursive result. However, the following alternative definition works:
+\begin{align*}
+\pred\,0 & = \inj_1\,() \\
+\pred\,(\suc\,n) & = \case{\inj_2\,0}{\inj_2 \circ \suc}
+\end{align*}
+The idea is that the 2nd definition computes the predeccessor by delaying the constructors by one step.
+\begin{Exercise}
+Verify in detail that both definitions of $\pred$ compute the same function.                     
+\end{Exercise}
+The second definition can be translated into 
+\begin{align*}
+& \pred : \Nat \to 1+\Nat \\
+& \pred = \It_{1+\Nat}\,(\inj_1\,())\, \case{\inj_2\,0}{\inj_2 \circ \suc}
+\end{align*}
+
+$\pred$ is the inverse of the constructors $0$ and $\suc$. We can make this precise by packaging $0$ and $\suc$ into one function 
+\begin{align*}
+& \inn : 1+\Nat \to \Nat \\
+& \inn = \case{0}{\suc} 
+\end{align*}
+This is an instance of Lambek's lemma which we will verify in the general case later. 
+\begin{Exercise}
+  Prove by induction or by using initiality that $\pred$ and $\inn$ are an isomorphism, i.e.
+  \begin{align*}
+    \pred \circ \inn & = \id_{1+\Nat} \\
+    \inn \circ \pred & = \id_\Nat
+  \end{align*}
+\end{Exercise}
+
+\subsection{Initial algebras}
+\label{sec:initial-algebras}
+
+Natural numbers are an instance of the general concept of an initial algebra which are the categorical counterpart of what we call an inductive definition, that is a datatype which is generated by constructors. An initial algebra is specified by an endofunctor $T$. In the case of natural numbers this was the functor $T_\Nat : \Set \to \Set$ defined as $T_\Nat\,X = 1+X$. 
+
+We give a general definition: Given an endofunctor $T : \cat{C} \to \cat{C}$ an initial $T$-algebra is given by an object $\mu T : \obj{\cat{C}}$ and a morphism $\inn_T : : \homC{C}{T\,\mu\,T}{\mu\,T}$ such that for any $T$-algebra, that is a pair of $A : \obj{\cat{C}}$ and a morphism 
+$f : \homC{C}{T\,A}{A}$ there is a unique morphism $\It_T \,f: \cat{C}{\mu T}{A}$
+\footnote{I leave the carrier $A$ implicit since it can be inferred from $f$.}
+that makes the following diagram commute:
+\[\begin{tikzcd}
+T\,A \arrow[r,"f"]  & A \\
+T\,(\mu T) \arrow[u, "T\, (\It_T \, f"]  \arrow[r,"\inn_T"] & \mu T \arrow[u,"\It_T \, f" right,dashrightarrow]
+\end{tikzcd}\]  
+Indeed, the initial algebra is just the initial object in the category of $T$-algebras, whose objects are $T$-algebras and given $T$-algebras $f : \homC{C}{T\,A}{A}$ and $g : \homC{C}{T\,B}{B}$ a morphism is given by a morphism $h : \homC{C}{A}{B}$ such that the following diagram commutes:
+\[\begin{tikzcd}
+T\,B \arrow[r,"g"] & B \\
+ T\,A \arrow[r,"f"] \arrow[u,"T\,h"]  & A \arrow[u,"h"] 
+\end{tikzcd}\]  
+Identity and composition is given by identity and composition in $\cat{C}$, it is easy to see that the corresponding diagrams commute. 
+
+\begin{Exercise}
+Show that $\Nat$ is the initial $T_\Nat$ algebra with $T_\Nat : \Set \to \Set$ defined as $T_\Nat\,X = 1+X$. 
+\end{Exercise}
+
+We can understand the type of lists in a similar fashion. $\List$ are given by two constructors (pronounced nil and cons):
+\begin{align*}
+[] & : \List\,A \\
+\_\cons\_ & : A \to \List\,A \to \List\,A
+\end{align*}
+We can transform this into one constructor function by first uncurrying
+\begin{align*}
+1 & \to \List\,A \\
+A \times \List\,A & \to \List\,A
+\end{align*}
+and then merging them into one function using coproducts:
+\begin{align*}
+1 + A \times \List\,A & \to \List\,A
+\end{align*}
+Hence $\List\,A$ is the initial algebra of the functor $T_{\List\,A}:\cat{\Set} \to \cat{\Set}$ with $T_{\List\,A}\,X = 1 + A \times X$.
+\begin{Exercise}
+Define the function $\rev_A : \List\,A \to \List\,A$ using only the iterator. \emph{Hint:} it is useful to define an auxilliary function 
+$\mathrm{snoc} : A \times\List\,A \to A$ that appends a single element at the end of a list using the iterator. 
+
+Show that this function is idempotent, that is $\rev_A \circ \rev_A = \id_{\List\,A}$ using only initiality. 
+\end{Exercise}
+
+\begin{Exercise}
+What are the functors defining 
+\begin{enumerate}
+\item unlabelled binary trees,
+\item binary trees whose leaves are labelled with $A:\Set$,
+\item binary trees whose nodes  are labelled with $A:\Set$,
+\end{enumerate}
+\end{Exercise}
+
+Since we already know that $\List$ is a functor, what is the initial algebra of the list functor? This has a constructor
+\begin{align*}
+\inn_\List : \List \,(\mu\,\List) \to \mu\,\List
+\end{align*}
+Indeed, this is the type of finitely branching trees, that is any node has a list of subtrees. We don't need to include leaves explicitely because we can have a node with an empty list of subtrees. This type is also called \emph{rose trees}.
+
+We can also construct infinitely branching trees which are the initial algebra of the functor $T\,X = 1 + \Nat \to X$. Here a node is given by a function that assigns to every natural number a subtree. This raises the question wether every functor on sets should have an initial algebra. We note that obviously paradoxical cases like $T\,X = X \to X$ are ruled out because they don't give rise to a functor. However, depending on our foundations even positive hence functorial definitions like $T\,X = (X \to \Bool) \to \Bool$ are problematic. If we work in a classical setting then this is obviously paradoxical because it gives us a fixpoint of the double powerset functor and from this we can derive a contradiction using diagonalisation.
+\begin{Exercise}
+Show that having an initial algebra of $T : \Set \to \Set$ with $T\,X = (X \to \Bool) \to \Bool$ leads to a contradiction if we assume $\Prop = \Bool$ (classical logic). Assume that $\inn_T : T (\mu\,T) \to \mu\,T$ is an isomorphism
+\footnote{We are going to prove this in the next section.}.
+\emph{Hint:} Derive a retraction, i.e. a function $\phi : (\mu\,T \to \Bool) \to \mu\,T$ that has a left inverse. Show that such a retract cannot exists using Cantor's diagonalisation.
+\end{Exercise}
+
+\subsection{Lambek's lemma}
+\label{sec:lambeks-lemma}
+
+We return to the predecessor function and show that the constructor morphism $\inn_T : \homC{C}{T\,(\mu\,T)}{\mu T}$ is an isomorphism for any initial $T$-algebra. The inverse is given by 
+\begin{align*}
+\out_T : \homC{C}{\mu T}{T\,(\mu\,T)} \\
+\out_T = \It_T\,(T\,\inn_T)
+\end{align*}
+which generalizes our definition of $\pred$. To see that this is an isomorphism, we use the following diagram:
+\[\begin{tikzcd}
+T\,(\mu T) \arrow[r,"\inn_T"] & \mu T\\
+T\,(T\,(\mu\,T)) \arrow[r,"T\,\inn_T"]  \arrow[u,"T\,\inn_T" right]& T\,(\mu\,T) \arrow[u,"\inn_T" left]\\
+T\,(\mu T) \arrow[u, "T\, \out_T" right]  \arrow[r,"\inn_T"] \arrow[uu,"T\,\id = \id",bend left = 60] & \mu T \arrow[u,"\out_T" left] \arrow[uu,"\id" right, bend right = 60]
+\end{tikzcd}\]  
+The lower square commutes due to the definition of $\out_T$, the upper square commutes trivially. On the other hand the whole square also commutes with $\id$ which on the left equals $T\,\id$. However, since there is at most one algebra morphism, we know that $\inn_T \circ \out_T = \id$. Now we can reason that :
+\begin{align*}
+  \out_T \circ \inn_T & = T\, \inn_T \circ T\, \out_T & \mbox{lower square} \\
+  & = T\,(\inn_T \circ \out_T) \\
+  & = T \, \id \\
+  & = \id
+\end{align*}
+Hence we have verified that $\inn_T$ and $\out_T$ are an isomorphism.
+
+\subsection{Streams}
+\label{sec:terminal-coalgebras}
+
+The dual of initial algebras, terminal coalgebras, turn out to be useful as well. An example of a coinductive type is the type of streams $\Stream\,A : \Set$ this are infinite sequences of elements of $A:\Set$, that is 
+\begin{align*}
+  [a_0,a_1,a_2 \dots  : \Stream\,A
+\end{align*}
+with $a_i : A$.
+Streams can be understood via destructors, that is for for any stream we can compute its head and its tail:
+\begin{align*}
+\head & : \Stream\,A \to A \\
+\tail & : \Stream\,A \to \Stream\,A
+\end{align*}
+To construct streams we need a coiterator, that is given $X : \Set$ and functions 
+\begin{align*}
+  h & : X \to A \\
+  t & : X \to X
+\end{align*}
+we obtain a function:
+\begin{align*}
+\CoIt\,h\,t & : X \to \Stream\,A
+\end{align*}
+which is given by the copatterns:
+\begin{align*}
+\head\,(\CoIt\,h\,t\,x) & = h\,x \\
+\tail\,(\CoIt\,h\,t\,x) & = \CoIt\,h\,t\,(t\,x)
+\end{align*}
+$\CoIt\,h\,t $ is the unique function that makes the following diagram commute:
+\[\begin{tikzcd}
+    &  X  \arrow[dl,"h" left]\arrow[r,"t"]\arrow[d, dashrightarrow,"\CoIt\,h\,t"] & X \arrow[d, dashrightarrow,"\CoIt\,h\,t"]\\
+A & \arrow[l,"\head"]\Stream\,A \arrow[r,"\tail"] & \Stream|,A
+\end{tikzcd}\]  
+As an example we can define the function $\from : \Nat \to \Stream\,\Nat$ which generates a stream of natural numbers starting with the input. I.e.
+\begin{align*}
+\from\,n & = [ n , n+1 , n+2 , \dots 
+\end{align*}
+We can define $\from$ via copatterns
+\begin{align*}
+\head\,(\from\,n) & = n \\
+\tail\,(\from\,n) & = \from\,(\suc\,n)
+\end{align*}
+and this can be turned into an application of the coiterator:
+\begin{align*}
+\from & = \CoIt\,\id_\Nat\,\suc
+\end{align*}
+$\Stream$ is a functor, that is given a function $f:A \to B$ we can define
+\begin{align*}
+\Stream\,f & : \Stream\,A \to \Stream\,B \\
+\head\,(\Stream\,f\,\vec{a}) & = f\,(\head\,a) \\
+\tail\,(\Stream\,f\,\vec{a}) & = \Stream\,f\,(\tail\,\vec{a})
+\end{align*}
+\begin{Exercise}
+  Define $\Stream\,f$ using only the coiterator.
+\end{Exercise}
+% The dual of induction is coinduction. This is usually formulated using the concept of a bisimulation: A relation 
+% $\_R\_ \subseteq \Stream\,A \times \Stream\,A$ is called a bisimulation if given $\vec{a} R \vec{b}$ then 
+% $\head\,\vec{a} = \head\,\vec{b}$ and $\tail\,\vec{a} R \tail\,\vec{b}$. Coinduction states that bisimilar streams are equal, i.e. if $\vec{a} R \vec{b}$ then $\vec{a} = \vec{b}$.
+
+% As an example consider the equation
+% \begin{align*}
+% \from\,(\suc\,n) = \Stream\,\suc\,(\from\,n)
+% \end{align*}
+% We define $\vec{m} R \vec{n}$ by saying that there exists a number $k$ such that $\vec{m} = \from\,(\suc k)$ and $\vec{n} = \Stream\,suc\,
+We can use uniqeness to prove equations, for example we want to verify
+\begin{align*}
+\from\,(\suc\,n) = \Stream\,\suc\,(\from\,n)
+\end{align*}
+for any number $n$. We turn this into an equation for functions $\Nat \to \Stream\,\Nat$:
+\begin{align*}
+  \from \circ \suc = \Stream\,\suc \circ \from
+\end{align*}
+We observe that 
+\begin{align*}
+  \head\,(\from\,(suc\,n)) & = \suc n\\
+  \head\,(\Stream\,\suc\,(\from\,n)) & = \suc\,(\head\,(\from\,n) \\
+  & = \suc\,n\\
+  \tail\, (\from\,(suc\,n)) & = \from\,(\suc\,(\suc\,n))\\
+  \tail\, (\Stream\,\suc\,(\from\,n)) & = \Stream\,\suc\,(\tail\,(\from\,n))\\
+                                        & = \Stream\,\suc\,(\from\,(\suc\,n))
+\end{align*}
+That is both side are equal to $\CoIt\,\suc\,\suc$ and hence equal due to uniqueness. 
+
+\begin{Exercise}
+  Prove that $\Stream\,A$ is isomorphic to $\Nat \to A$.
+\end{Exercise}
+
+\subsection{Terminal coalgebras}
+\label{sec:terminal-coalgebras}
+
+In general a terminal coalgebra of an endofunctor $T : \cat{C} \to \cat{C}$ is given by an object $\nu T : \obj{\cat{C}}$ and a morphism $\out_T : : \homC{C}{\nu\,T}{T\,(\nu\,T)}$ such that for any $T$-coalgebra, that is a pair of $A : \obj{\cat{C}}$ and a morphism 
+$f : \homC{C}{A}{T\,A}$ there is a unique morphism $\CoIt_T \,f: \cat{C}{A}{\nu T}$
+that makes the following diagram commute:
+\[\begin{tikzcd}
+A \arrow[d,"\CoIt_T \, f" right,dashrightarrow] \arrow[r,"f"]  & T\,A \arrow[d, "T\, (\CoIt_T \, f"]\\
+\nu\,T  \arrow[r,"\out_T"] & T\,(\nu T) 
+\end{tikzcd}\]  
+Indeed, the terminal coalgebra is just the terminal object in the category of $T$-coalgebras, whose objects are $T$-coalgebras and given $T$-coalgebras $f : \homC{C}{A}{T\,A}$ and $g : \homC{C}{B}{T\,B}$ a morphism is given by a morphism $h : \homC{C}{A}{B}$ such that the following diagram commutes:
+\[\begin{tikzcd}
+ A \arrow[d,"h"] \arrow[r,"f"]  & T\,A \arrow[d,"T\,h"]\\
+ B \arrow[r,"g"] & T\,B 
+\end{tikzcd}\]  
+As for algebras, Identity and composition is given by identity and composition in $\cat{C}$, it is easy to see that the corresponding diagrams commute. 
+
+It is clear that $\Stream\,A$ is the terminal coalgebra of the functor $T_{\Stream\,A}\,X = A \times X$. We can look at initial algebras and terminal coalgebras for the same functor. In the case of $T_{\Stream\,A}$  this is not very interesting because the initial algebra is just the empty set. However, natural numbers $T_\Nat\,X = 1+X$ and lists $T_{\List\,A}\,X = 1 + A \times X$ are more interesting: here the terminal coalgebras are called the conatural numbers and colists: they include both finite elements and infinite elements. 
+
+\begin{Exercise}
+  Show that the initial algebra of $T_{\Stream\,A}\,X = A \times X$ is isomorphic to the empty set
+\end{Exercise}
+
+\begin{Exercise}
+  Define addition for conatural numbers ($\Nat^\infty = \nu X.1+X$) using only the coiterator.
+\end{Exercise}
+
+\begin{Exercise}
+  Show explicitely that Lambek's lemma hold for terminal coalgebras.
+\end{Exercise}
+
+
+% \begin{Exercise}
+%   Show that there is always a monomorphism from the initial algebra to the terminal coalgebra.
+% \end{Exercise}

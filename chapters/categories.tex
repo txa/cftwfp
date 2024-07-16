@@ -1,0 +1,327 @@
+\section{Categories}
+\label{sec:categories}
+
+\subsection{From sets to categories}
+\label{sec:from-sets-categories}
+
+We start with the standard example of a category: the category of sets $\cSet$. To define a category we need a type of objects which is $\Set$
+%\footnote{So really we have categories of sets on every level $\cat{\Set_i}$.}%
+. We write $\obj{\cSet} = \Set$. 
+Given two objects $A,B : \Set$ we define the set of morphisms which in this case is the set of functions, $\cSet(A,B) = A \to B$. For every object $A : \Set$ we have an identity function $\id_A : A \to A$ which is defined as $\id_A\,a = a$, given functions $f : B \to C$ and $g : A \to B$ we define function composition $f \circ g : A \to C$ as $(f\circ g)\,a = f\,(g\,a)$. The strange order of arguments in composition is a consequence of the fact that we write function application this way around, hence there is no change of direction in the definition of $\circ$. We observe that there are a number of laws for function composition: identity is neutral, that is given $f : A \to B$ we have that $\id_B \circ f = f$ and $f \circ \id_A = f$ and moreover it is associative, that is given three composable function $h : C \to D, g : B \to C, f : A \to B$ we have that $h \circ (g \circ f) = (h \circ g) \circ f$.
+
+\begin{Exercise}
+  Write down the proofs that identity is neutral and composition is associative in detail.
+\end{Exercise}
+\begin{Answer}
+  We use the principle of \emph{function extensionality}: for functions $f,f':A\to B$, if $f(a)=f'(a)$ for all $a:A$, then $f=f'$.
+
+  First we prove that the identity function is neutral, i.e. that $\id_B\circ f=f$ and $f\circ\id_A=f$ for any $f\colon A\to B$. Pick arbitrary $a:A$. Then
+  \begin{align*}
+    (\id_B \circ f)(a) 
+      &= \id_B(f(a)) \tag{Defn. of $\circ$}\\
+      &= f(a) \tag{Defn. of $\id_B$} 
+  \end{align*}
+  So $\id_B\circ f = f$. Also,
+  \begin{align*}
+    (f\circ id_A)(a) 
+      &= f(\id_A(a)) \tag{Defn. of $\circ$}\\
+      &= f(a) \tag{Defn. of $\id_A$} 
+  \end{align*}
+  so $f\circ\id_A = f$.
+
+  Now to prove associativity. Pick composable function $h : C \to D, g : B \to C, f : A \to B$ and arbitrary $a:A$. Then,
+  \begin{align*}
+    (h \circ (g \circ f))(a)
+      &= h((g\circ f)(a)) \tag{Defn. $\circ$}\\
+      &= h(g(f(a))) \tag{Defn. $\circ$}\\
+      &= (h\circ g)(f(a)) \tag{Defn. $\circ$}\\
+      &= ((h\circ g)\circ f)(a) \tag{Defn. $\circ$}\\
+  \end{align*}
+  so $h \circ (g \circ f) = (h \circ g) \circ f$.
+\end{Answer}
+
+We abstract from this example to define what is a category: A category $\cat{C}$ is given by a type of objects $\obj{\cat{C}}$ and given two objects $A,B: \obj{\cat{C}}$, a set of morphisms $\homC{C}{A}{B} : \Set$ called the \emph{homset}. 
+%Inspired by the set example we also write $A \to_{\cat{C}} B$ for this.
+For every object $A : \obj{\cat{C}}$ we have an identity function%
+\footnote{We are overloading $\id$ and $\circ$ to be precise we should annotate these symbols with the category, i.e. write $\id^{\cat{C}}$ and $\circ^{\cat{C}}$. However, it is usually clear from the context which category is meant.}
+$\id_A : \homC{C}{A}{A}$, given functions $f : \homC{C}{B}{C}$ and $g : \homC{C}{A}{B}$ there is a composite $f \circ g : \homC{C}{A}{C}$ satisfying the following laws: identity is neutral, that is given $f : \cat{C}(A,B)$ we have that $\id_B \circ f = f$ and $f \circ \id_A = f$ and moreover it is associative, that is given three composable functions $f : \homC{C}{A}{B}, g : \homC{C}{B}{C}, h : \homC{C}{C}{D}$ we have that $h \circ (g \circ h) = (h \circ g) \circ f$.
+
+Equations in category theory are often shown as \emph{commuting diagrams}. Composition corresponds to completing a triangle
+\[\begin{tikzcd}
+A \arrow[rd, dashrightarrow,"f\circ g" below] \arrow[r,"f"] & B \arrow[d,"g"]\\
+& C
+\end{tikzcd}
+\]
+I am using a dashed arrow to indicate that this is the unique arrow that makes this diagram commute. 
+The identity laws can be drawn as follows where I use a double line to indicate an identity arrow:
+\[\begin{tikzcd}
+A \arrow[rd,"f" below] \arrow[r,"f"] & B \arrow[d,equal]\\
+& B
+\end{tikzcd}
+\qquad
+\begin{tikzcd}
+A \arrow[rd,"f" below] \arrow[r,equal] & A \arrow[d,"f"]\\
+& B
+\end{tikzcd}
+\]
+The associativity law can be drawn as below, the arrow on the right makes both the big triangle and the small triangle commute corresponding to the two sides of the associativity law:
+\[\begin{tikzcd}
+    & D  &\\
+   & C  \arrow[u,"h"] & \\
+A \arrow[ur,"g \circ f" below]\arrow[rr,"f"] 
+\arrow[uur,dashrightarrow,"h \circ(g \circ f)" near start,"(h\circ g)\circ f" near end] &     & B \arrow[ul,"g"]\arrow[uul,"h \circ g" above=10]
+\end{tikzcd}
+\]
+A good intuition for a commuting diagram is to consider that the inside of the diagram is filled so that a path on the one side can be continuously transformed into a path on the other side. In the diagram for associativity we use the rule that we can also complete tetraeders, hence the bottom side of the tetraeder commutes and hence because composition is unique, associativity holds.
+
+The sort of geometric, or rather homotopic, thinking suggest a clear path to higher categories, but this is beyond the scope of this course.
+
+\subsection{Terminal and initial objects}
+\label{sec:term-init-objects}
+
+Here is an example how we can use the language of category theory to define concepts in the category of sets. We are interested in the concept of a set with exactly one element, but there are lots of choices for this element: some people write $()$ and in Agda it is called \texttt{tt} other people write $*$. In category theory we avoid this confusion and say that a \emph{terminal object} $\bf{1}$ is an object such that there is exactly one morphisms from any other object, let's say 
+\[\begin{tikzcd}
+  A \arrow[r, dashrightarrow, "!_A"] & \bf{1}
+\end{tikzcd}\]
+%$!_A : A \to \bf{1}$, 
+Clearly one element sets are terminal objects in the category of sets. Now terminal objects are unique \emph{up to isomorphism}. 
+
+We say that two objects $A,B$ are \emph{isomorphic} if there are morphisms $f : A \to B$ and $g : B \to A$ such that there compositions are identities: $f \circ g = \id_B$ and $g \circ f = \id_A$. 
+\[\begin{tikzcd}
+  A \arrow[r, bend left, "f"]  \arrow[loop left,"\id_A"] & B \arrow[l,bend left ,"g"]\arrow[loop right,"\id_B"] 
+\end{tikzcd}\]
+We call $f$ and $g$ \emph{isomorphisms}. We write $f : A \cong B$ or omitting the witness we write $A \cong B$ to express that $A$ and $B$ are isomorphic. 
+\begin{Exercise}
+  Show that inverses are unique, i.e. if $(f,g)$ and $(f,g')$ are an isomorphisms then $g = g'$. 
+\end{Exercise}
+\begin{Answer}
+  Unfolding the definition of ``isomorphism'', we know the following:
+  \begin{alignat*}{2}
+    f\circ g &= \id_B \qquad g\circ f&&=\id_A\\
+    f\circ g' &= \id_B \qquad g'\circ f&&=\id_A
+  \end{alignat*}
+  and we want to show $g=g'$. We do so by the following chain of equations:
+  \begin{align*}
+    g &= \id_A \circ g \\
+      &= (g'\circ f) \circ g\\
+      &= g' \circ (f\circ g)\\
+      &= g' \circ \id_B\\
+      &= g'.
+  \end{align*}
+\end{Answer}
+
+Now given two terminal objects $\bf{1},\bf{1'}$ we have $!'_{\bf{1}} : \bf{1} \to \bf{1'}$ and $!_{\bf{1'}} : \bf{1} \to \bf{1'}$. There compositions are the identity because for example $!_{\bf{1'}} \circ !_{\bf{1'}} : \bf{1} \to \bf{1}$ but there is also the identity $\id_{\bf{1}} : \bf{1} \to \bf{1}$ and since we said that there is exactly one morphism from any object to the terminal object it must be that $!_{\bf{1'}} \circ !_{\bf{1'}} = !_{\bf{1}} = \id_{\bf{1}}$. The same reasoning shows that the other composition is also the identity.
+
+In category theory we are only interested in concepts \emph{up to isomorphism} and all constructions are preserved by isomorphism. In the category of sets isomorphic objects have the same elements up to a renaming given by the isomorphism. Hence we ignore the irrelevant detail how the elements are called.
+
+There is also a dual concept: the empty set is an \emph{initial object} $\bf{0}$, that is there is a unique morphism from the empty set into any set, 
+\[\begin{tikzcd}
+  \bf{0} \arrow[r, dashrightarrow, "?_A"] & A
+\end{tikzcd}\]
+this exists trivially because we don't have to say what the functions returns since there are no elements in its domain. In this case we are lucky there is only one way to write the initial object. We can make the symmetry precise by introducing the concept of a dual category: given a category $\cat{C}$ the opposite category $\cat{C}^\op$ has the same objects as $\cat{C}$ but the homsets are given by reversing the order $\cat{C}^\op(A,B) = \cat{C}(B,A)$ and consequently composition also reverses order $f \circ^{\cat{C}^\op} g = g \circ^{\cat{C}} f$. We can now say that an initial object is a terminal object in the opposite category, or vice versa a terminal object is an initial object in the opposite 
+category. We use the syllable \emph{co-} in this situation, we could say that an initial object is a co-terminal object or that a terminal object is a co-initial object (but nobody says this).
+
+\begin{Exercise}
+  Prove explicitly that initial objects are unique upto isomorphism.
+\end{Exercise}
+\begin{Answer}
+  This is a simple dualisation of the argument for terminal objects above. Suppose we had two initial objects $\bf{0}$ and $\bf{0'}$. Then the two triangles below commute.
+  \[\begin{tikzcd}
+      \bf{0} \arrow{r}{?_{\bf{0'}}} \arrow[swap]{d}{\id_{\bf 0}} & \bf{0'} \arrow{d}{\id_{\bf 0'}} \arrow{dl}{?'_{\bf{0}}} \\
+      \bf{0} \arrow[swap]{r}{?_{\bf{0'}}} & \bf{0'}
+  \end{tikzcd}\]
+  We know that $?'_{\bf 0}\circ ?_{\bf 0'}=\id_{\bf 0}$ (the upper left triangle) because both $?'_{\bf 0}\circ ?_{\bf 0'}$ and $\id_{\bf 0}$ are elements of $\cat{C}({\bf 0}, {\bf 0})$, but by the initiality of $\bf{0}$ there must be a \emph{unique} such morphism. By similar reasoning, we know that there is a unique element of $\cat{C}({\bf 0'}, {\bf 0'})$, so the lower right triangle commutes, i.e. $?_{\bf 0'}\circ ?'_{\bf 0}=\id_{\bf 0'}$. Thus we have shown that $(?_{\bf 0'},?'_{\bf 0})$ is an isomorphism.
+\end{Answer}
+
+When I say that a category has a terminal or initial object this also indicates that I assume that we have chosen one which I indicate by $1$ or $0$ respectively. The same principle applies to all categorical constructs we are going to introduce. We will later discuss the concept of univalent categories which entails that categorical constructions are unique.
+
+\subsection{Preorders and monoids}
+\label{sec:preorders-mnoids}
+
+Let us look at some other examples of categories. We can use the natural numbers to define some categories: The category $\cat{\omega}$ has as objects the natural numbers and morphisms are given as $\homC{\omega}{m}{n} = m \leq n$. This is a category because $\leq$ is reflexive and transitive and those properties give rise to identity and composition. The laws hold trivial because there is at most one element of a proposition. This category is an example of a degenerate case of a category: it is a \emph{preorder}, i.e. a relation that is reflexive and transitive. 
+
+\begin{Exercise}
+  Does this category have an initial or a terminal object? 
+\end{Exercise}
+\begin{Answer}
+  It does have an initial object: 0. For all $n\colon\Nat$, we know $0\leq n$, so we get a morphism in $\homC{\omega}{0}{n}$. Since all the hom-sets are $\Prop$'s, we know that this morphism must be unique. This is an instance of a more general fact: if we view any preorder as a category (as we've done for the preorder $(\Nat,\leq)$ here), then an initial object in this category (if there is one) is a \emph{least element} in the preorder.
+
+  Dually, a terminal object in $\cat{\omega}$ would be a \emph{greatest element} in the preorder $(\Nat,\leq)$. But we know that there is no greatest natural number, hence there is no terminal object in $\cat{\omega}$. If we added a ``point at infinity'' greater than all natural numbers, i.e. considered the preorder $\omega+1$, then this \emph{would} have a greatest element and the corresponding category would have a terminal object. 
+\end{Answer}
+
+% An interesting preorder is the category of propositions $\cat{\Prop}$ whose objects are propositions and whose morphisms are implications that is $P \to Q : \Prop$ with $P,Q : \Prop$. 
+
+Another category we can be build from natural numbers has only one object and its morphisms are the natural numbers. The identity morphism is $0$ and composition is given by addition. The laws follow from the fact that $0$ is neutral ($n+0 = n = 0+n$) and associative $(l+m)+n = l+(m+n)$. Here we exploit the algebraic properties of $+$, namely that it is a \emph{monoid}; hence categories with one object correspond to monoids.
+
+\begin{Exercise}
+  Does this category have an initial or a terminal object? 
+\end{Exercise}
+\begin{Answer}
+  No. If an object $X$ is either initial or terminal, then this implies that $\cat{C}(X,X)$ must be the singleton set $\{\id_X\}$. But there is not one morphism from this object to itself, there are infinitely many.
+\end{Answer}
+
+In Mathematics we are also interested in equivalence relations (preorders that are symmetric) and groups (monoids that have a inverses), like the integers $\Int$ with addition on negation). We can also do this for categories by saying that a category is a \emph{groupoid}, if for every morphism $f : A \to B$ there is an inverse $f^{-1} : B \to A$ such that $f \circ f^{-1} = \id$ and $f^{-1} \circ f = \id$. A groupoid whose homsets are propositions is an equivalence relation and a groupoid with one object is a group.
+
+\begin{Exercise}
+  Let $\Set^{\cong}$ be the category whose objects are sets but whose morphisms are just the $\Set$-\emph{isomorphisms}. Show that this is a category, and moreover a groupoid. 
+\end{Exercise}
+\begin{Answer}
+  First, to check that this is a category. The identity functions are isomorphisms in $\Set$, since they are self-inverse, so $\cat{\Set^{\cong}}$ has identity morphisms. Moreover, $\cat{\Set^{\cong}}$ ``inherits'' the composition operation: if $f\colon A\to B$ and $g\colon B\to C$ are functions, with inverses $f\inv$ and $g\inv$ respectively, then $g\circ f : A \to C$ is their composite. This is also an isomorphism in $\cat{\Set}$, with inverse $f\inv\circ g\inv$ (check that this composition makes sense):
+  \begin{align*}
+    (f\inv\circ g\inv)\circ (g\circ f) 
+      &= f\inv \circ (g\inv\circ g)\circ f\\ 
+      &= f\inv \circ \id\circ f \\
+      &= f\inv \circ f \\
+      &= \id\\
+    (g\circ f)\circ (f\inv\circ g\inv)
+      &= g\circ (f\circ f\inv)\circ g\inv\\
+      &= g\circ \id \circ g\inv\\
+      &= g\circ g\inv\\
+      &= \id.
+  \end{align*}
+  So $g\circ f$ is indeed a morphism of $\cat{Set^{\cong}}$. The associativity and unit laws are also inherited from $\cat{\Set}$.
+
+  This is also a groupoid: each morphism $f$, by virtue of being a $\cat{Set}$-isomorphism, comes equipped with an inverse $f\inv$, which is also its inverse in $\cat{Set^{\cong}}$. So every morphism is an iso, i.e. this is a groupoid.
+\end{Answer}
+
+A rich source of categories are sets with structure. For example we define the category of preorders $\cat{Pre}$: Its objects are preorders that is a set $A$ together with a relation $R : A \to A \to \Prop$ which is reflexive and transitive. Given preorders $(A,R)$ and $(B,S)$ a morphism is a function $f : A \to B$ which preserves the relation that is if $R\,a\,a'$ then $S\,(f\,a)\,(f\,a')$. We use identity and composition as in $\cat{Set}$, we need to check that identity is a preorder morphism and that the composition of preorder morphisms is a preorder morphism.
+
+Another example is the category of monoids $\cat{Mon}$: Its objects are monoids, that is a set $A$ with a neutral element $e:A$ and a binary operation $\_*\_$ such that the laws of a monoid hold ($x*e=x, e*x=x, x*(y*z) = (x*y)*z$). A morphism between monoids $(A,e, \_*\_)$ and $(B,e',\_*'\_)$ is a function $f : A \to B$ which preserves the structure, i.e. $f\,e = e'$ and $f\,(x * y) = (f\,x) *' (f\, y)$. Again we only have to show that identity is a morphism and that morphisms are closed under composition to see that this is a category.
+
+\begin{Exercise}
+  Do the categories $\cat{Pre}$ and $\cat{Mon}$ have initial and terminal objects?
+\end{Exercise}
+\begin{Answer}
+  Yes, both categories have both initial and terminal objects. 
+  
+  $\cat{Pre}$ gets its initial and terminal objects from $\cat{Set}$:
+  \begin{itemize}
+    \item The intial object of $\cat{Set}$, the empty set $\emptyset$, has a trivial preorder relation on it (we don't need to specify anything to define a relation $\emptyset \to \emptyset \to \Prop$). For any preorder $(A,R)$, the unique map $\emptyset \to A$ is a preorder morphism---again, there's nothing to check.
+    \item The terminal object of $\cat{Set}$, a singleton set $\{\star\}$, can only have one preorder relation $T$ on it: reflexivity requires that $T\;\star\;\star$, and that entirely determines $T\colon\{\star\}\to\{\star\}\to\Prop$. For any preorder $(A,R)$, the unique map $!_A\colon A\to\{\star\}$ is indeed a preorder morphism: for any $x,y\colon A$, it's the case that $!_A(x)=!_A(y)=\star$, so the requirement that $R\;x\;y$ implies $T\;(!_A(x))\;(!_A(y))$ is satisfied automatically.
+  \end{itemize}
+
+  $\cat{Mon}$ also gets its \emph{terminal} object from $\cat{Set}$, but not \emph{initial}:
+  \begin{itemize}
+    \item The singleton set $\{\star\}$ can only have one monoid structure, namely the one where $\star * \star = \star$ and $\star$ as the neutral element. For any other monoid $(A,e,\_*'\_)$, the unique map $!_A$ indeed sends the netural element $e$ to the neutral element $\star$, and, for $x,y\colon A$,
+    \[ !_A(x)\;*\;!_A(y) \quad=\quad \star * \star \quad=\quad \star \quad=\quad !_A(x\;*'\;y) \]
+    so $!_A$ is a monoid morphism $(A,e,\_*'\_) \to (\{\star\},\star,\_*\_)$.
+    \item We cannot put a monoid structure on $\emptyset$, because a monoid requires a neutral element. But there is still an initial object of $\cat{Mon}$. Actually, the terminal object is also initial! The terminal monoid has $\{\star\}$ as its carrier set, and $\star$ is specified to be the neutral element. But the definition of monoid morphism requires that neutral elements be sent to neutral elements. So, for any other monoid $(A,e,\_*'\_)$, the function sending $\star$ to $e$ is a monoid morphism, but no other function $\{\star\}\to A$ is. Therefore there is a unique monoid morphism $(\{\star\},\star,\_*\_)\to (A,e,\_*'\_)$, i.e. $(\{\star\},\star,\_*\_)$ is initial.
+  \end{itemize}
+\end{Answer}
+
+\subsection{Monos and epis}
+\label{sec:monos-epis}
+
+A function $f:A\to B$ is injective if every element appears at most once in the image, i.e. $\forall x,y:A.f\,x = f\,y \implies x = y$, it is surjective if every element of the codomain is in the image: $\forall y:B.\exists x:A.f\,x = y$, it is bijective if it is both injective and surjective. 
+
+So for example the function $\double : \Nat \to \Nat$ which doubles its input is injective (but not surjective), while the function $\half : \Nat \to \Nat$ which divides by 2 ignoring remainders (eg. $\half\,5 = 2$) is surjective but not injective. On the other hand the function $\swap : \Nat \to \Nat$ which sends every even number to its successor and every odd number to its predecessor (e.g. $\swap\,5 = 4, \swap\,4 = 5$ is both injective and surjective and hence it is a bijection.  
+
+We can translate these notions into the language of category theory by noting that an injective function can be cancelled on the left side of a composition that is if $i : A \to B$ is injective then for all $f,g : C \to A$ it is the case  that if $i \circ f = i \circ g$ then $f = g$. We call such a function a \emph{monomorphism} or short \emph{mono}. We draw monos with a tail at the end of the arrow:
+\[\begin{tikzcd}
+A \arrow[r,rightarrowtail,"i"]  & B
+\end{tikzcd} 
+\]
+On the other hand a surjective function can be cancelled on the right hand side. That is given a surjective function $e : A \to B$ and $f,g : B \to C$ then if $f \circ e = g \circ e$ then $f = g$. We call a function with this property an\emph{ epimorphism} or short an \emph{epi}. We draw epis with a double arrowhead:
+\[\begin{tikzcd}
+A \arrow[r,twoheadrightarrow,"e"]  & B
+\end{tikzcd}
+\]
+\begin{Exercise}
+  Show that the monos in $\cat{Set}$ are exactly the injective functions and the epis are exactly the surjective functions.
+% \footnote{It seems that the implication epi $\to$ surjective needs impredicativity, i.e. $\Prop_i : \Set_i$.} -- not true
+\end{Exercise}
+\begin{Answer}
+  First, we show that a function $i\colon A\to B$ is injective if and only if it's a monomorphism in the category $\cat{\Set}$.
+  \begin{enumerate}
+    \item[($\Rightarrow$)] Suppose $i$ is injective, i.e. for all $a,a'\colon A$, if $i(a)=i(a')$ then $a=a'$. To show it's a mono, pick arbitrary $f,g\colon C\to A$ such that $i\circ f = i\circ g$. To show $f=g$, pick some $x\colon C$. Then we know $(i\circ f)(x)=(i\circ g)(x)$, i.e.
+    \[ i(f(x)) = i(g(x)). \]
+    But by the injectivity of $i$, we know that $f(x)=g(x)$. Since $x$ was arbitrary, conclude $f=g$. Thus $i$ is mono.
+    \item[($\Leftarrow$)] Now suppose $i\colon A\to B$ is a mono. Given $a,a'$ such that $i(a)=i(a')$, we want to show that $a=a'$. Now consider the functions $\const[a]$ and $\const[a']$ from the singleton set $\bf{1}$ to $A$, which send the single element to $a$ and $a'$, respectively.
+    \[ \begin{tikzcd}[column sep=large] \bf{1} \arrow[shift left=2]{r}{\const[a]} \arrow[swap,shift right=2]{r}{\const[a']} & A \arrow{r}{i} & B \end{tikzcd} \]
+    The equation $i(a)=i(a')$ is equivalently written $i\circ\const[a]=i\circ\const[a']$. But since $f$ is a mono, this tells us that $\const[a]=\const[a']$, i.e. that $a=a'$. So conclude $i$ is injective.
+  \end{enumerate}
+
+  Now, the proof that $e\colon A \to B$ is surjective iff it's an epimorphism in $\cat{Set}$.
+  \begin{enumerate}
+    \item[($\Rightarrow$)] Suppose $e$ is surjective, that is, for all $b\colon B$, there is some $a\colon A$ such that $e(a)=b$. Now take arbitrary $f,g\colon B\to C$ such that $f\circ e=g\circ e$ and show $f=g$. By function extensionality, it suffices to pick arbitrary $b\colon B$ and show $f(b)=g(b)$. By surjectivity, obtain some $a\colon A$ such that $e(a)=b$. Since $f\circ e=g\circ e$, we know
+    \[ f(e(a)) = g(e(a)) \qquad\text{that is,}\qquad f(b)=g(b),\]
+    as desired.
+    \item[($\Leftarrow$)] The opposite direction, that $e$ epic implies $e$ surjective requires more work. We need to call to mind two other notions we'll use in the construction. The first is that of the \emph{disjoint union} of two sets: if $X$ and $Y$ are sets, we'll write $X+Y$ for the set
+    \[  \{\inl(x) \mid x\colon X\} \cup \{\inr(y)\mid y\colon Y\}. \]
+    So $X+Y$ contains a copy of the set $X$ (tagged with ``$\inl$'') and a copy of $Y$ (tagged with ``$\inr$''). We can also regard $\inl$ as a function $X\to X+Y$ and likewise $\inr\colon Y\to X+Y$.
+    
+    We'll also use \emph{set quotients}. Given a set $X$ and an equivalence relation $\_\sim\_$ on $X$ (that is, a reflexive, symmetric, and transitive relation), we can define the set $X/\sim$ of $\sim$-equivalence classes: for each $x\colon X$, the set $[x]_\sim \colon X/\sim$ consists of all the $x'\colon X$ such that $x\sim x'$. So it's the case that $[x]_\sim = [x']_\sim$ if and only if $x\sim x'$ (prove this, by the properties of equivalence relations). We have a canonical function $\eta\colon X\to X/\sim$, sending each $x$ to $[x]_\sim$.
+
+    Now, let's combine these to prove that an epi $e:A\to B$ in $\cat{Set}$ must be a surjection. Define an equivalence relation $\sim$ to be the \emph{least equivalence relation} on the set $B+B$ such that:
+    \[ \inl(b) \sim \inr(b') \quad\text{iff}\quad \exists a\colon A. b=e(a)=b'. \]
+    In other words, we declare that $\inl(b)\sim\inr(b')$ when there's such an $a\colon A$, and then relate those pairs (and only those pairs) we need to in order to make this an equivalence relation.
+    
+    Define $f:B\to (B+B)/\sim$ to be $\eta\circ\inl$ and $g$ to be $\eta\circ\inr$. To use the fact that $e$ is an epimorphism, we want to prove that $f\circ e = g\circ e$. By function extensionality, pick arbitrary $a\colon A$. By the definition of $\sim$ (instantiating both $b$ and $b'$ to $e(a)$), it must be the case that
+    \[ \inl(e(a)) \sim \inr(e(a)) \]
+    because there is some $a\colon A$ such that $e(a)=e(a)=e(a)$, namely $a$ itself. Since $\inl(e(a))$ is $\sim$-related to $\inr(e(a))$, they must have the same $\sim$-equivalence classes, i.e.
+    \[ \eta(\inl(e(a))) = \eta(\inr(e(a))). \]
+    Since $a$ was arbitrary, conclude $\eta\circ\inl\circ e = \eta\circ\inr\circ e$, that is, $f\circ e = g\circ e$. 
+    
+    Then apply the fact that $e$ is an epimorphism: $f\circ e = g\circ e$ tells us that $f=g$. So, for any $b\colon B$, $\eta(\inl(b))=\eta(\inr(b))$, i.e.
+    \[ [\inl(b)]_\sim = [\inr(b)]_\sim. \]
+    But we know this is the case if and only if $\inl(b)\sim\inr(b)$. But, by the definition of $\sim$, this tells us that there must exist some $a$ such that $b=e(a)=b$. So we have succeeded in proving surjectivity of $e$: we took an arbitrary $b$ and found some $a$ such that $e(a)=b$.
+  \end{enumerate}
+\end{Answer}
+
+If a function $f : A \to B$ has a left inverse $l : B \to A$ with $l \circ f = \id$ then it is mono, because  
+\begin{align*}
+f \circ g = f \circ h 
+& \implies & l \circ (f \circ g) & = l \circ (f \circ h) \\
+& \implies & (l \circ f) \circ g& = (l \circ f) \circ h \\
+& \implies &\id \circ g & = \id \circ h \\
+& \implies & g & = h 
+\end{align*}
+\begin{Exercise}
+  Explicitly prove the dual construction: if $f : A \to B$ has a left inverse $r : B \to A$ with $f \circ r = \id$ then it is an epi.
+\end{Exercise}
+Since $\half \circ \double = \id$ we can conclude that $\double$ is a mono (because it has a left inverse) and $\half$ is an epi (because it has a right inverse). On the other hand $\swap$ is self inverse that is $\swap \circ \swap = \id$ hence it has both a left and a right inverse (itself) and hence it is both a mono and an epi. 
+ Indeed it is isomorphism and from the above it is easy to see that isomorphisms are always monos and epis. 
+
+In $\cat{\Set}$ the inverse direction is also true: 
+\begin{Exercise}
+  Show that in $\cat{\Set}$ a morphism that is both mono and epi (i.e. bijections) is an isomorphism.
+\footnote{One direction uses the principle of unique choice, that is for $R : A \to B \to \Prop$~
+\[(\forall x:A.\exists! y:B .R\,x\,y) \to \exists f :A \to B . \forall x:A.R\,x\,(f\,x) \]
+where $\exists!$ means there exists unique, i.e. $\exists! x:A.\phi\,x = \exists x:A.\phi\,x \wedge \forall y:A.\phi\,y \to x=y$. This principle is provable from univalence in Homotopy Type Theory.} 
+\end{Exercise}
+However, this is not true in general: consider the embedding $i : \Nat \to \Int$, this is a monoid morphism $i : \cat{Mon}((\Nat,\_+\_,0),(\Int,\_+\_,0))$. 
+\begin{Exercise}
+  Show that $i$ is both an epi and a mono. But it cannot be an iso. Why?
+\end{Exercise}
+However, if we know that the function is a mono and an epi because of inverses (we say it is a split mono and a split epi) that it is always an isomorphism:
+\begin{Exercise}
+  Show that in any category a function that has both an left and a right inverse is always an isomorphism.
+\end{Exercise}
+
+
+% \subsection{Lambda terms and substitutions}
+% \label{sec:lambda-terms-subst}
+
+% We can make a categories from $\lambda$-calculi, let's take the simply typed $\lambda$-calculus as an example. To avoid any confusion with names we are using de Bruijn indices, that is numbers that indicate how many levels of binders are between a variable and the $\lambda$ abstraction it refers to.  Types are forms from a base type $\omicron$ and function types $\signa \to \tau$ (we are overloading the arrow again). A context is simply a sequence of types. We inductively define the set of terms in a given context  
+% \[
+% \infer{\x_{n-1}:\sigma_{n-1},\dots \signa_1,\sigma_0 \vdash i : \sigma_i}{0 \leq i < n}
+% \quad
+% \infer{\
+
+% Yet another example for a category is $\cat{\Lambda}$ a category derived from simply typed $\lambda$-calculus. Here objects are contexts, that is  a sequence of typing assumptions for variables $x_0:\sigma_0,\dots,x_{n-1}:\sigma_{n-1}$ and morphisms between contexts 
+% $\Gamma$ and $\Delta = x_0:\sigma_0,\dots,x_{n-1}:\sigma_n$ are parallel substitutions of the form $x_0 \mapsto t_0, \dots x_{n-1} \mapsto t_{n-1}$ with $\Gamma \vdash t_i : \sigma_i$ for $0 \leq i < n$. 
+% \begin{Exercise}
+%   Complete the definition of this category: Define the application of a substitution of a term, that is if $\vec{t} : \cat{\Lambda}(\Gamma,\Delta)$ and $\Delta\vdash u : \sigma$ then $\Gamma \vdash u[\vec{t}] : \sigma$. Using this define composition of substitutions and define the identity substitution. Show that the laws of a category hold upto $\alpha$-conversion. If you want to avoid $\alpha$-conversion and capture-avoiding substitution use de Bruijn indices instead.
+% \end{Exercise}
+
+% Relations
+% univalent categories
+% monos and epis
+
+% Let's take the simply typed $\lambda$-calculus as an example: types are generated from a base type $\omikron$ and function types $\sigma '\to' \tau$. I am writing here $'\to'$ to avoid confusion with metalevel functions. A context is a sequence of typing assumptions for variables $x_0:\sigma_0,\dots,x_n:\sigma_n$ and ters can be derived using the following rules:
+% \[
+% \infer{x_0:\sigma_0,\dots,x_n:\sigma_n \vdash x_i : \sigma_i}
+% \quad
+% \infer{\Gamma\vdash t : \sigma '\to' \tau}{\Gamma,x:\sigma \vdash t : \tau}
+% \quad
+% \infer{
