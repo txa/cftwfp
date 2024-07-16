@@ -1,0 +1,46 @@
+\newcommand{\cat}[1]{\mathbf{#1}}
+\newcommand{\set}[1]{\mathrm{#1}}
+\renewcommand{\hom}[3]{\cat{#1}(#2,#3)}
+
+\newcommand{\Set}{\set{Set}}
+\newcommand{\Prop}{\set{Prop}}
+\newcommand{\SET}{\cat{Set}}
+\newcommand{\SETh}[2]{\hom{Set}{#1}{#2}}
+\newcommand{\CAT}{\cat{CAT}}
+\newcommand{\nat}{\rightarrow\hspace{-1em}{}^{\mbox{\tiny  $_{\bullet}$}}}
+%\newcommand{\Nattfn}[2]{#1 \relop{\nat} #2}
+\newcommand{\Nattfn}[2]{#1 \to #2}
+%\newcommand{\Func}[2]{[#1,#2]}
+\newcommand{\Func}[2]{#1 \to #2}
+%\newcommand{\FUNC}[2]{[#1,#2]}
+\newcommand{\FUNC}[2]{#1\to #2}
+%\newcommand{\PSh}[1]{\hat{#1}}
+\newcommand{\PSh}[1]{\cat{PSh}\,#1}
+%\newcommand{\FUNC}{\cat{Func}}
+
+\newcommand{\Nat}{\mathbb{N}}
+\newcommand{\Int}{\mathbb{Z}}
+
+\newcommand{\id}{\mathrm{id}}
+\newcommand{\op}{\mathrm{op}}
+
+\newcommand{\inl}{\mathrm{inl}}
+\newcommand{\inr}{\mathrm{inr}}
+
+\newcommand{\List}{\mathrm{List}}
+
+\newcounter{excount}
+\newenvironment{exercise}
+        {\addtocounter{excount}{1}\begin{block}{Exercise \theexcount}}
+        {\end{block}}
+\newenvironment{question}
+        {\begin{block}{Question}}
+        {\end{block}}
+
+\renewcommand{\lim}{\mathrm{lim}}
+\newcommand{\colim}{\mathrm{colim}}
+\newcommand{\fold}{\mathrm{fold}}
+\newcommand{\unfold}{\mathrm{unfold}}
+\newcommand{\inn}{\mathrm{in}}
+\newcommand{\out}{\mathrm{out}}
+\newcommand{\Stream}[1]{{#1}^\omega}
