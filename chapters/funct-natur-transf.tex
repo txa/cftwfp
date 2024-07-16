@@ -1,7 +1,7 @@
-\section{Functors and natural transformations}
+\chapter{Functors and natural transformations}
 \label{sec:funct-natur-transf}
 
-\subsection{Functors}
+\section{Functors}
 \label{sec:functors}
 
 A functor is a morphism between categories, the standard example is the List functor which is an endofunctor on the category of sets, i.e. it is a functor from $\cSet$ to $\cSet$, I write $\List : \cSet \to \cSet$ overloading $\to$%
@@ -52,7 +52,7 @@ We note that functors between preorder categories are simply monotone maps, i.e.
 Categories form another structure, a higher category. Functors between two categories don't form a set they form a category themselves.
 The morphisms between functors are called \emph{natural transformations} and in the case of endofunctors on sets they correspond to a well known concept from functional programming: polymorphic functions. 
 
-\subsection{Natural transformations}
+\section{Natural transformations}
 \label{sec:natfns}
 
 Let's look at an example: the reverse function on lists. Given a set $A$ we have a function $\rev_A : \List\,A \to \List\,A$ which reverses its input, i.e. 
@@ -183,7 +183,7 @@ of natural transformations $\int_{X:C} \homC{D}{F\,X}{G\,X}$, the identity natur
   Check that these are indeed natural transformations and that the laws for a category hold.
 \end{Exercise}
 
-\subsection{Adjunctions}
+\section{Adjunctions}
 \label{sec:adjunctions}
 
 An important class of functors are the forgetful functors which just \emph{forget} some property or structure; they are usually denoted by $U$, for example $U : \cat{Mon} \to \cat{Set}$ which assigns to any monoid the carrier of the monoid, i.e. $U\,(A,e,\_*\_) = A$. Since functions between monoids are given by functions on the carrier that preserve the structure the morphism part of the functor and the functor laws are straightforward. 
@@ -366,7 +366,7 @@ R\,B \arrow[rd,equal] \arrow[r,"\eta_{R\,B}"] &   R\,(L\,(R\,B)) \arrow[d,"R\,\e
   \end{itemize}
 \end{Exercise}
 
-\subsection{The Yoneda lemma}
+\section{The Yoneda lemma}
 \label{sec:yoneda-lemma}
 
 The Yoneda lemma is famous for mystifying the students of category theory, not so much because it is difficult to prove but rather because it is not immediately obvious what it is good for. But then it shows up, maybe unexpectedly again and again, and many constructions proceed with the magic appeal to Yoneda. 
@@ -512,7 +512,7 @@ Sometimes we need the Yoneda lemma for covariant functors but this is no problem
 %   Define explicitely the category of presheaves $\PSh\,\cat{C}$ and the Yoneda embedding $\Y: \cat{C} \to \PSh\,\cat{C}$ and check all the laws.
 % \end{Exercise}
 
-\subsection{Ends and coends}
+\section{Ends and coends}
 \label{sec:ends-coends}
 
 Since I have introduced the notation $\int_{A : \obj{\cat{C}}} \cat{D}(F\,A,G\,A)$ to define natural transformations, you are maybe wondering what the general meaning of these \emph{integrals} are. It is clear that $\cat{D}(F\,A,G\,A)$ is an function from

@@ -3,12 +3,12 @@
 all: sols nosols
 
 nosols:
-	pdflatex --jobname="notes-nosol" "\newif\ifsol\solfalse\input{notes}" 
-	pdflatex --jobname="notes-nosol" "\newif\ifsol\solfalse\input{notes}"
+	pdflatex --jobname="CftLFP-nosol" "\newif\ifsol\solfalse\input{CftLFP}" 
+	pdflatex --jobname="CftLFP-nosol" "\newif\ifsol\solfalse\input{CftLFP}"
 
 pdf:
-	pdflatex notes.tex
-	pdflatex notes.tex
+	pdflatex CftLFP.tex
+	pdflatex CftLFP.tex
 
 clean:
 	@rm -f *.aux

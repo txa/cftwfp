@@ -1,7 +1,7 @@
-\section{Categories}
+\chapter{Categories}
 \label{sec:categories}
 
-\subsection{From sets to categories}
+\section{From sets to categories}
 \label{sec:from-sets-categories}
 
 We start with the standard example of a category: the category of sets $\cSet$. To define a category we need a type of objects which is $\Set$
@@ -76,7 +76,7 @@ A good intuition for a commuting diagram is to consider that the inside of the d
 
 The sort of geometric, or rather homotopic, thinking suggest a clear path to higher categories, but this is beyond the scope of this course.
 
-\subsection{Terminal and initial objects}
+\section{Terminal and initial objects}
 \label{sec:term-init-objects}
 
 Here is an example how we can use the language of category theory to define concepts in the category of sets. We are interested in the concept of a set with exactly one element, but there are lots of choices for this element: some people write $()$ and in Agda it is called \texttt{tt} other people write $*$. In category theory we avoid this confusion and say that a \emph{terminal object} $\bf{1}$ is an object such that there is exactly one morphisms from any other object, let's say 
@@ -135,7 +135,7 @@ category. We use the syllable \emph{co-} in this situation, we could say that an
 
 When I say that a category has a terminal or initial object this also indicates that I assume that we have chosen one which I indicate by $1$ or $0$ respectively. The same principle applies to all categorical constructs we are going to introduce. We will later discuss the concept of univalent categories which entails that categorical constructions are unique.
 
-\subsection{Preorders and monoids}
+\section{Preorders and monoids}
 \label{sec:preorders-mnoids}
 
 Let us look at some other examples of categories. We can use the natural numbers to define some categories: The category $\cat{\omega}$ has as objects the natural numbers and morphisms are given as $\homC{\omega}{m}{n} = m \leq n$. This is a category because $\leq$ is reflexive and transitive and those properties give rise to identity and composition. The laws hold trivial because there is at most one element of a proposition. This category is an example of a degenerate case of a category: it is a \emph{preorder}, i.e. a relation that is reflexive and transitive. 
@@ -209,7 +209,7 @@ Another example is the category of monoids $\cat{Mon}$: Its objects are monoids,
   \end{itemize}
 \end{Answer}
 
-\subsection{Monos and epis}
+\section{Monos and epis}
 \label{sec:monos-epis}
 
 A function $f:A\to B$ is injective if every element appears at most once in the image, i.e. $\forall x,y:A.f\,x = f\,y \implies x = y$, it is surjective if every element of the codomain is in the image: $\forall y:B.\exists x:A.f\,x = y$, it is bijective if it is both injective and surjective. 
@@ -299,7 +299,7 @@ However, if we know that the function is a mono and an epi because of inverses (
 \end{Exercise}
 
 
-% \subsection{Lambda terms and substitutions}
+% \section{Lambda terms and substitutions}
 % \label{sec:lambda-terms-subst}
 
 % We can make a categories from $\lambda$-calculi, let's take the simply typed $\lambda$-calculus as an example. To avoid any confusion with names we are using de Bruijn indices, that is numbers that indicate how many levels of binders are between a variable and the $\lambda$ abstraction it refers to.  Types are forms from a base type $\omicron$ and function types $\signa \to \tau$ (we are overloading the arrow again). A context is simply a sequence of types. We inductively define the set of terms in a given context  
