@@ -6,8 +6,16 @@
 }{\solfalse}
 \makeatother
 
+
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true, %set true if you want colored links
+    linktoc=all,     %set to all if you want both sections and subsections linked
+    linkcolor=blue,  %choose some color if you want links to stand out
+}
+
 \ifsol
-\usepackage[lastexercise]{exercise}
+\usepackage[lastexercise,answerdelayed]{exercise}
 \else
 \usepackage[noanswer,lastexercise]{exercise}
 \fi
@@ -16,14 +24,9 @@
 \usepackage{amssymb}
 \usepackage{proof}
 \usepackage{tikz}
+\usepackage{etoolbox}
 \usetikzlibrary{cd}
 
-\usepackage{hyperref}
-\hypersetup{
-    colorlinks=true, %set true if you want colored links
-    linktoc=all,     %set to all if you want both sections and subsections linked
-    linkcolor=blue,  %choose some color if you want links to stand out
-}
 
 
 
@@ -61,4 +64,17 @@
       \fi}
       {\if@twocolumn\else\endquotation\fi}
 \fi
+
+
+% \newif\ifExerThisChapter
+% \ExerThisChapterfalse
+\pretocmd{\chapter}{%
+        \ifnum \value{chapter}>1
+          \shipoutAnswer
+        \fi
+    % \if@AnswerOutput\subsection{Solutions to exercises}\fi%
+}{}{}
+% \renewcommand{\AtBeginExercise}{\ExerThisChaptertrue}
 \makeatother
+
+\pretocmd{\shipoutAnswer}{\addcontentsline{toc}{section}{Solutions to exercises}\section*{Solutions to exercises}}{}{}
