@@ -27,6 +27,10 @@
 \newcommand{\false}{\mathrm{false}}
 \newcommand{\T}{\mathrm{T}}
 
+\newcommand{\Con}{\mathrm{Con}}
+\newcommand{\Tm}{\mathrm{Tm}}
+\newcommand{\Subst}{\mathrm{Subst}}
+
 \newcommand{\cat}[1]{\underline{\mathbf{#1}}}
 \newcommand{\cSet}{\cat{\Set}}
 \newcommand{\obj}[1]{|#1|}
@@ -282,34 +286,71 @@ However, if we know that the function is a mono and an epi because of inverses (
   Show that in any category a function that has both an left and a right inverse is always an isomorphism.
 \end{exercise}
 
+\subsection{Lambda terms and substitutions}
+\label{sec:lambda-terms-subst}
 
-% \subsection{Lambda terms and substitutions}
-% \label{sec:lambda-terms-subst}
+We can make a categories from $\lambda$-calculi, let's take the simply typed $\lambda$-calculus as an example. To avoid any confusion with names we are using de Bruijn indices, that is numbers that indicate how many levels of binders are between a variable and the $\lambda$ abstraction it refers to.
+Types are formed from a base type $o$ (or more if you like) and function types $\sigma \to \tau$ (we are overloading the arrow again). So for example the term
+\[ \lambda  x . \lambda y  . \lambda z . x\,z\,(y\,z) : (\sigma \to \tau \to \rho) \to (\sigma \to \tau) \to \sigma \to \rho \]
+is written as
+\[ \lambda  \lambda \lambda  2\,0\,(1\,0) : (\sigma \to \tau \to \rho) \to (\sigma \to \tau) \to \sigma \to \rho \]
+We adopt the following conventions
+\begin{itemize}
+\item Application is left-associative , e.g. we read $t\,u\,v$ as $(t \, u) \, v$,
+\item $\to$ is right-associative, eg. we read $\sigma \to \tau \to \rho$ as $\sigma \to (\tau \to \rho)$
+\item The scope of $\lambda$ goes as far as possible, eg. we read $\lambda t \, u$ as $\lambda (t\,u)$
+\end{itemize}
+We are only annotating terms with types when it is necessary to disambiguate, the type of the variables in the example above can be inferred from the type of the whole term. Alternatively we could have written
+\[  \lambda^{\sigma\to\tau\to\rho}  \lambda^{\sigma \to \tau} \lambda^\sigma  . 2\,0\,(1\,0) \]
 
-% We can make a categories from $\lambda$-calculi, let's take the simply typed $\lambda$-calculus as an example. To avoid any confusion with names we are using de Bruijn indices, that is numbers that indicate how many levels of binders are between a variable and the $\lambda$ abstraction it refers to.  Types are forms from a base type $\omicron$ and function types $\signa \to \tau$ (we are overloading the arrow again). A context is simply a sequence of types. We inductively define the set of terms in a given context  
-% \[
-% \infer{\x_{n-1}:\sigma_{n-1},\dots \signa_1,\sigma_0 \vdash i : \sigma_i}{0 \leq i < n}
-% \quad
-% \infer{\
+We are going to use an intrinsic syntax, that is we define typed terms only. For this we need the notion of a context which for de Bruijn terms is just a sequence of types, e.g. $\Gamma = \sigma_n . \sigma_{n-1} \dots .\sigma_0$, is a typical context; we write $\bullet$ for the empty context. We extend contexts on the right, that is they are snoc-lists. 
 
-% Yet another example for a category is $\cat{\Lambda}$ a category derived from simply typed $\lambda$-calculus. Here objects are contexts, that is  a sequence of typing assumptions for variables $x_0:\sigma_0,\dots,x_{n-1}:\sigma_{n-1}$ and morphisms between contexts 
-% $\Gamma$ and $\Delta = x_0:\sigma_0,\dots,x_{n-1}:\sigma_n$ are parallel substitutions of the form $x_0 \mapsto t_0, \dots x_{n-1} \mapsto t_{n-1}$ with $\Gamma \vdash t_i : \sigma_i$ for $0 \leq i < n$. 
-% \begin{exercise}
-%   Complete the definition of this category: Define the application of a substitution of a term, that is if $\vec{t} : \cat{\Lambda}(\Gamma,\Delta)$ and $\Delta\vdash u : \sigma$ then $\Gamma \vdash u[\vec{t}] : \sigma$. Using this define composition of substitutions and define the identity substitution. Show that the laws of a category hold upto $\alpha$-conversion. If you want to avoid $\alpha$-conversion and capture-avoiding substitution use de Bruijn indices instead.
-% \end{exercise}
+Given a context $\Gamma$ and a type $\sigma$ we define the set of terms $\Tm(\Gamma,\sigma)$ inductively by the following rules:
+\begin{align*}
+  & \infer{0 : \Tm(\Gamma.\sigma,\sigma)}{}
+  \qquad
+  \infer{1+t : \Tm(\Gamma.\sigma,\tau)}{t : \Tm(\Gamma,\tau)}\\
+  & \infer{t\,u : \Tm(\Gamma,\tau)}{t : \Tm(\Gamma,\sigma\to\tau) \quad u : \Tm(\Gamma,\sigma)}
+  \qquad
+  \infer{\lambda t : \Tm(\Gamma,\sigma\to\tau)}{t : \Tm(\Gamma.\sigma,\tau)} 
+\end{align*}
+We write the de Bruijn index $2$ as $1+1+0$. In our syntax we also have terms like $1+(0\,1)$ which can be reduced to $1\,2$.
+\begin{question}
+Can you reduce to $1 + \lambda(0 1)$ to a term ony using proper indices?
+\end{question}
 
-% Relations
-% univalent categories
-% monos and epis
+Given two contexts $\Gamma, \Delta$ we define the set of substitutions $\Subst(\Gamma,\Delta)$. That is given
+$\Delta = \tau_n . \tau_{n-1} \dots .\tau_0$, elements of $\Subst(\Gamma,\Delta)$ are sequences of terms $\vec{t} = t_n,t_{n-1},\dots,t_0$
+where $t_i : \Tm(\Gamma,\tau_i)$. Given $t_n,t_{n-1},\dots t_0 : \Subst(\Gamma,\Delta)$ we write $\epsilon : \Subst(\Gamma,\bullet)$ for the empty substitution.
+Given $\vec{t}$ as above, we write $1 + \vec{t} : \Subst (\Gamma.\sigma,\Delta)$ for $1+t\_n , 1+t_{n-1} , \dots , 1+t_0$.
 
-% Let's take the simply typed $\lambda$-calculus as an example: types are generated from a base type $\omikron$ and function types $\sigma '\to' \tau$. I am writing here $'\to'$ to avoid confusion with metalevel functions. A context is a sequence of typing assumptions for variables $x_0:\sigma_0,\dots,x_n:\sigma_n$ and ters can be derived using the following rules:
-% \[
-% \infer{x_0:\sigma_0,\dots,x_n:\sigma_n \vdash x_i : \sigma_i}
-% \quad
-% \infer{\Gamma\vdash t : \sigma '\to' \tau}{\Gamma,x:\sigma \vdash t : \tau}
-% \quad
-% \infer{
+  We define parallel substitution for terms: given $t : \Tm(\Gamma,\sigma)$ and $\vec{u} : \Subst(\Delta,\Gamma)$ we define $t[\vec{u}] : \Tm(\Delta,\sigma)$ by the following equations:
+  
+  \begin{eqnarray*}
+  0 [ \vec{t},t ] & = & t \\ 
+  (1+t) [ \vec{t},t ]& = & t [\vec{t} ]\\
+  (t u) [\vec{t}] & = & (t [\vec{t}]) \,(u[\vec{t}) \\
+  (\lambda t) [\vec{t}] & = & \lambda (t [1+\vec{t},0])    
+  \end{eqnarray*}
 
+  We can now define identity and substitutions: Given $\Gamma = \sigma_n . \sigma_{n-1} \dots .\sigma_0$ we define
+  \[ \id_\Gamma = n , n-1 , \dots, 0 \]
+  Now given $\vec{t} = t_n,t_{n-1},\dots, t_0 : \Subst(\Gamma,\Delta)$ and $\vec{u} : \Subst(\Theta,\Gamma)$ we define
+  \begin{align*}
+    & \vec{t} \circ \vec{u} : \Subst(\Theta,\Delta) \\
+    & \vec{t} \circ \vec{u}  = t_n[\vec{u}] , t_{n-1}[\vec{u}], \dots t_0[\vec{u}]
+  \end{align*}
+
+  \begin{exercise}
+    Show that this lambda terms and substitutions form a category $\cat{\Lambda}$ where the objects are contexts, given contexts $\Gamma,\Delta$ the homsets are substitutions $\Subst(\Gamma,\Delta)$ and identity and composition are defined as above. You need to check the laws.
+
+      As lemmas it is useful to establish:
+      \begin{eqnarray*}
+        t [\id] & = & t \\
+        t[\vec{t}\circ\vec{u}] & = & t[\vec{t}][\vec{u}]
+      \end{eqnarray*}
+  \end{exercise}
+  
 \newpage
 \section{Functors and natural transformations}
 \label{sec:funct-natur-transf}
