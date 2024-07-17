@@ -1,14 +1,13 @@
 
 
-all: sols nosols
-
+pdf:
+	pdflatex CftLFP.tex
+	pdflatex CftLFP.tex
+	
 nosols:
 	pdflatex --jobname="CftLFP-nosol" "\newif\ifsol\solfalse\input{CftLFP}" 
 	pdflatex --jobname="CftLFP-nosol" "\newif\ifsol\solfalse\input{CftLFP}"
 
-pdf:
-	pdflatex CftLFP.tex
-	pdflatex CftLFP.tex
 
 clean:
 	@rm -f *.aux
