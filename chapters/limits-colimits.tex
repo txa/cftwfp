@@ -1,0 +1,182 @@
+\chapter{Limits and colimits}
+\label{chap:limits-colimits}
+
+Until now we have stuck to constructions that correspond to simple types in programming. But for many applications we need to go further and look at categorical constructions corresponding to predicate logic or dependent types.
+
+\section{Pullbacks and equalizers}
+\label{sec:pullbacks-equalizers}
+
+\subsection*{Pullbacks}
+\label{sec:pullbacks}
+
+As a first step we look at \emph{pullbacks} in $\cat{Set}$: Given two functions with the same codomain: $f : A \to C$ and $g : B \to C$ 
+\[\begin{tikzcd}
+& A \arrow[d,"f"] \\
+B \arrow[r,"g" below] &C 
+\end{tikzcd}\]
+we construct their pullback 
+\[ f \times_C g = \{ (x,y) : A \times B \mid f\,x = g\,y \} \]
+together with the projections
+\begin{align*}
+\pi_1 : f \times_C g \to A \\
+\pi_1\,(x,y) = x \\
+\pi_2 : f \times g \to B \\
+\pi_2\,(x,y) = y 
+\end{align*}
+We indicate that a square is a pullback by putting a $\lrcorner$ in the upper left corner.
+\[\begin{tikzcd}
+f \times_c g \arrow[r,"\pi_1"] \arrow[d,"\pi_2" left] \arrow[dr, phantom, "\lrcorner", very near start]
+    & A \arrow[d,"f"] \\
+B \arrow[r,"g" below] &C 
+\end{tikzcd}\]
+
+The pullback satisfies the universal property that for any $D : \Set$ with functions $h : D \to A$ and $k : D \to B$ such that $f \circ h = g \circ k$ then there is a unique function $\pair{h}{k} : D \to E$ which is defined as
+\begin{align*}
+\pair{h}{k} \, d = (h\,d , k\, d) 
+\end{align*}
+which satisfies the equations
+\begin{align*}
+\pi_1 \circ [h , k] & = h \\
+\pi_2 \circ [h , k] & = k
+\end{align*}
+We can summarize the construction by the following diagram:
+\[\begin{tikzcd}
+D \arrow[rrd,bend left = 40,"h"] \arrow[ddr,bend right = 40,"k" below]
+\arrow[rd,dashrightarrow,"\pair{h}{k}"] \\
+&  f \times_c g \arrow[r,"\pi_1"] \arrow[d,"\pi_2" left] \arrow[dr, phantom, "\lrcorner", very near start]
+    & A \arrow[d,"f"] \\
+&  B \arrow[r,"g" below] &C 
+\end{tikzcd}\]
+
+\begin{Exercise}
+  What happens if we don't demand $f \circ h = g \circ k$? Can we still obtain $\pair{h}{k} : D \to E$?
+\end{Exercise}
+
+The general definition of a pullback is the straightforward generalisation. A pullback in a category $\cat{C}$ for $f : \homC{C}{A}{C}$ and $g : \homC{C}{B}{C}$ is given by an object $f \times_C g :\obj{\cat{C}}$ together with morphisms $\pi_1 : \homC{C}{f \times_C g}{A}$ and $\pi_2 : \homC{C}{f \times_C g}{B}$ which makes the square commute and for every other such triple (this is called a \emph{cone}): $D : \obj{\cat{C}}, h : \homC{C}{D}{A}, k :  \homC{C}{D}{B}$ such that the outer square commutes, there is a unique morphism $\pair{h}{k} : \homC{C}{f \times_C g}$ such that all the triangles commute.
+
+My notation for pullbacks is motivated by the observation that pullbacks are actually products in a slice category. Given a category $\cat{C}$ and an object $C : \obj{\cat{C}}$ we define the slice category $\cat{C}/C$: its objects are given by an object $A:\obj{\cat{C}}$ and a morphism $f : \homC{C}{A}{C}$. Given objects $(A,f)$ and $(B,g)$ a morphism is given by a morphism $h : \homC{C}{A}{B}$ such that the triangle
+\[\begin{tikzcd}
+  A \arrow[dr,"f"] \arrow[rr,"h"]& & B \arrow[dl,"g"] \\
+& C
+\end{tikzcd}\]
+commutes.
+
+\begin{Exercise}
+  Show that the pullback $f \times_C g$ is the product of $f$ and $g$ in the slice category $\cat{C}/C$.
+\end{Exercise}
+
+\subsection*{Equalizers}
+\label{sec:equalizers}
+
+Another important limit are \emph{equalizers}, again we start in $\cat{Set}$, given two parallel functions
+\[\begin{tikzcd}
+  A \arrow[r,"f",shift left] \arrow[r,"g" below,shift right]& B 
+\end{tikzcd}\]
+and their equalizer is 
+\begin{align*}
+\Eq{f}{g}  = \{ x : A \mid f\,x = g\,x \}
+\end{align*}
+together with the obvious embedding $e : \Eq{f}{g} \to A$:
+\[\begin{tikzcd}
+  \Eq{f}{g} \arrow[r,"e"] & A \arrow[r,"f",shift left] \arrow[r,"g" below,shift right]& B 
+\end{tikzcd}\]
+The universal property is; given any other set $C$ together with a function $h : C \to A$ that \emph{equalizes} $f$ and $g$, i.e. $f \circ h = g \circ h$ then there is a unique arrow $\eq{h} : C \to \Eq{f}{g}$ which is just given by $h$ and the fact that $h$ equalizes and which aso makes the triangle formed by $\eq{h},h$ and $e$ commute.
+\[\begin{tikzcd}
+    C \arrow[dr,"h"] \arrow[d, dashrightarrow,"\eq{f}" left] \\
+  \Eq{f}{g} \arrow[r,"e" below] & A \arrow[r,"f",shift left] \arrow[r,"g" below,shift right]& B 
+\end{tikzcd}\]
+
+\begin{Exercise}
+  Spell out the definition of an equalizer in an arbitrary category $\cat{C}$
+\end{Exercise}
+
+\begin{Exercise}
+  Show that  $e : \Eq{f}{g} \to A$ is a mono.
+\end{Exercise}
+
+\subsection*{Finite limits}
+\label{sec:finite-limits}
+
+Pullbacks and equalizers but also finite products, i.e. terminal objects and binary products are \emph{finite limits}. Without giving a general definition of a limit, or in particular a finite limit just now we notice that if we assume that we have a terminal object then it is equivalent for a category $\cat{C}$ to have all pullbacks \textbf{or} to have binary products and equalizers.
+
+For example we can derive products from pullbacks by just using the arrow into  $\mathbf{1}$, that is 
+\[\begin{tikzcd}
+A \times B \arrow[r,"\pi_1"] \arrow[d,"\pi_2" left] \arrow[dr, phantom, "\lrcorner", very near start]
+    & B \arrow[d,"!_B"] \\
+A \arrow[r,"!_A" below] & \bf{1}
+\end{tikzcd}\]
+
+We can derive equalizers from pullbacks: given 
+\[\begin{tikzcd}
+  A \arrow[r,"f",shift left] \arrow[r,"g" below,shift right]& B 
+\end{tikzcd}\]
+we construct the equalizer as a pullback
+\[\begin{tikzcd}
+\Eq{f}{g}\arrow[r,"e"] \arrow[d,"e" left] \arrow[dr, phantom, "\lrcorner", very near start]
+    & A \arrow[d,"\pair{\id}{f}"] \\
+A \arrow[r,"\pair{\id}{g}" below] & A \times B
+\end{tikzcd}\]
+
+On the other hand given 
+\[\begin{tikzcd}
+& A \arrow[d,"f"] \\
+B \arrow[r,"g" below] &C 
+\end{tikzcd}\]
+we can construct the pullback as the equalizer
+\[\begin{tikzcd}
+  f\times_C g \arrow[r,"e"] & A\times B \arrow[r,"f \circ \pi_1",shift left] \arrow[r,"g \circ \pi_2" below,shift right]& C
+\end{tikzcd}\]
+using $e$ composed with the product projections for the projections of the pullback.
+
+\begin{Exercise}
+  Carry out the constructions in detail, using only the universal properties.
+\end{Exercise}
+
+\begin{Exercise}
+  Show that we can't get a terminal object from equalizers and binary products.
+\end{Exercise}
+% the empty category
+
+\section{Pushouts and coequalizers}
+\label{sec:push-coeq}
+
+By now we are already used to the power of dualisation: a pushout is simply a pullback in the opposite category and a coqualizer is an equalizer in the opposite category. However, it is useful to have a look at them in $\cat{\Set}$.
+
+To define colimits we need quotients, they are dual to the use of subsets in the definitions of pullbacks and coequalizers. Given $A:\Set$ and a relation $\_R\_:A \to A \to \Prop$ which doesn't need to be an equivalence relation we define the set $A/R : \Set$ whose elements are equivalence classes constructed by $[\_] : A \to A/R$ and equivalence classes generated by related elements are equal, i.e. given $a R b$ we have that $[a] = [b]$. To define a function out of a quotient we need a function $g : A \to C$ which is stable under $R$, ie. $a R b$ implies $g\,a = g\,b$, this gives rise to a function $g^* : A/R \to C$ with $g [a] = g\, a$. Since we don't require that $R$ is an equivalence relation we don't have that $[a] = [b]$ implies $a R b$ but it does imply $a R^* b$ where $\_R^*\_$ is the free equivalence relation generated by $R$. This relation is similar to the one constructed in the solution of exercise \ref{ex:free-preorder} if we replace preorder by equivalence relation). However, in the case that $R$ is already an equivalence relation, $R^*$ is equivalent to $R$ hence the reverse direction hodls and we have a logical equivalence $ a R b \iff [ a ] = [ b ]$.
+\footnote{This means we assume that the quotients are \emph{effective}.}
+
+\subsection{Pushouts}
+\label{sec:pushouts}
+
+Given two functions with the same domain: $f : C \to A$ and $g : C \to B$ 
+\[\begin{tikzcd}
+C \arrow[r,"f"]\arrow[d,"g" left] & A \\
+B  
+\end{tikzcd}\]
+we construct their pushout 
+\[ f +_C g = A+B / \sim \]
+where $\_\sim\_ : A+B \to A+B \to \Prop$ is the defined as $x \sim y$ if there is a $c:C$ such that $x = \inj_1\,(f\,c)$ and $y = \inj\_2\,(g\,c)$. Note that the apparent asymmetry in the definition of $\_\sim\_$ doesn't matter since they all we care about is the free equivalence relation generated by it.
+
+As before for pullbacks we overload the syntax for injections
+\begin{align*}
+\inj_1 : A \to f +_C g  \\
+\inj_1 a = [ \inj_1\,(f\,a) \\
+\inj_2 : B \to f +_C g  \\
+\inj_2 b = [ \inj_2\,(f\,b) 
+\end{align*}
+This time we use a $\ulcorner$ close to the bottom right corner to indicate that the square is a pushout.
+\[\begin{tikzcd}
+C \arrow[r,"f"]\arrow[d,"g" left] 
+\arrow[dr, phantom, "\ulcorner", very near end]
+& A \arrow[d,"\inj_1"]\\
+B  \arrow[r,"\inj_2" below] & f +_C g
+\end{tikzcd}\]
+The pushout satsifies a universal property which is dual to the one of the pullback: given $D : \Set$ with functions $h : A \to D$ and 
+\[\begin{tikzcd}
+C \arrow[r,"f"]\arrow[d,"g" left] 
+\arrow[dr, phantom, "\ulcorner", very near end]
+& A \arrow[d,"\inj_1"]  \arrow[rdd,bend left,"h"]\\
+B  \arrow[r,"\inj_2" below] \arrow[drr,bend right,"k"] & f +_C g 
+\arrow[dr,dashrightarrow,"\case{h}{k}"]\\
+& & D
+\end{tikzcd}\]

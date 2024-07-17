@@ -1,11 +1,24 @@
 
 
-all: sols nosols
-
-sols:
-	pdflatex --jobname="notes-sol" "\newif\ifsol\soltrue\input{notes}" 
-	pdflatex --jobname="notes-sol" "\newif\ifsol\soltrue\input{notes}"
-
+pdf:
+	pdflatex CftLFP.tex
+	pdflatex CftLFP.tex
+	
 nosols:
-	pdflatex notes.tex
-	pdflatex notes.tex
+	pdflatex --jobname="CftLFP-nosol" "\newif\ifsol\solfalse\input{CftLFP}" 
+	pdflatex --jobname="CftLFP-nosol" "\newif\ifsol\solfalse\input{CftLFP}"
+
+
+clean:
+	@rm -f *.aux
+	@rm -f *fdb_latexmk
+	@rm -f *.fls
+	@rm -f *.log
+	@rm -f *.out
+	@rm -f *.lof
+	@rm -f *.lot
+	@rm -f *.toc
+	@rm -f *.fmt
+	@rm -f *.fot
+	@rm -f *.cb
+	@rm -f *.cb2

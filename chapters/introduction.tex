@@ -1,0 +1,34 @@
+\chapter{Introduction}
+\label{chap:intro}
+
+\section{For the Lazy Functional Programmer\ldots}
+\label{sec:title}
+
+\section{Background}
+\label{sec:background}
+
+\section{Philosophy}
+\label{sec:philosophy}
+
+\section{Overview}
+\label[sec:overview]
+
+\section{Preliminaries}
+\label{sec:prelim}
+We will use naive type theory as a metalanguage, this is not very different from a disciplined use of set theory. It is not necessary to have any knowledge about the formalism of type theory in as much as it is not necessary to know the axioms of set theory when using set theory naively.
+
+However, a few notes are in place. We write $a : A$ to mean that $a$ is an element of the type $A$ unlike $a \in A$ in set theory this is a judgement not a proposition, i.e. it is a static property.
+
+We write $\Set$ for the type of sets and $\Prop$ for the type of truth values, which we do not assume to be equal to  $\Bool$. We have an embedding from $\Prop$ to $\Set$ which is justified by the proposition as types translation: a proposition corresponds to a set with at most one inhabitant, it  is true if the type is non-empty. For every $A:\Set$ we have an equality relation, that is for $a,b : A$ we have $a = b : \Prop$, expressing that $a$ and $b$ are equal. $\Set$ is a type but not every type is a set, and we avoid talking about equality of elements of types that are not sets%
+\footnote{That is I adopt an agnostic view you can view types as Zermelo-Fraenkel sets or as types in the sense of HoTT}%
+. On the other hand $\Prop : \Set$ and equality of propositions is logical equivalence. 
+
+We will assume that there is a hierarchy of of types, eg. $\Type_0 : \Type_1 : \dots$ and correspondingly $\Set_i,\Prop_i : \Type_{i+1}$ and $\Prop_i : \Set_{i+1}$.
+\footnote{Some people like to assume that $\Prop_i : \Set_0$ which is a consequence of $\Prop_i = \Bool$.}
+We usually assume implicitly that we are working for some fixed level $i$ and write $\Type,\Set,\Prop$ for $\Type_i,\Set_i,\Prop_i$. We say types (sets, propositions) are small if they are in $\Set_i$ and large if they are in $\Set_{i+1}$.
+
+ % When we need to refer to the next level we use capital letterrs, i.e. write $\TYPE,\SET,\PROP$ for $\Type_{i+1},\Set_{i+1},\Prop_{i+1}$. I call the elements of $\Type_i$ small and the elements of $\Type_{i+1}$ large.
+
+We also use function types (sets, propositions) $A \to B$  extensively, we view them as primitive and not defined as relations. Given $f : A \to B$ and $a : A$ we write application as juxtaposition $f\,a : B$ as usual in functional programming and type theory. We assume functional extensionality: two functions are equal, if they are pointwise equal. 
+
+We borrow Agda's convention to write mixfix operations by using $\_$ where the arguments should go, e.g. a binary infix operator is written $\_+\_ : \Nat \to \Nat \to \Nat$. There are some notations I borrow from set theory, e.g. I am going to write finite sets as $\{c_0,c_1, \dots, c_n \}$ where $c_i$ are some names for the constructors. I also use comprehension notation $\{ x : A \mid P\,x \}$ where $A$ is a type and $P :A \to \Prop$, type theoretically this can be interpreted as the type of pairs $(a,p)$ where $a:A$ and $p : P\,a$.%, formally this is a $\Sigma$-type. 
