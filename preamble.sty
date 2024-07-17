@@ -67,14 +67,23 @@
 \fi
 \makeatother
 
+% endChap.tmp defaults to blank
+\newwrite\tempfile
+\immediate\openout\tempfile=endChap.tmp
+\immediate\write\tempfile{}
+\immediate\closeout\tempfile
+
 \pretocmd{\chapter}{%
-        \ifnum \value{chapter}>1 %bad hack
-          \shipoutAnswer
-        \fi
+    % If previous chapter had answers, this will have a solutions section* with \shipoutAnswer.
+    % Otherwise, it will be blank
+        \input{endChap.tmp} 
+    % Blank endChap.tmp, so it will be blank unless an answer sets it
+        \immediate\openout\tempfile=endChap.tmp
+        \immediate\write\tempfile{}
+        \immediate\closeout\tempfile
 }{}{}
 
-\pretocmd{\shipoutAnswer}{\addcontentsline{toc}{section}{Solutions to exercises}\section*{Solutions to exercises}}{}{}
-
+% Saves the problem statement to theproblem.tmp, and prints it in an Exercise environment
 \newenvironment{exercise}
 {\VerbatimOut{theproblem.tmp}}
 {\endVerbatimOut
@@ -82,11 +91,21 @@
     \input{theproblem.tmp}
   \end{Exercise}
 }
-\newenvironment{answer}{
+
+\newenvironment{answer}{%
+  % Set endChap.tmp to contain solutions section* and \shipoutAnswer so it will print this answer 
+  % (and the others in the chapter) at the end of the chapter
+  \immediate\openout\tempfile=endChap.tmp
+  \immediate\write\tempfile{\unexpanded{
+    \addcontentsline{toc}{section}{Solutions to exercises}\section*{Solutions to exercises}
+    \shipoutAnswer
+    }}
+  \immediate\closeout\tempfile
+  
+  % Start the Answer by restating the problem (which will be saved in theproblem.tmp)
   \begin{Answer}
     \input{theproblem.tmp}
   
     \noindent\textit{Solution:}
     
-}
-{\end{Answer}}
+}{\end{Answer}}
