@@ -26,6 +26,7 @@
 \usepackage{tikz}
 \usepackage{etoolbox}
 \usetikzlibrary{cd}
+\usepackage{minted}
 
 
 
@@ -33,7 +34,7 @@
 \renewcommand{\ExerciseHeader}{{\noindent\textbf{
 \ExerciseName\ \ExerciseHeaderNB\ExerciseHeaderTitle
 \ExerciseHeaderOrigin\;}}}
-\renewcommand{\AnswerHeader}{\noindent{\textit{\textbf{Solution\ \ExerciseHeaderNB:}}\;}}
+\renewcommand{\AnswerHeader}{\noindent{\textbf{Exercise\ \ExerciseHeaderNB:}}\;}
 \renewcommand{\ExerciseSkipAfter}{8pt}
 \renewcommand{\AnswerSkipAfter}{8pt}
 
@@ -73,3 +74,19 @@
 }{}{}
 
 \pretocmd{\shipoutAnswer}{\addcontentsline{toc}{section}{Solutions to exercises}\section*{Solutions to exercises}}{}{}
+
+\newenvironment{exercise}
+{\VerbatimOut{theproblem.tmp}}
+{\endVerbatimOut
+  \begin{Exercise}
+    \input{theproblem.tmp}
+  \end{Exercise}
+}
+\newenvironment{answer}{
+  \begin{Answer}
+    \input{theproblem.tmp}
+  
+    \noindent\textit{Solution:}
+    
+}
+{\end{Answer}}

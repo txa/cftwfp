@@ -71,9 +71,9 @@ We can derive the addition function exploiting also cartesian closure. We choose
 & s\,f\,n = \suc\,(f\,n)
 \end{align*}
 We can now define $\_+\_ = \It_{\Nat\to\Nat}\,z\,s : \Nat \to (\Nat \to \Nat)$.
-\begin{Exercise}
+\begin{exercise}
   Convince yourself that this computes the same function as the previous definition of $\_+\_$ using pattern maching.
-\end{Exercise}
+\end{exercise}
 
 We can prove that $n + 0 = 0$ using the unicity of $\It$ instead of induction. We observe that both $\id_\Nat$ and $\_+0 : \Nat \to \Nat$ make the following diagram commute:
 \[\begin{tikzcd}[row sep = large]
@@ -84,9 +84,9 @@ We can prove that $n + 0 = 0$ using the unicity of $\It$ instead of induction. W
 \end{tikzcd}\]  
 And hence by uniqueness $\id_\Nat = \_+0$, by applying both sides to $n:\Nat$ we obtain 
 $n = \id\,n = (\_ + 0)\,n = n + 0$. 
-\begin{Exercise}
+\begin{exercise}
   Verify the claim that both functions make the diagram commute.
-\end{Exercise}
+\end{exercise}
 
 One basic function on natural numbers is the \emph{predecessor}, i.e. the inverse to the successor. Initially we may think that we should define a function $\pred : \Nat \to \Nat$ with $\pred\,(\suc\,n) = n$. But what should $\pred\,0$ be? We could arbitrarily set $\pred\,0 = 0$ but this seems a very unprincipled move. It seems better to say that $\pred$ should return an \emph{error} when applies to $0$. That is as well known in functional programming, we should use the \emph{Maybe}-monad
 \footnote{Even though we don't actually know yet what a monad is}
@@ -101,9 +101,9 @@ However, we cannot translate this definition directly into an application of $\I
 \pred\,(\suc\,n) & = \case{\inj_2\,0}{\inj_2 \circ \suc}
 \end{align*}
 The idea is that the 2nd definition computes the predeccessor by delaying the constructors by one step.
-\begin{Exercise}
+\begin{exercise}
 Verify in detail that both definitions of $\pred$ compute the same function.                     
-\end{Exercise}
+\end{exercise}
 The second definition can be translated into 
 \begin{align*}
 & \pred : \Nat \to 1+\Nat \\
@@ -116,13 +116,13 @@ $\pred$ is the inverse of the constructors $0$ and $\suc$. We can make this prec
 & \inn = \case{0}{\suc} 
 \end{align*}
 This is an instance of Lambek's lemma which we will verify in the general case later. 
-\begin{Exercise}
+\begin{exercise}
   Prove by induction or by using initiality that $\pred$ and $\inn$ are an isomorphism, i.e.
   \begin{align*}
     \pred \circ \inn & = \id_{1+\Nat} \\
     \inn \circ \pred & = \id_\Nat
   \end{align*}
-\end{Exercise}
+\end{exercise}
 
 \section{Initial algebras}
 \label{sec:initial-algebras}
@@ -144,9 +144,9 @@ T\,B \arrow[r,"g"] & B \\
 \end{tikzcd}\]  
 Identity and composition is given by identity and composition in $\cat{C}$, it is easy to see that the corresponding diagrams commute. 
 
-\begin{Exercise}
+\begin{exercise}
 Show that $\Nat$ is the initial $T_\Nat$ algebra with $T_\Nat : \Set \to \Set$ defined as $T_\Nat\,X = 1+X$. 
-\end{Exercise}
+\end{exercise}
 
 We can understand the type of lists in a similar fashion. $\List$ are given by two constructors (pronounced nil and cons):
 \begin{align*}
@@ -163,21 +163,21 @@ and then merging them into one function using coproducts:
 1 + A \times \List\,A & \to \List\,A
 \end{align*}
 Hence $\List\,A$ is the initial algebra of the functor $T_{\List\,A}:\cat{\Set} \to \cat{\Set}$ with $T_{\List\,A}\,X = 1 + A \times X$.
-\begin{Exercise}
+\begin{exercise}
 Define the function $\rev_A : \List\,A \to \List\,A$ using only the iterator. \emph{Hint:} it is useful to define an auxilliary function 
 $\mathrm{snoc} : A \times\List\,A \to A$ that appends a single element at the end of a list using the iterator. 
 
 Show that this function is idempotent, that is $\rev_A \circ \rev_A = \id_{\List\,A}$ using only initiality. 
-\end{Exercise}
+\end{exercise}
 
-\begin{Exercise}
+\begin{exercise}
 What are the functors defining 
 \begin{enumerate}
 \item unlabelled binary trees,
 \item binary trees whose leaves are labelled with $A:\Set$,
 \item binary trees whose nodes  are labelled with $A:\Set$,
 \end{enumerate}
-\end{Exercise}
+\end{exercise}
 
 Since we already know that $\List$ is a functor, what is the initial algebra of the list functor? This has a constructor
 \begin{align*}
@@ -186,11 +186,11 @@ Since we already know that $\List$ is a functor, what is the initial algebra of 
 Indeed, this is the type of finitely branching trees, that is any node has a list of subtrees. We don't need to include leaves explicitely because we can have a node with an empty list of subtrees. This type is also called \emph{rose trees}.
 
 We can also construct infinitely branching trees which are the initial algebra of the functor $T\,X = 1 + \Nat \to X$. Here a node is given by a function that assigns to every natural number a subtree. This raises the question wether every functor on sets should have an initial algebra. We note that obviously paradoxical cases like $T\,X = X \to X$ are ruled out because they don't give rise to a functor. However, depending on our foundations even positive hence functorial definitions like $T\,X = (X \to \Bool) \to \Bool$ are problematic. If we work in a classical setting then this is obviously paradoxical because it gives us a fixpoint of the double powerset functor and from this we can derive a contradiction using diagonalisation.
-\begin{Exercise}
+\begin{exercise}
 Show that having an initial algebra of $T : \Set \to \Set$ with $T\,X = (X \to \Bool) \to \Bool$ leads to a contradiction if we assume $\Prop = \Bool$ (classical logic). Assume that $\inn_T : T (\mu\,T) \to \mu\,T$ is an isomorphism
 \footnote{We are going to prove this in the next section.}.
 \emph{Hint:} Derive a retraction, i.e. a function $\phi : (\mu\,T \to \Bool) \to \mu\,T$ that has a left inverse. Show that such a retract cannot exists using Cantor's diagonalisation.
-\end{Exercise}
+\end{exercise}
 
 \section{Lambek's lemma}
 \label{sec:lambeks-lemma}
@@ -266,9 +266,9 @@ $\Stream$ is a functor, that is given a function $f:A \to B$ we can define
 \head\,(\Stream\,f\,\vec{a}) & = f\,(\head\,a) \\
 \tail\,(\Stream\,f\,\vec{a}) & = \Stream\,f\,(\tail\,\vec{a})
 \end{align*}
-\begin{Exercise}
+\begin{exercise}
   Define $\Stream\,f$ using only the coiterator.
-\end{Exercise}
+\end{exercise}
 % The dual of induction is coinduction. This is usually formulated using the concept of a bisimulation: A relation 
 % $\_R\_ \subseteq \Stream\,A \times \Stream\,A$ is called a bisimulation if given $\vec{a} R \vec{b}$ then 
 % $\head\,\vec{a} = \head\,\vec{b}$ and $\tail\,\vec{a} R \tail\,\vec{b}$. Coinduction states that bisimilar streams are equal, i.e. if $\vec{a} R \vec{b}$ then $\vec{a} = \vec{b}$.
@@ -297,9 +297,9 @@ We observe that
 \end{align*}
 That is both side are equal to $\CoIt\,\suc\,\suc$ and hence equal due to uniqueness. 
 
-\begin{Exercise}
+\begin{exercise}
   Prove that $\Stream\,A$ is isomorphic to $\Nat \to A$.
-\end{Exercise}
+\end{exercise}
 
 \section{Terminal coalgebras}
 \label{sec:terminal-coalgebras}
@@ -320,19 +320,19 @@ As for algebras, Identity and composition is given by identity and composition i
 
 It is clear that $\Stream\,A$ is the terminal coalgebra of the functor $T_{\Stream\,A}\,X = A \times X$. We can look at initial algebras and terminal coalgebras for the same functor. In the case of $T_{\Stream\,A}$  this is not very interesting because the initial algebra is just the empty set. However, natural numbers $T_\Nat\,X = 1+X$ and lists $T_{\List\,A}\,X = 1 + A \times X$ are more interesting: here the terminal coalgebras are called the conatural numbers and colists: they include both finite elements and infinite elements. 
 
-\begin{Exercise}
+\begin{exercise}
   Show that the initial algebra of $T_{\Stream\,A}\,X = A \times X$ is isomorphic to the empty set
-\end{Exercise}
+\end{exercise}
 
-\begin{Exercise}
+\begin{exercise}
   Define addition for conatural numbers ($\Nat^\infty = \nu X.1+X$) using only the coiterator.
-\end{Exercise}
+\end{exercise}
 
-\begin{Exercise}
+\begin{exercise}
   Show explicitely that Lambek's lemma hold for terminal coalgebras.
-\end{Exercise}
+\end{exercise}
 
 
-% \begin{Exercise}
+% \begin{exercise}
 %   Show that there is always a monomorphism from the initial algebra to the terminal coalgebra.
-% \end{Exercise}
+% \end{exercise}

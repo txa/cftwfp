@@ -62,10 +62,10 @@ As for terminal and initial objects we can show that products are unique up to i
 % do this explicitly?
 
 We have only defined binary products, what about ternary products? There are at least two ways to derive them from binary products $A \times (B\times C)$ and $(A\times B)\times C$. 
-\begin{Exercise}
+\begin{exercise}
   Show that $A \times (B\times C) \cong (A\times B)\times C$. 
-\end{Exercise}
-\begin{Answer}
+\end{exercise}
+\begin{answer}
   We'll call these morphisms $\phi\colon A \times (B\times C) \to (A\times B)\times C$ and $\phi\inv$ the other way around.
 
   To define $\phi$, notice that its codomain is the product of two objects: $(A\times B)$ and $C$. To define a morphism \emph{into} a product, we need to give a pair of morphisms:
@@ -106,7 +106,7 @@ We have only defined binary products, what about ternary products? There are at 
           (A\times B)\times C \arrow{r}{\pi_2} & C
             \end{tikzcd}       
     \end{tabular}
-\end{Answer}
+\end{answer}
 
 This suggests that we can indeed derive all non-empty products from binary products. The only things which is missing is the \emph{empty product}, which corresponds to the terminal object. Hence we say that a category has finite products if it has a terminal object and binary products. Note that this also means that we chose a particular terminal object $1$ and for any pair of object $A$ and $B$ another object $A\times B$.
 
@@ -126,9 +126,9 @@ This is the unique function which makes the following diagram commute:
 A \arrow[r,"\inj_1" below] \arrow[ur,"f"] & A + B \arrow[u,dashrightarrow,"\case{f}{g}" right] & B \arrow[l,"\inj_2"] \arrow[ul,"g" above]
 \end{tikzcd}\]
 Moreover this assignment is natural, i.e. $h \circ \case{f}{g} = \case{h\circ f}{h\circ g}$.
-\begin{Exercise}
+\begin{exercise}
   Verify uniqueness and naturality of $\case{f}{g}$.
-\end{Exercise}
+\end{exercise}
 
 This leads directly to the definition of binary coproducts in a category $\cat{C}$, a coproduct $A+B$ of $A$ and $B$ is given by injections:
 $\inj_1 : \homC{C}{A}{A+B}$ for and $\inj_2\,b : \homC{C}{B}{A+B}$ and for any pair of morphisms $f : \homC{C}{A}{C}$ and 
@@ -146,10 +146,10 @@ Moreover this assignment is natural, i.e. $h \circ \case{f}{g} = \case{h\circ f}
 As for produts we say that a category has all finite coproducts if it has an initial object and all binary coproducts.
 
 In $\Set$ and actually in many categories products and coproducts are very different, but this is not always the case. We have already seen that in $\cat{Mon}$ ths initial object and the terminal object coincide. For the following consider the category of commutative monoids $\cat{CMon}$ which is like monoids but with the additional property that $x * y = y * x$ for any object $(A,e,\_*\_)$. Given two commutative monoids  $(A,e,\_*\_),  (B,z,\_+\_)$ we define $A \oplus B$ as $(A\times B,(e,z),\_ \bullet \_)$ where $(a,b) \bullet (a',b') = (a * a',b + b')$. It is easy to see that this is a commutative monoid again.
-\begin{Exercise}
+\begin{exercise}
 Show that $A \oplus B$ is both a product and a coproduct of $A$ and $B$.
-\end{Exercise}
-\begin{Answer}
+\end{exercise}
+\begin{answer}
   \Question
     To prove that this is a product, we need to do several things.
     \begin{itemize}
@@ -196,7 +196,7 @@ Show that $A \oplus B$ is both a product and a coproduct of $A$ and $B$.
           &= [f,g](x).
       \end{align*}
     \end{itemize}
-\end{Answer}
+\end{answer}
 \begin{question}
   What happens if we give up commutativity, i.e. if we consider $\cat{Mon}$ instead.
 \end{question}
@@ -204,22 +204,22 @@ Show that $A \oplus B$ is both a product and a coproduct of $A$ and $B$.
 Products and coproducts can also be defined as an adjunction: Given a category $\cat{C}$ we write $\cat{C^2} = \cat{C}\times\cat{C}$
 \footnote{Yes, this is a product in the category of categories which is not a category in our sense. We already develop a taste for higher categories\dots}
 whose objects are pairs of objects and whose morphsims are pairs of morphisms in $\cat{C}$. There is a functor $\Delta : \cat{C} \to \cat{C^2}$ (called the diagonal functor) which just copies, that is $\Delta\,A = (A,A)$ and the same on morphisms. Now if $\cat{C}$ has binary products and coproducts resepctively we also have $\_\times\_, \_+\_ : \cat{C^2} \to \cat{C}$
-\begin{Exercise}
+\begin{exercise}
   Define the morphism parts of these functors using only the properties of products / coproducts.
-\end{Exercise}
+\end{exercise}
 Moreover, they are left and right adjoint to $\Delta$:
 \[\begin{tikzcd}[row sep=large]
 \cat{C} \arrow[d,"\Delta" near start] \\ 
 \cat{C^2} \arrow[u,bend left = 60,"\_+\_" left,"\dashv" right=5 ] \arrow[u,bend right = 60,"\_\times\_" right,"\dashv" left = 5]
 \end{tikzcd}\]
-\begin{Exercise}
+\begin{exercise}
   Verify these adjunctions, i.e. show that
   \begin{align*}
     \cat{C}(X,Z) \times \cat{C}(Y,Z) \cong \cat{C}(X + Y,Z) \\
     \cat{C}(Z, X\times Y) \cong \cat{C}(Z,X) \times \cat{C}(Z,Y)
   \end{align*}
   are natural isomorphisms. 
-\end{Exercise}
+\end{exercise}
 
 \section{Exponentials}
 \label{sec:exponentials}
@@ -235,26 +235,26 @@ where
   &\psi_{A,B,C} : (A\to(B \to C)) \to (A\times B \to C) \\
   &\psi\,g = \lambda p.g\,(\pi_1\,p)\,(\pi_2\,p)
 \end{align*}
-\begin{Exercise}
+\begin{exercise}
   Verify that $\phi$ and $\psi$ are inverse to each other.
-\end{Exercise}
+\end{exercise}
 If we fix $B$ this looks like an adjunction, namely the functors $\_\times B, B \to \_ : \Set \to \Set$ form an adjunction. All that is left is to check naturality:
-\begin{Exercise}
+\begin{exercise}
   Derive the morphism part of $\_\times B$ and $B \to \_$ and
   check that $\phi_{A,B,C}$ is natural in $A,C$, that is given $f : A \to A'$ and $g : C \to C'$
 \[\begin{tikzcd}[row sep = large]
    A\times B \to C \arrow[r,"\phi_{A,B,C}"] \arrow[d,"\lambda h. g\circ h \circ (f \times B)"] & A\to(B \to C) \arrow[d,"\lambda k. (B \to g)\circ k \circ f"] \\
    A'\times B \to C'  \arrow[r,"\phi_{A',B,C'}" below]  & A'\to(B \to C') 
 \end{tikzcd}\]  
-\end{Exercise}
+\end{exercise}
 
 This directly leads to the definition of \emph{exponentials (aka function objects)} for a category $\cat{C}$ with products, we say that for a fixed object $B:\obj{\cat{C}}$ an exponential $\expC{}{B}{\_}$ or $(\_)^B$ is the right adjoint to $\_ \times B$. We can compare $\expC{}{\_}{\_}$ with homsets $\homC{C}{\_}{\_}$ both take two objects as input but the first one returns an object while the latter returns a set. This is why exponentials are also called internal homs. Only on $\Set$ the two are actually the same.
 
 By definition $\expC{\cat{C}}{B}{\_}$ is a covariant functor $\cat{C} \to \cat{C}$ but exponentials also give rise to a contravariant functor:
-\begin{Exercise}
+\begin{exercise}
 Show that $\expC{\cat{C}}{\_}{C}$ is a contravariant functor, i.e. 
 \[\expC{}{\_}{C} : \cat{C}^\op \to \cat{C}.\]     
-\end{Exercise}
+\end{exercise}
 %Actually $\expX{\_}{\_} : \cat{C}^\op \times \cat{C} \to \cat{C}$ is a bifunctor.
 
 A category which has all finite products and exponentials is called a \emph{a cartesian closed category} (CCC) if it is also has coproducts it is a \emph{Bicartesian closed category (BiCCC)}. As we have already observed $\Set$ is cartesian closed and has finite coproducts hence it is a bicartesian closed category. 
@@ -278,9 +278,9 @@ exponentials & $m \to n = n^m$\\\hline
 % \item[exponentials] $m^n$.
 % \end{description}
 
-\begin{Exercise}
+\begin{exercise}
 Verify that these definitions indeed have the required properties.
-\end{Exercise}
+\end{exercise}
 
 Another standard example for a bicartesian closed category is the category of propositions $\cat{\Prop}$: its objects are propositions and its homsets are given by implication (which correspond to functions): $\cat{\Prop}(P,Q) = P \to Q$. This category is a preorder (because all its homs are propositions) and it has (given $P,Q : \Prop$) :
 
@@ -293,9 +293,9 @@ products & $P \wedge Q$ \\\hline
 exponentials & $P \to Q$\\\hline
 \end{tabular}
 
-\begin{Exercise}
+\begin{exercise}
 Verify that these definitions indeed have the required properties.
-\end{Exercise}
+\end{exercise}
 A bicartesian closed category which is a preorder is called a \emph{Heyting algebra}, it is a model for intuitionistic propositional logic.
 
 % In bicartesian closed categories we can show distributivity, that is 
@@ -325,9 +325,9 @@ The easiest way to show this is to use the corollary from the Yoneda lemma: to s
 \end{align*}
 and hence $(B + C)\times A \cong B\times A + C \times A$.
 In each line we only used the adjunctions defining $\times$, $+$ and $\expC{}{}{}$.
-\begin{Exercise}
+\begin{exercise}
   Prove the first isomorphism $0 \times A \cong 0$ using the same idea. Note that $\homC{C}{0}{A} \cong 1$
-\end{Exercise}
+\end{exercise}
 
 Not every category with products and coproducts is distributive. A counterexample is $\cat{Mon}$ where the terminal object and the initial object agree, i.e. $0 \cong 1$. hence we can just use the first isomorphism to show that every object is isomorphic to the initial object (and the terminal):
 \begin{align*}
@@ -337,18 +337,18 @@ A & \cong 1 \times A \\
 \end{align*}
 But this is certainly not true in $\cat{Mon}$, hence we can conclude that $\cat{Mon}$ is not cartesian closed. 
 
-\begin{Exercise}
+\begin{exercise}
   Is $\cat{\omega}$ (bi)cartesian closed? What about $\cat{\omega}^\op$?
-\end{Exercise}
+\end{exercise}
 
 An important example for a bicartesian closed category is the category of presheaves of a given category $\PSh\,\cat{C}$. Its objects are functors $F : \cat{C}^\op \to \Set$ and its morphisms are natural transformations. Products (and coproducts) are calculated \emph{pointwise}: That is given $F,G : \cat{C}^\op \to \Set$
 \begin{align*}
   (F \times G)\,A = F\,A \times G\,A \\
   (F + G)\, A = F\,A + G\,A
 \end{align*}
-\begin{Exercise}
+\begin{exercise}
   Verify that these are indeed products and coproducts in $\PSh\,\cat{C}$.
-\end{Exercise}
+\end{exercise}
 
 But what about exponentials? We cannot have $(\expC{\PSh\,\cat{C}}{F}{G})\,A = F\,A \to G\,A$ because this wouldn't be a contravariant functor since $F$ appears on the left hand side of the exponential. The construction of the exponential is actually a nice application of the Yoneda lemma: 
 If we assume that the exponential exists we have then 
@@ -365,7 +365,7 @@ So the last line is a candidate for the exponential but in this case we do need 
 (\expC{\PSh\,\cat{C}}{F}{G})\,A & = \int_{X:\cat{C}}C(X,A)\to F\,X \to G\,X
 \end{align*}
 % We also need to check that this definition actually satisfies the universal property:
-% \begin{Exercise}
+% \begin{exercise}
 %   Show that the above definition of $\expC{\PSh\,\cat{C}}{F}{G}$ satisfies the universal property of exponentials, i.e. for $H : \PSh\,\cat{C}$
 %   \[ \PSh\,\cat{C}(H \times F,G) \simeq \PSh\,\cat{C}(H, \ex But what about exponentials? We cannot have $(\expC{\PSh\,\cat{C}}{F}{G})\,A = F\,A \to G\,A$ because this wouldn't be a contravariant functor since $F$ appears on the left hand side of the exponential. The construction of the exponential is actually a nice application of the Yoneda lemma: 
 % If we assume that the exponential exists we have then 
@@ -382,13 +382,13 @@ So the last line is a candidate for the exponential but in this case we do need 
 % (\expC{\PSh\,\cat{C}}{F}{G})\,A & = \int_{X:\cat{C}}C(X,A)\to F\,X \to G\,X)
 % \end{align*}
 We also need to check that this definition actually satisfies the universal property:
-\begin{Exercise}
+\begin{exercise}
   Show that the above definition of $\expC{\PSh\,\cat{C}}{F}{G}$ satisfies the universal property of exponentials, i.e. for $H : \PSh\,\cat{C}$
   \[ \PSh\,\cat{C}(H \times F,G) \simeq \PSh\,\cat{C}(H, \expC{\PSh\,\cat{C}}{F}{G})\]
   i.e.
   \[ \int_{X:\cat{C}}H\,X \times F\,X \to G\,X \simeq
     \int_{X:\cat{C}}H\,X \to (\expC{\PSh\,\cat{C}}{F}{G})\,X\]
-\end{Exercise}
+\end{exercise}
 
 This shows that the category or presheaves over a small category (i.e. a category with a small type of objects) is cartesian closed. However, it does for example not imply that the category of presheaves over $\Set$, i.e. functors $\cat{\Set}^\op \to \cat{\Set}$ is cartesian closed. 
 
@@ -397,9 +397,9 @@ Given a preorder, that is $|R|:\Set$ and $\_R\_ : |R| \to |R| \to \Prop$ that is
 This is a bicartesian closed category the constructions are simplified versions of the ones for set valued presehaves, in particular 
 \[(\expX{P}{Q})\,x = \forall y:|R|.y\,R\,x\to P\,y \to Q\,y \]
 These categories are called \emph{Kripke models} and the fact that they are bicartesian closed corresponds to the fact that they model intuitionistic propositional logic.
-\begin{Exercise}
+\begin{exercise}
   Use Kripke models to show that the law of the excluded middle $P \vee \neg P$ is not derivable in intuitionistic logic. 
-\end{Exercise}
+\end{exercise}
 
 % Indeed they are complete
 % \footnote{However, while completeness for the cartesian closed part is straightforward, the construction for coproducts relies on the decidabily of propositional logic and doesn't carry over to predicate logic. this issues can be adressed by using sheaf models instead.}
@@ -411,20 +411,20 @@ natural in $C$.
 
 An example for such a \emph{symmetric cartesian closed category} is the category of booleans which is similar to the category of propositions, but we use booleans instead of propositions. In particular, the type of objects is $\Bool$ and the homsets are given as 
 $\homC{\Bool}{p}{q} = \T\,p \to \T\,q$ where $\T : \Bool \to \Prop$ is defined as $\T\,b = (b = \true)$. We can define products, coproducts and exponentials as for $\Prop$, i.e. by using the usual truthtable semantics. Subtraction can be defines as $p-q = p \wedge \neg q$.
-\begin{Exercise}
+\begin{exercise}
   Check that $\cat{\Bool}$ is a symmetric cartesian closed category.
-\end{Exercise}
+\end{exercise}
 You may notice that this example is a preorder. This is no accident because all symmetric cartesian closed categories are preorders. This is because in such a category also the dual form of distributivity hold:
 \begin{align*}
   1 +  A & \cong 1 \\
   (B \times C) + A & \cong (B + A) \times (C + A)
 \end{align*}
 The first one is already suspicious because it implies in particular that $1+1 = 1$, which basically says that $\true = \false$ in $\Bool$. Moreover:
-\begin{Exercise}
+\begin{exercise}
   In a bicartesian closed category with $1 = 1+1$ all morphisms are equal (i.e. it is a preorder). 
-\end{Exercise}
+\end{exercise}
 You may wonder wether symmetry already implies excluded middle $P \vee \neg P$, which certainly holds in $\cat{\Bool}$. The answer is no, because we can extend Kripke semantics to the symmetric logic (using boolean valued presheaves over finite preorders) and uses this to show that excluded middle isn't implied. 
 
-\begin{Exercise}
+\begin{exercise}
   Show that the category $\cat{1+\omega}$ is a symmetric cartesian closed category. It's definition is similar to $\cat{\omega}$ its objects are the natural numbers and a top element $\omega$ such that $i \leq \omega$ for all elements.
-\end{Exercise}
+\end{exercise}
