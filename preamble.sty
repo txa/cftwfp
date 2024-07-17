@@ -1,0 +1,64 @@
+
+\makeatletter
+\@ifundefined{ifsol}{%
+  \newif\ifsol
+  \soltrue
+}{\solfalse}
+\makeatother
+
+\ifsol
+\usepackage[lastexercise]{exercise}
+\else
+\usepackage[noanswer,lastexercise]{exercise}
+\fi
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{proof}
+\usepackage{tikz}
+\usetikzlibrary{cd}
+
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true, %set true if you want colored links
+    linktoc=all,     %set to all if you want both sections and subsections linked
+    linkcolor=blue,  %choose some color if you want links to stand out
+}
+
+
+
+\renewcommand{\ExerciseHeader}{{\noindent\textbf{
+\ExerciseName\ \ExerciseHeaderNB\ExerciseHeaderTitle
+\ExerciseHeaderOrigin\;}}}
+\renewcommand{\AnswerHeader}{\noindent{\textit{\textbf{Solution\ \ExerciseHeaderNB:}}\;}}
+\renewcommand{\ExerciseSkipAfter}{8pt}
+\renewcommand{\AnswerSkipAfter}{8pt}
+
+\newtheorem{question}[Exercise]{Question}
+
+\newcommand\abstractname{Abstract}
+\makeatletter
+\if@titlepage
+  \newenvironment{abstract}{%
+      \titlepage
+      \null\vfil
+      \@beginparpenalty\@lowpenalty
+      \begin{center}%
+        \bfseries \abstractname
+        \@endparpenalty\@M
+      \end{center}}%
+     {\par\vfil\null\endtitlepage}
+\else
+  \newenvironment{abstract}{%
+      \if@twocolumn
+        \section*{\abstractname}%
+      \else
+        \small
+        \begin{center}%
+          {\bfseries \abstractname\vspace{-.5em}\vspace{\z@}}%
+        \end{center}%
+        \quotation
+      \fi}
+      {\if@twocolumn\else\endquotation\fi}
+\fi
+\makeatother
