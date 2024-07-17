@@ -29,6 +29,8 @@
 
 \newcommand{\Con}{\mathrm{Con}}
 \newcommand{\Tm}{\mathrm{Tm}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Vars}{\mathrm{Vars}}
 \newcommand{\Subst}{\mathrm{Subst}}
 
 \newcommand{\cat}[1]{\underline{\mathbf{#1}}}
@@ -305,67 +307,97 @@ We are only annotating terms with types when it is necessary to disambiguate, th
 
 We are going to use an intrinsic syntax, that is we define typed terms only. For this we need the notion of a context which for de Bruijn terms is just a sequence of types, e.g. $\Gamma = \sigma_n \rhd \sigma_{n-1} \rhd \dots \rhd\sigma_0$, is a typical context; we write $\bullet$ for the empty context. We extend contexts on the right, that is they are snoc-lists. 
 
-Given a context $\Gamma$ and a type $\sigma$ we define the set of terms $\Tm(\Gamma,\sigma)$ inductively by the following rules:
+Given a context $\Gamma$ and a type $\sigma$ we define the set of de Bruijn Variables $\Var(\Gamma,\sigma)$ and the set of terms $\Tm(\Gamma,\sigma)$ inductively by the following rules:
 \begin{align*}
-  & \infer{0 : \Tm(\Gamma\rhd\sigma,\sigma)}{}
+  & \infer{0 : \Var(\Gamma\rhd\sigma,\sigma)}{}
   \qquad
-  \infer{1+t : \Tm(\Gamma\rhd\sigma,\tau)}{t : \Tm(\Gamma,\tau)}\\\\
+    \infer{1+i : \Var(\Gamma\rhd\sigma,\tau)}{i : \Var(\Gamma,\tau)}
+    \qquad
+    \infer{i  : \Tm(\Gamma,\tau)}{i : \Var(\Gamma,\tau)}
+  \\\\
   & \infer{t\,u : \Tm(\Gamma,\tau)}{t : \Tm(\Gamma,\sigma\to\tau) \quad u : \Tm(\Gamma,\sigma)}
   \qquad
   \infer{\lambda\,t : \Tm(\Gamma,\sigma\to\tau)}{t : \Tm(\Gamma\rhd\sigma,\tau)} 
 \end{align*}
-We write the de Bruijn index $2$ as $1+1+0$. In our syntax we also have terms like $1+(0\,1)$ which should be equivalent to $1\,2$.
-\begin{question}
-What should $1 + \lambda\,(0\, 1)$ correspond to using proper indices?
-\end{question}
-We will address the question how to make this correspondence precise below.
+\footnote{To be precise the embedding from $\Var$ to $\Tm$ is an (invisible) constructor.}
+We write the de Bruijn index $2$ as $1+1+0$.
+\begin{exercise}
+  Derive $\lambda  \lambda \lambda\,  2\,0\,(1\,0) : (\sigma \to \tau \to \rho) \to (\sigma \to \tau) \to \sigma \to \rho$ using the given rules. 
+\end{exercise}
 
 Given two contexts $\Gamma, \Delta$ we define the set of substitutions $\Subst(\Gamma,\Delta)$. That is given
 $\Delta = \tau_n . \tau_{n-1} \dots .\tau_0$, elements of $\Subst(\Gamma,\Delta)$ are sequences of terms $\vec{t} = t_n,t_{n-1},\dots,t_0$
-where $t_i : \Tm(\Gamma,\tau_i)$. Given $t_n,t_{n-1},\dots t_0 : \Subst(\Gamma,\Delta)$ we write $\epsilon : \Subst(\Gamma,\bullet)$ for the empty substitution.
+where $t_i : \Tm(\Gamma,\tau_i)$. Given $t_n,t_{n-1},\dots t_0 : \Subst(\Gamma,\Delta)$ we write $\epsilon : \Subst(\Gamma,\bullet)$ for the empty substitution. In the special case that all the terms are variables, we call it a renaming and write $\Vars(\Gamma,\Delta)$.
+\footnote{We continue the abuse of notation by silently coercing $\Vars(\Gamma,\Delta)$ into $\Tm(\Gamma,\Delta)$.}
 
-Given $\vec{t}$ as above, we can apply $1+$ to it componentwise:
+Given $\vec{x} = x_n,x_{n-1},\dots,x_0: \Vars(\Gamma,\Delta) $ as above, we can apply $1+$ to it componentwise:
 \begin{align*}
-  & 1 + \vec{t} : \Subst (\Gamma.\sigma,\Delta) \\
-  & 1 + \vec{t} = 1+t_n , 1+t_{n-1} , \dots , 1+t_0
+  & 1 + \vec{x} : \Vars (\Gamma\rhd \sigma,\Delta) \\
+  & 1 + \vec{x} = 1+x_n , 1+x_{n-1} , \dots , 1+x_0
 \end{align*}
 
-Using $1+\vec{t}$ we can define lifting which will be useful when shifting a substitution under a $\lambda$:
+Using $1+\vec{x}$ we can define lifting which will be useful when shifting a renaming under a $\lambda$:
 \begin{align*}
-& \vec{t} \rhd \sigma  : \Subst(\Gamma \rhd\sigma,\Delta\rhd\sigma)\\
-& \vec{t} \rhd \sigma  = (1 + \vec{t},  0)
+& \vec{x} \rhd \sigma  : \Vars(\Gamma \rhd\sigma,\Delta\rhd\sigma)\\
+& \vec{x} \rhd \sigma  = (1 + \vec{x},  0)
 \end{align*}
 
-We define parallel substitution for terms: given $t : \Tm(\Gamma,\sigma)$ and $\vec{u} : \Subst(\Delta,\Gamma)$ we define $t[\vec{u}] : \Tm(\Delta,\sigma)$ by the following equations:
-  
+We first define renaming, that is $t : \Tm(\Gamma,\sigma)$ and 
+$\vec{x} : \Vars(\Delta,\Gamma)$ we define $t[\vec{x}] : \Tm(\Delta,\sigma)$ by the following equations:
   \begin{eqnarray*}
-  0 [ \vec{u},u ] & = & u \\ 
-  (1+t) [ \vec{u},u ]& = & t [\vec{u} ]\\
-  (t\,v) [\vec{u}] & = & (t [\vec{u}]) \,(v[\vec{u}) \\
-  (\lambda^\sigma t) [\vec{u}] & = & \lambda (t [\vec{u} \rhd \sigma])    
+  0 [ \vec{x},x ] & = & x \\ 
+  (1+i) [ \vec{x},x ]& = & i [\vec{x} ]\\
+  (t\,u) [\vec{x}] & = & (t [\vec{x}]) \,(u[\vec{x}) \\
+  (\lambda^\sigma t) [\vec{x}] & = & \lambda (t [\vec{x} \rhd \sigma])    
   \end{eqnarray*}
-
-We now define identity and composition : Given $\Gamma = \sigma_n . \sigma_{n-1} \dots .\sigma_0$ we define
+We now define identity : Given $\Gamma = \sigma_n . \sigma_{n-1} \dots .\sigma_0$ we define
 \begin{align*}
   & \id_\Gamma  :   \Subst(\Gamma,\Gamma) \\
   & \id_\Gamma = n , n-1 , \dots, 0 
 \end{align*}
+% Actually, we observe that there is a nice recursive definition of $\id$:
+% \begin{align*}
+% & \id_\bullet = \epsilon \\
+% & \id_{\Gamma\rhd\sigma} = \id_\Gamma \rhd \sigma 
+% \end{align*}
 
-Now given $\vec{t} = t_n,t_{n-1},\dots, t_0 : \Subst(\Gamma,\Delta)$ and $\vec{u} : \Subst(\Theta,\Gamma)$ we define
+Using renaming we can now define $1+$ for terms, that is given $\Tm(\Gamma,\sigma)$ we define 
+\begin{align*}
+1+t & : \Tm(\Gamma\rhd \sigma,\tau) \\
+1+t & = t [1+\id]
+\end{align*}
+% Repeating the definition for renamings we can define operations on substitutions:
+% Given $\vec{t} = t_n,t_{n-1},\dots,t_0: \Subst(\Gamma,\Delta) $, we can apply $1+$ to it componentwise:
+% \begin{align*}
+%   & 1 + \vec{t} : \Subst (\Gamma\rhd \sigma,\Delta) \\
+%   & 1 + \vec{t} = 1+t_n , 1+t_{n-1} , \dots , 1+t_0\\
+%   \\
+%   & \vec{x} \rhd \sigma  : \Vars(\Gamma \rhd\sigma,\Delta\rhd\sigma)\\
+%   & \vec{x} \rhd \sigma  = (1 + \vec{x},  0)
+% \end{align*}
+
+% We first define renaming, that is $t : \Tm(\Gamma,\sigma)$ and 
+% $\vec{x} : \Vars(\Delta,\Gamma)$ we define $t[\vec{x}] : \Tm(\Delta,\sigma)$ by the following equations:
+%   \begin{eqnarray*}
+%   0 [ \vec{x},x ] & = & x \\ 
+%   (1+i) [ \vec{x},x ]& = & x [\vec{x} ]\\
+%   (t\,u) [\vec{x}] & = & (t [\vec{x}]) \,(u[\vec{x}) \\
+%   (\lambda^\sigma t) [\vec{x}] & = & \lambda (t [\vec{x} \rhd \sigma])    
+%   \end{eqnarray*}
+
+We can now repeat the definitions for renamings to define the corresponding operations on terms, i.e. given $\vec{u}: \Subst(\Gamma,\Delta)$ and $t : \Tm(\Delta,\sigma)$ we define :
+\begin{align*}
+  & \vec{u} \rhd \sigma  : \Subst(\Gamma \rhd\sigma,\Delta\rhd\sigma)  \\
+  & t[\vec{u}] : \Tm(\Gamma,\sigma) 
+\end{align*}
+It seems to be quite inelegant to repeat the same definition but it isn't so easy to avoid this, since we need renamings to derive the $1+$-operation for terms. There are alternatives but each comes with their own issues.
+
+We can now define composition: given $\vec{t} = t_n,t_{n-1},\dots, t_0 : \Subst(\Gamma,\Delta)$ and $\vec{u} : \Subst(\Theta,\Gamma)$ we define
 \begin{align*}
   & \vec{t} \circ \vec{u} : \Subst(\Theta,\Delta) \\
   & \vec{t} \circ \vec{u}  = t_n[\vec{u}] , t_{n-1}[\vec{u}], \dots t_0[\vec{u}]
 \end{align*}
 
- We can now add the equations which allow us to weird terms like $1+(0\,1)$ or $1 + \lambda\,(0 1)$ to one with proper numerical indices -- this is sometimes called \emph{$\alpha$-normalisation}.
-
-  \begin{eqnarray*}
-    1+(t\,u) & = & (1+t) \, (1+u) \\
-    1+(\lambda^\sigma t) & = & \lambda (t [(1 + \id) \rhd \sigma]
-  \end{eqnarray*}
-
-In the equation for $\lambda$ we weaken under a binder, that is we use $(1 + \id) \rhd \sigma : \Subst(\Gamma\rhd\tau\rhd\sigma,\Gamma\rhd\sigma)$. 
-  
   \begin{exercise}
     Show that lambda terms and substitutions form a category $\cat{\Lambda}$ where the objects are contexts, given contexts $\Gamma,\Delta$ the homsets are substitutions $\Subst(\Gamma,\Delta)$ and identity and composition are defined as above. You need to check the laws.
 
@@ -375,6 +407,8 @@ In the equation for $\lambda$ we weaken under a binder, that is we use $(1 + \id
         t[\vec{t}\circ\vec{u}] & = & t[\vec{t}][\vec{u}]
       \end{eqnarray*}
   \end{exercise}
+
+
   
 \newpage
 \section{Functors and natural transformations}
