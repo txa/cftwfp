@@ -64,17 +64,12 @@
       \fi}
       {\if@twocolumn\else\endquotation\fi}
 \fi
+\makeatother
 
-
-% \newif\ifExerThisChapter
-% \ExerThisChapterfalse
 \pretocmd{\chapter}{%
-        \ifnum \value{chapter}>1
+        \ifnum \value{chapter}>1 %bad hack
           \shipoutAnswer
         \fi
-    % \if@AnswerOutput\subsection{Solutions to exercises}\fi%
 }{}{}
-% \renewcommand{\AtBeginExercise}{\ExerThisChaptertrue}
-\makeatother
 
 \pretocmd{\shipoutAnswer}{\addcontentsline{toc}{section}{Solutions to exercises}\section*{Solutions to exercises}}{}{}
