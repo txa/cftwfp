@@ -4,10 +4,13 @@
 \section{From sets to categories}
 \label{sec:from-sets-categories}
 
+
+
 We start with the standard example of a category: the category of sets $\cSet$. To define a category we need a type of objects which is $\Set$
 %\footnote{So really we have categories of sets on every level $\cat{\Set_i}$.}%
 . We write $\obj{\cSet} = \Set$. 
 Given two objects $A,B : \Set$ we define the set of morphisms which in this case is the set of functions, $\cSet(A,B) = A \to B$. For every object $A : \Set$ we have an identity function $\id_A : A \to A$ which is defined as $\id_A\,a = a$, given functions $f : B \to C$ and $g : A \to B$ we define function composition $f \circ g : A \to C$ as $(f\circ g)\,a = f\,(g\,a)$. The strange order of arguments in composition is a consequence of the fact that we write function application this way around, hence there is no change of direction in the definition of $\circ$. We observe that there are a number of laws for function composition: identity is neutral, that is given $f : A \to B$ we have that $\id_B \circ f = f$ and $f \circ \id_A = f$ and moreover it is associative, that is given three composable function $h : C \to D, g : B \to C, f : A \to B$ we have that $h \circ (g \circ f) = (h \circ g) \circ f$.
+
 
 \begin{exercise}
   Write down the proofs that identity is neutral and composition is associative in detail.
@@ -40,13 +43,26 @@ Given two objects $A,B : \Set$ we define the set of morphisms which in this case
   so $h \circ (g \circ f) = (h \circ g) \circ f$.
 \end{answer}
 
+
 We abstract from this example to define what is a category: A category $\cat{C}$ is given by a type of objects $\obj{\cat{C}}$ and given two objects $A,B: \obj{\cat{C}}$, a set of morphisms $\homC{C}{A}{B} : \Set$ called the \emph{homset}. 
 %Inspired by the set example we also write $A \to_{\cat{C}} B$ for this.
 For every object $A : \obj{\cat{C}}$ we have an identity function%
 \footnote{We are overloading $\id$ and $\circ$ to be precise we should annotate these symbols with the category, i.e. write $\id^{\cat{C}}$ and $\circ^{\cat{C}}$. However, it is usually clear from the context which category is meant.}
-$\id_A : \homC{C}{A}{A}$, given functions $f : \homC{C}{B}{C}$ and $g : \homC{C}{A}{B}$ there is a composite $f \circ g : \homC{C}{A}{C}$ satisfying the following laws: identity is neutral, that is given $f : \cat{C}(A,B)$ we have that $\id_B \circ f = f$ and $f \circ \id_A = f$ and moreover it is associative, that is given three composable functions $f : \homC{C}{A}{B}, g : \homC{C}{B}{C}, h : \homC{C}{C}{D}$ we have that $h \circ (g \circ h) = (h \circ g) \circ f$.
+$\id_A : \homC{C}{A}{A}$, given functions $f : \homC{C}{B}{C}$ and $g : \homC{C}{A}{B}$ there is a composite $f \circ g : \homC{C}{A}{C}$ satisfying the following laws: identity is neutral, that is given $f : \cat{C}(A,B)$ we have that $\id_B \circ f = f$ and $f \circ \id_A = f$ and moreover it is associative, that is given three composable functions $f : \homC{C}{A}{B}, g : \homC{C}{B}{C}, h : \homC{C}{C}{D}$ we have that $h \circ (g \circ h) = (h \circ g) \circ f$. Whenever we want to define a new category, we have to supply all these components (summarised in \checklistref{Category}).
 
-Equations in category theory are often shown as \emph{commuting diagrams}. Composition corresponds to completing a triangle
+\begin{NamedDoubleChecklist}[to define a category $\cat{C}$, we need to specify]{Category}{Data}{Conditions}
+  \item objects
+  \item homsets (morphisms)
+  \item identity morphisms
+  \item composition
+
+  \NextColumn
+
+  \item identity is neutral (left and right)
+  \item composition is associative
+\end{NamedDoubleChecklist}
+
+Equations in category theory are often shown as \emph{commuting diagrams}. Composition corresponds to completing a triangle 
 \[\begin{tikzcd}
 A \arrow[rd, dashrightarrow,"f\circ g" below] \arrow[r,"f"] & B \arrow[d,"g"]\\
 & C
