@@ -6,17 +6,6 @@
 }{\solfalse}
 \makeatother
 
-\ifsol
-\usepackage[lastexercise]{exercise}
-\else
-\usepackage[noanswer,lastexercise]{exercise}
-\fi
-
-\usepackage{amsmath}
-\usepackage{amssymb}
-\usepackage{proof}
-\usepackage{tikz}
-\usetikzlibrary{cd}
 
 \usepackage{hyperref}
 \hypersetup{
@@ -25,12 +14,27 @@
     linkcolor=blue,  %choose some color if you want links to stand out
 }
 
+\ifsol
+\usepackage[lastexercise,answerdelayed]{exercise}
+\else
+\usepackage[noanswer,lastexercise]{exercise}
+\fi
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{proof}
+\usepackage{tikz}
+\usepackage{etoolbox}
+\usetikzlibrary{cd}
+\usepackage{minted}
+
+
 
 
 \renewcommand{\ExerciseHeader}{{\noindent\textbf{
 \ExerciseName\ \ExerciseHeaderNB\ExerciseHeaderTitle
 \ExerciseHeaderOrigin\;}}}
-\renewcommand{\AnswerHeader}{\noindent{\textit{\textbf{Solution\ \ExerciseHeaderNB:}}\;}}
+\renewcommand{\AnswerHeader}{\noindent{\textbf{Exercise\ \ExerciseHeaderNB:}}\;}
 \renewcommand{\ExerciseSkipAfter}{8pt}
 \renewcommand{\AnswerSkipAfter}{8pt}
 
@@ -62,3 +66,46 @@
       {\if@twocolumn\else\endquotation\fi}
 \fi
 \makeatother
+
+% endChap.tmp defaults to blank
+\newwrite\tempfile
+\immediate\openout\tempfile=endChap.tmp
+\immediate\write\tempfile{}
+\immediate\closeout\tempfile
+
+\pretocmd{\chapter}{%
+    % If previous chapter had answers, this will have a solutions section* with \shipoutAnswer.
+    % Otherwise, it will be blank
+        \input{endChap.tmp} 
+    % Blank endChap.tmp, so it will be blank unless an answer sets it
+        \immediate\openout\tempfile=endChap.tmp
+        \immediate\write\tempfile{}
+        \immediate\closeout\tempfile
+}{}{}
+
+% Saves the problem statement to theproblem.tmp, and prints it in an Exercise environment
+\newenvironment{exercise}
+{\VerbatimOut{theproblem.tmp}}
+{\endVerbatimOut
+  \begin{Exercise}
+    \input{theproblem.tmp}
+  \end{Exercise}
+}
+
+\newenvironment{answer}{%
+  % Set endChap.tmp to contain solutions section* and \shipoutAnswer so it will print this answer 
+  % (and the others in the chapter) at the end of the chapter
+  \immediate\openout\tempfile=endChap.tmp
+  \immediate\write\tempfile{\unexpanded{
+    \addcontentsline{toc}{section}{Solutions to exercises}\section*{Solutions to exercises}
+    \shipoutAnswer
+    }}
+  \immediate\closeout\tempfile
+  
+  % Start the Answer by restating the problem (which will be saved in theproblem.tmp)
+  \begin{Answer}
+    \input{theproblem.tmp}
+  
+    \noindent\textit{Solution:}
+    
+}{\end{Answer}}

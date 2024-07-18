@@ -41,6 +41,7 @@ CftLFP-nosol.pdf
 *.synctex.gz
 *.synctex.gz(busy)
 *.pdfsync
+*.tmp
 
 ## Build tool directories for auxiliary files
 # latexrun

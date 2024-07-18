@@ -48,9 +48,9 @@ D \arrow[rrd,bend left = 40,"h"] \arrow[ddr,bend right = 40,"k" below]
 &  B \arrow[r,"g" below] &C 
 \end{tikzcd}\]
 
-\begin{Exercise}
+\begin{exercise}
   What happens if we don't demand $f \circ h = g \circ k$? Can we still obtain $\pair{h}{k} : D \to E$?
-\end{Exercise}
+\end{exercise}
 
 The general definition of a pullback is the straightforward generalisation. A pullback in a category $\cat{C}$ for $f : \homC{C}{A}{C}$ and $g : \homC{C}{B}{C}$ is given by an object $f \times_C g :\obj{\cat{C}}$ together with morphisms $\pi_1 : \homC{C}{f \times_C g}{A}$ and $\pi_2 : \homC{C}{f \times_C g}{B}$ which makes the square commute and for every other such triple (this is called a \emph{cone}): $D : \obj{\cat{C}}, h : \homC{C}{D}{A}, k :  \homC{C}{D}{B}$ such that the outer square commutes, there is a unique morphism $\pair{h}{k} : \homC{C}{f \times_C g}$ such that all the triangles commute.
 
@@ -61,9 +61,9 @@ My notation for pullbacks is motivated by the observation that pullbacks are act
 \end{tikzcd}\]
 commutes.
 
-\begin{Exercise}
+\begin{exercise}
   Show that the pullback $f \times_C g$ is the product of $f$ and $g$ in the slice category $\cat{C}/C$.
-\end{Exercise}
+\end{exercise}
 
 \subsection*{Equalizers}
 \label{sec:equalizers}
@@ -86,13 +86,13 @@ The universal property is; given any other set $C$ together with a function $h :
   \Eq{f}{g} \arrow[r,"e" below] & A \arrow[r,"f",shift left] \arrow[r,"g" below,shift right]& B 
 \end{tikzcd}\]
 
-\begin{Exercise}
+\begin{exercise}
   Spell out the definition of an equalizer in an arbitrary category $\cat{C}$
-\end{Exercise}
+\end{exercise}
 
-\begin{Exercise}
+\begin{exercise}
   Show that  $e : \Eq{f}{g} \to A$ is a mono.
-\end{Exercise}
+\end{exercise}
 
 \subsection*{Finite limits}
 \label{sec:finite-limits}
@@ -128,13 +128,13 @@ we can construct the pullback as the equalizer
 \end{tikzcd}\]
 using $e$ composed with the product projections for the projections of the pullback.
 
-\begin{Exercise}
+\begin{exercise}
   Carry out the constructions in detail, using only the universal properties.
-\end{Exercise}
+\end{exercise}
 
-\begin{Exercise}
+\begin{exercise}
   Show that we can't get a terminal object from equalizers and binary products.
-\end{Exercise}
+\end{exercise}
 % the empty category
 
 \section{Pushouts and coequalizers}

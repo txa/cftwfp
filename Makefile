@@ -1,12 +1,14 @@
 
 
 pdf:
-	pdflatex CftLFP.tex
-	pdflatex CftLFP.tex
+	pdflatex -shell-escape CftLFP.tex
+	pdflatex -shell-escape CftLFP.tex
+	@rm -f *.tmp
+	@rmdir _minted-*
 	
 nosols:
-	pdflatex --jobname="CftLFP-nosol" "\newif\ifsol\solfalse\input{CftLFP}" 
-	pdflatex --jobname="CftLFP-nosol" "\newif\ifsol\solfalse\input{CftLFP}"
+	pdflatex -shell-escape --jobname="CftLFP-nosol" "\newif\ifsol\solfalse\input{CftLFP}" 
+	pdflatex -shell-escape --jobname="CftLFP-nosol" "\newif\ifsol\solfalse\input{CftLFP}"
 
 
 clean:

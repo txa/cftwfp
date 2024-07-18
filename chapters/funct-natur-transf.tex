@@ -29,10 +29,10 @@ More formally the proofs proceed by list induction.
 Inspired by $\List$ we define the notion of a functor in general: given categories $\cat{C}$ and $\cat{D}$ a functor $F : \cat{C} \to \cat{D}$ is given by a map on objects $F : \obj{\cat{C}} \to \obj{\cat{D}}$ and a map on morphisms 
 $F : \cat{C}(A,B) \to \cat{D}(F\,A,F\,B)$ that preserves identities $F\,\id_A = \id_{F\,A}$ and composition $F\,(f \circ g) = (F\,f) \circ (F\,g)$.
 
-\begin{Exercise}
+\begin{exercise}
   Show that every functor $F\colon\cat{C}\to\cat{D}$ preserves isomorphisms. That is if $\phi : \homC{C}{A}{B}$ is an isomorphism then so is $F\,\phi : \homC{D}{F\,A}{F\,B}$.
-\end{Exercise}
-\begin{Answer}
+\end{exercise}
+\begin{answer}
   Let $\phi\inv:\homC{C}{B}{A}$ be the inverse of $\phi$, i.e. $\phi\circ\phi\inv=\id$ and $\phi\inv\circ\phi=\id$. We need an inverse for $F\,\phi$, and the obvious choice is $F(\phi\inv)\colon\homC{D}{F\,B}{F\,A}$. Check that either composition is the identity:
   \begin{align*}
     F(\phi\inv)\circ F(\phi)
@@ -44,7 +44,7 @@ $F : \cat{C}(A,B) \to \cat{D}(F\,A,F\,B)$ that preserves identities $F\,\id_A = 
       &= F(\id) \tag{assumed}\\
       &= \id \tag{functoriality}
   \end{align*}
-\end{Answer}
+\end{answer}
 
 We note that functors between preorder categories are simply monotone maps, i.e. correspond to morphisms in $\cat{Pre}$ and functors between monoids are monoid morphisms, i.e. correspond to morphisms in $\cat{Mon}$. Given these observations above it may appear a good idea to define a category of categories with functors as morphisms. You find this definition in many classical text books. We will not do this because it isn't clear what equality of functors is, they do not form a set in our sense.
 \footnote{We can however, define the category of strict categories, i.e. categories whose objects form a set. Because in this case equality of functors is a proposition and hence functors form a set.}
@@ -116,7 +116,7 @@ F\,B \arrow[r,"\alpha_B" below] & F\,B
 To express that $\alpha$ is a natural transformation we write:
 \[ \alpha : \int_{A : \obj{\cat{C}}} \cat{D}(F\,A,G\,A)\]
 
-\begin{Exercise}\hfill
+\begin{exercise}
 
   \Question
     Show that $\Maybe : \Set \to \Set$ where $\Maybe\,A$ is given by the constructors:
@@ -132,8 +132,8 @@ To express that $\alpha$ is a natural transformation we write:
     \end{align*}
     is a natural transformation (i.e. $\hd : \int_{A:\Set}\List\,A \to \Maybe\,A$).
 
-\end{Exercise}
-\begin{Answer}
+\end{exercise}
+\begin{answer}
   \Question
     First, we need to define the morphism part, $\Maybe\,f\colon \Maybe\,A \to \Maybe\,B$ for each function $f\colon A\to B$. We define this by cases:
     \begin{align*}
@@ -170,7 +170,7 @@ To express that $\alpha$ is a natural transformation we write:
             &= (\Maybe(f)\circ\hd_A)\,[a_0,\ldots]
      \end{align*}
      So conclude $\hd_B\circ\List(f) = \Maybe(f)\circ\hd_A$, as required.
-\end{Answer}
+\end{answer}
 
 Functors between any two categories $\cat{C},\cat{D}$ and natural transformations form a category, the functor category $\cat{C}\cat{\to}\cat{D}$. It's objects are functors $F : \cat{C} \to \cat{D}$ and given two functors $F,G$ the homset is the set
 \footnote{This is a set in our sense because two natural transformations are equal when they are pointwise equal (and we don't need to talk about equality of objects). However, they are not necessarily small. The natural transformations between two endofunctors on $\cat{\Set_i}$ are not in $\Set_i$ because we quantify over all small sets.}
@@ -179,9 +179,9 @@ of natural transformations $\int_{X:C} \homC{D}{F\,X}{G\,X}$, the identity natur
 & (\beta \circ \alpha) : \int_{X:C} \homC{D}{F\,X}{H\,X}\\
 & (\beta \circ \alpha)_X = \beta_X \circ \alpha_X
 \end{align*}
-\begin{Exercise}
+\begin{exercise}
   Check that these are indeed natural transformations and that the laws for a category hold.
-\end{Exercise}
+\end{exercise}
 
 \section{Adjunctions}
 \label{sec:adjunctions}
@@ -191,13 +191,13 @@ An important class of functors are the forgetful functors which just \emph{forge
 Is there an interesting functor in the other direction, that is $F : \cat{\Set} \to \cat{Mon}$? Indeed there is: we can use the fact that lists form a monoid with append $\_\app\_ : \List\,A \to \List\,A \to \List\,A$ and $[] : \List\,A$, hence on objects we can define
 \[ F\,A = (\List\,A, [], \_\app\_) \]
 We have already observed that $\List$ is a functor but to show that $F$ is a functor we also need that $\List\,f$ is a monoid morphism:
-\begin{Exercise}
+\begin{exercise}
   Show that for any $f:A \to B$, $\List\,f : \List\,A \to \List\,B$ is a monoid morphism, that is
   \begin{align*}
     \List\,f\,[] & = [] \\
     \List\,f\,(l \app m) & = (\List\,f\,l) \app (\List\,f\,m)
   \end{align*}
-\end{Exercise}
+\end{exercise}
 Hence we can define $F\,f = \List\,f$, the functor laws follow because $\List$ is a functor on $\cat{\Set}$.
 
 The monoid constructed with lists is special, it is the \emph{free monoid} over a given set. Here free means that it only satisfies the laws of a monoid but is not subject to any other laws. There are other functors with the type $\cat{\Set} \to \cat{Mon}$ for example the finite multisets or the finite sets over a given set. These do satisfy additional laws, the counterpart to the append operation is commutative in the case of multisets $l \app m = m \app l$ and idempotent in the case of finite sets $l \app l = l$, hence they are not free over monoids.
@@ -217,10 +217,10 @@ On the other hand given a function $g : A \to |M|$ we can define a function $\ps
   \psi\,g\,[] & = e \\
   \psi\,g\, [a_0,a_1,\dots,a_{n-1}] & = (g\,a_0) * (g\,a_1) * \dots * (g\,a_{n-1})
 \end{align*}
-\begin{Exercise}
+\begin{exercise}
   Show that $\psi\,g$ is a monoid morphism, i.e. $\phi\,g : \cat{Mon}(F\,A,M)$
-\end{Exercise}
-\begin{Answer}
+\end{exercise}
+\begin{answer}
   $\psi\,g$ preserves the neutral element: it sends $[]$ to $e$. As for preserving the monoid operation, observe:
   \begin{align*}
       &\psi\,g\,([a_0,a_1,\dots,a_{n-1}]\app[b_0,b_1,\dots,b_{m-1}])\\
@@ -229,7 +229,7 @@ On the other hand given a function $g : A \to |M|$ we can define a function $\ps
         &= (\psi\,g\,[a_0,a_1,\dots,a_{n-1}]) * (\psi\,g\,[b_0,b_1,\dots,b_{m-1}])
   \end{align*}
   so this is indeed a monoid morphism.
-\end{Answer}
+\end{answer}
 Hence we have constructed functions:
 \[\begin{tikzcd}[column sep = large]
 \cat{Mon}(F\,A,M) \arrow[r,"\phi_{A,M}",bend right] & \cat{\Set}(A,U\,M) \arrow[l,"\psi_{A,M}",bend right]
@@ -275,14 +275,14 @@ The other direction is a bit more interesting: to show that $\psi \circ \phi = \
 & = (\id\,f)\,[a_0,a_1,\dots,a_{n-1}] 
 \end{align*}
 
-\begin{Exercise}
+\begin{exercise}
   Verify that $\phi$ is a natural transformation, that is for any $f : \cat{Set}(B,A)$ and $g:\cat{Mon}(M,N)$ the following diagram commutes:
   \[\begin{tikzcd}[row sep = large]
     \cat{Mon}(F\,A,M) \arrow[r,"\phi_{A,M}"] \arrow[d,"\lambda h. g\circ h \circ (F\,f)"] & \cat{\Set}(A,U\,M)  \arrow[d,"\lambda k. (U\,g)\circ k \circ f"] \\
     \cat{Mon}(F\,B,N) \arrow[r,"\phi_{B,N}" below]  & \cat{\Set}(B,U\,N)  
 \end{tikzcd}\]
-\end{Exercise}
-\begin{Answer}
+\end{exercise}
+\begin{answer}
   Pick arbitrary $h\colon\homC{Mon}{F\,A}{M}$. Then the down-then-right trip around the square gives
   \[ \phi\,(g\circ h\circ F(f)) \colon \homC{Set}{A}{U\,N} \]
   this function sends $a\colon A$ to $g(h(\List\,f\,[a)))$, that is, $g(h\,[f\,a])$ by definition of $\phi$ and $F$.
@@ -297,7 +297,7 @@ The other direction is a bit more interesting: to show that $\psi \circ \phi = \
   This is the same expression we got by the other direction. Since $a$ was arbitrary, conclude
   \[ \phi\,(g\circ h\circ F(f)) = (U\,g)\circ (\phi\,h)\circ f,\]
   which is naturality.
-\end{Answer}
+\end{answer}
 \begin{question}
   Why don't we need to verify that $\psi$ is a natural transformation?
 \end{question}
@@ -324,10 +324,10 @@ In this case we say that $L$ is left adjoint to $R$ (or that $R$ is right adjoin
 
 We can actually obtain the list functor as the composition of the forgetful and the free functor: $\List = U \circ F$. We will return to this observation later, because functors which are obtained by composing a free and a forgetful functor are always monads and indeed List is a monad.
 
-\begin{Exercise}
+\begin{exercise}
 \label{ex:free-preorder}
   There is also a forgetful functor from the category of preorders to the category of endorelations $U : \cat{Pre} \to \cat{Rel}$, which is defined just as for preorders but without any conditions, i.e. the objects are sets $X:\Set$ with a relation $R : X\to X\to\Prop$ and morphisms are defined as functions that preserve the relation (as for $\cat{Pre}$). Now $U$ doesn't do anything but it just forgets that the relation is a preorder. Can you find a left adjoint $F : \cat{Rel} \to \cat{Pre}$ which constructs the free preorder over a given relation?
-\end{Exercise}
+\end{exercise}
 
 There are many ways to define adjunctions, the one I have given here is maybe not the best, especially the naturality conditions are quite complicated. A popular alternative is to observe that we can obtain two natural transformations from the natural equivalence, which are called the unit and the counit of an adjunction:
 \begin{align*}
@@ -348,11 +348,11 @@ R\,B \arrow[rd,equal] \arrow[r,"\eta_{R\,B}"] &   R\,(L\,(R\,B)) \arrow[d,"R\,\e
 \end{tikzcd}
 \]
 
-\begin{Exercise}
+\begin{exercise}
  Give explicit definitions of $\eta$ and $\epsilon$ for the adjunction between $\cat{Mon}$ and $\cat{\Set}$ we have defined.
-\end{Exercise}
+\end{exercise}
 
-\begin{Exercise}
+\begin{exercise}
   Show that the two definitions of an adjunctions between two functors $L : \cat{C} \to \cat{D}$ and $R : \cat{D} \to \cat{C}$ are equivalent: 
   \begin{itemize}
   \item An adjunction is given by a natural isomorphism 
@@ -364,7 +364,7 @@ R\,B \arrow[rd,equal] \arrow[r,"\eta_{R\,B}"] &   R\,(L\,(R\,B)) \arrow[d,"R\,\e
     \end{align*}
     s.t. $\epsilon_{L\,A} \circ L\,\eta_A = \id_{L\,A}$ and $R\,\epsilon_B \circ \eta_{R\,B} = \id_{R\,B}$.
   \end{itemize}
-\end{Exercise}
+\end{exercise}
 
 \section{The Yoneda lemma}
 \label{sec:yoneda-lemma}
@@ -384,17 +384,17 @@ Let $F$ be a functor $\cat{C}^\op \to \cat{\Set}$ this is called \emph{a preshea
 &\homC{C}{f}{A} : \homC{C}{C}{A} \to \homC{C}{B}{A} \\
 &\homC{C}{f}{A} \,g =  g \circ f
 \end{align*}
-\begin{Exercise}
+\begin{exercise}
   Check that $\homC{C}{\_}{A}$ satisfies the functor laws.
-\end{Exercise}
+\end{exercise}
 Indeed, since we already learnt that functors and natural transformations form a category, preshaves over $\cat{C}$ form a category which we denote as $\PSh\,\cat{C}$. Now using the other input of the homset of $\cat{C}$ we can form a functor $\Y : \cat{C} \to \PSh\,\cat{C}$, called the \emph{Yoneda embedding}, which is defined on objects as $\Y\,A = \homC{C}{\_}{A}$. To define the morphism part assume $f:\homC{C}{A}{B}$:
 \begin{align*}
 & \Y\,f :  \int_{X:\cat{C}}\homC{C}{X}{A} \to \homC{C}{X}{B} \\
 & (\Y\,f)_X\,g = f \circ g
 \end{align*}
-\begin{Exercise}
+\begin{exercise}
   Check that $Y\,f$ is a natural transformation and that $Y$ satisfies the functor laws.
-\end{Exercise}
+\end{exercise}
 Maybe you wondered why presheaves are defined as contravariant functors. The reason is that this way the Yoneda embedding is covariant (otherwise it could be hardly called an embedding).
 
 For any presheaf $F : \cat{C}^\op\to\Set$ we can use its morphism part to define
@@ -403,9 +403,9 @@ For any presheaf $F : \cat{C}^\op\to\Set$ we can use its morphism part to define
             & :  F\,X \to \int_{Y : \cat{C}} \cat{C}(Y,X) \to F\,Y \\
 \end{align*}
 as $\phi_X\,x\,f = F\,f\,x$. 
-\begin{Exercise}
+\begin{exercise}
   Check that $\phi$ is natural in $X:\cat{C}$.
-\end{Exercise}
+\end{exercise}
 
 Now the Yoneda lemma says that this is a natural isomorphism. It is easy to define the inverse (fixing $X:\cat{C}$):
 \begin{align*}
@@ -458,13 +458,13 @@ Hence $(\phi \circ \psi)\,\alpha\,f = \alpha\,f$ and using extensionality we can
 .%We should also check naturality but the naturality of $\psi$ is true by construction and this is sufficient. 
 
 % This completes the proof of the Yoneda lemma, actually if we are in a really nitpicking mood we better check naturality:
-% \begin{Exercise}
+% \begin{exercise}
 % Show the isomorphism is natural, i.e. for any $f : \cat{C}(Z,X)$
 % \[\begin{tikzcd}[row sep = large]
 %     F\,X \arrow[r,"\phi_X"] \arrow[d,"F\,f"] & \int_{Y : \cat{C}} \cat{C}(Y,X) \to F\,Y\arrow[d,"\lambda Y\,g. \alpha_Y (f \circ g)"] \\
 %     F\,Z \arrow[r,"\phi_Z" below]  & \int_{Y : \cat{C}} \cat{C}(Y,Z) \to F\,Y
 % \end{tikzcd}\]
-% \end{Exercise}
+% \end{exercise}
 
 An important corollary of the Yoneda lemma is that the Yoneda embedding is full and faithful, that is the effect of the functor on morphisms is both injective (faithful) and surjective (full) which is a good reason why it deserves the name \emph{embedding}. We can see this by applying the Yoneda lemma to $Y\,Z$
 \begin{align*}
@@ -487,9 +487,9 @@ We can expand the isomorphism further:
          & : \int_{X:\cat{C}} \homC{C}{X}{Z} \cong \int_{Y : \cat{C}} \homC{C}{Y}{X}\to \homC{C}{Y}{Z}
 \end{align*}
 We know that every functor preserves isomorphisms, a functor which is full and faithful also \emph{reflects} them. That is if $Y\,f$ is an isomorphism then $f$ is one. 
-\begin{Exercise}
+\begin{exercise}
   Proof that every full and faithful functor reflects isomorphisms. 
-\end{Exercise}
+\end{exercise}
 This gives rise to a useful corollary: to show that $f : \homC{C}{A}{B}$ is an isomorphism it is enough to show that $\Y\,A$ and $\Y\,B$ are naturally isomorphic, i.e.
 \[ \int_{X:\cat{C}} \homC{C}{A}{X} \cong \homC{C}{B}{X} ,\]
 and this is often easier because we can just calculate with natural isomorphisms.
@@ -498,28 +498,28 @@ Sometimes we need the Yoneda lemma for covariant functors but this is no problem
 \[ \int_{X:\cat{C}} \homC{C}{X}{A} \cong \homC{C}{X}{B}. \]
 
 % Maybe you are puzzled why we use contravariant functors $\cat{C}^\op \to \cat{\Set}$, i.e. presheaves, and not just $\cat{C} \to \cat{\Set}$. This is completely equivalent because  $\cat{C} \to \Set$ becasue all we need to do is to apply the Yoneda lemma for presheaves to the opposite of our category. Still this is a nice (even though easy) exercise:
-% \begin{Exercise}
+% \begin{exercise}
 %   Explicitely prove the Yoneda lemma for covariant presheaves $F: \cat{C} \to \cat{\Set}$:
 %   \[F\,X \cong \int_{Y : \cat{C}} \cat{C}(X,Y) \to F\,Y\] 
-% \end{Exercise}
+% \end{exercise}
 % But back to the question. First of all we haven't mentioned it but functors and natural transformations form a category, in particular the category of presheaves $\PSh\,\cat{C}$ over a given category $\cat{C}$. Now using homsets we can define a functor called the Yoneda embedding:
 % \begin{align*}
 % \Y : \cat{C} \to \PSh\,\cat{C} \\
 % \Y\,A = \lambda X.\cat{C}(X,A)
 % \end{align*}
 % This functor embeds a category into its category of presheaves and it has a number of interesting and useful properties (it is the unit of a higher adjunction) and this makes only sense if it is covariant but then presheaves have to be contravariant.
-% \begin{Exercise}
+% \begin{exercise}
 %   Define explicitely the category of presheaves $\PSh\,\cat{C}$ and the Yoneda embedding $\Y: \cat{C} \to \PSh\,\cat{C}$ and check all the laws.
-% \end{Exercise}
+% \end{exercise}
 
 \section{Ends and coends}
 \label{sec:ends-coends}
 
 Since I have introduced the notation $\int_{A : \obj{\cat{C}}} \cat{D}(F\,A,G\,A)$ to define natural transformations, you are maybe wondering what the general meaning of these \emph{integrals} are. It is clear that $\cat{D}(F\,A,G\,A)$ is an function from
 $\obj{\cat{C}}$ but it is neither co- nor contravariant. However, it is a profunctor that is a functor of the type $F : \cat{C}^\op\times\cat{C} \to \cat{\Set}$\footnote{Here $\cat{C}\times\cat{D}$ is the product of categories: the objects are pairs of objects: $\obj{\cat{C}\times\cat{D}}=\obj{\cat{C}}\times\obj{\cat{D}}$ and the morphisms are pairs of morphisms: $\homC{C \times D}{(C_0,D_0)}{(C_1,D_1)}=\homC{C}{C_0}{C_1}\times\homC{D}{D_0}{D_1}$.} where we define it as $F(A^{-},A^{+})= \cat{D}(F\,A^{-},G\,A^{+})$.
-\begin{Exercise}
+\begin{exercise}
   Fill in the morphism part of $F$.
-\end{Exercise}
+\end{exercise}
 Now given a profunctor $F : \cat{C}^\op\times\cat{C} \to \Set$ we define its end $\int_{X: \cat{C}}F(X,X)$ as a subset of the dependent function type $\alpha:\Pi_{X : \obj{\cat{C}}}F(X,X)$ such the following diagram commutes for any $f : \homC{C}{A}{B}$ in $\cat{Set}$:
 \[\begin{tikzcd}
   & \bf{1} \arrow[dl,"\alpha_A" left=5]\arrow[dr,"\alpha_B"]\\
@@ -530,10 +530,10 @@ Now given a profunctor $F : \cat{C}^\op\times\cat{C} \to \Set$ we define its end
 That is we define
 \[ \int_{X:\cat{C}} F(X,X) = \{ \alpha : \Pi_{X : \obj{\cat{C}}}F(X,X) \mid
   \forall {f : \homC{C}{A}{B}} . F(A,f)\,\alpha_A) = F(f,B)\,\alpha_B \}\]
-\begin{Exercise}
+\begin{exercise}
   Show that instantiating the definition of ends given here gives rise to the definition of natural transformations given previously.
   That is $\int_{A : \obj{\cat{C}}} \cat{D}(F\,A,G\,A)$ is the set of natural transformations.
-\end{Exercise}
+\end{exercise}
 
 Dually we define coends $\int^{X:\cat{C}} F(X,X)$ as a quotient of a $\Sigma$-type. That is we consider
 $\Sigma_{X : \obj{\cat{C}}}F(X,X) / \sim$ where for any  $z : F(B,A)$ and $f: \homC{C}{A}{B}$ and $z : F(B,A)$ ,
