@@ -30,8 +30,11 @@
 \usepackage{mathtools}
 \usepackage{enumitem}
 \usepackage{framed}
+\usepackage{xifthen}
 
-
+\newcommand{\ifnonempty}[2]{%
+  \ifthenelse{\isempty{#1}}{}{#2}%
+}
 
 
 \renewcommand{\ExerciseHeader}{{\noindent\textbf{
@@ -40,6 +43,7 @@
 \renewcommand{\AnswerHeader}{\noindent{\textbf{Exercise\ \ExerciseHeaderNB:}}\;}
 \renewcommand{\ExerciseSkipAfter}{8pt}
 \renewcommand{\AnswerSkipAfter}{8pt}
+\newcommand{\Exerciseautorefname}{Exercise}
 
 \newtheorem{question}[Exercise]{Question}
 
@@ -87,10 +91,11 @@
 }{}{}
 
 % Saves the problem statement to theproblem.tmp, and prints it in an Exercise environment
-\newenvironment{exercise}
+\NewDocumentEnvironment{exercise}{m}
 {\VerbatimOut{theproblem.tmp}}
 {\endVerbatimOut
-  \begin{Exercise}
+  \begin{Exercise}[label=#1] 
+
     \input{theproblem.tmp}
   \end{Exercise}
 }
@@ -124,7 +129,7 @@
   \begin{figure}[t] \label{checklist:#2}
     \begin{framed}
       \begin{center}
-      \textbf{#2~checklist}\ifx{#1}{}{}\else{:~#1}\fi
+      \textbf{#2~checklist}\ifnonempty{#1}{:~#1}
       \vspace{0.25cm}
       \hrule
       \vspace{0.25cm}
@@ -141,7 +146,7 @@
 \newenvironment{DoubleChecklist}[2][]{
   \begin{figure}[t] \label{checklist:#2}
     \begin{framed} \centering
-    \textbf{#2~checklist}\ifx{#1}{}{}\else{:~#1}\fi
+    \textbf{#2~checklist}\ifnonempty{#1}{:~#1}
     \vspace{0.25cm}
     \hrule
     \vspace{0.25cm}
@@ -161,7 +166,7 @@
       \begin{center}\itshape #4\end{center}
       \begin{checklist}}
     \begin{framed} \centering
-    \textbf{#2~checklist}\ifx{#1}{}{}\else{:~#1}\fi
+    \textbf{#2~checklist}\ifnonempty{#1}{:~#1}
     \vspace{0.25cm}
     \hrule
     \vspace{0.25cm}
