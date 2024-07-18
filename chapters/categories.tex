@@ -4,12 +4,15 @@
 \section{From sets to categories}
 \label{sec:from-sets-categories}
 
+
+
 We start with the standard example of a category: the category of sets $\cSet$. To define a category we need a type of objects which is $\Set$
 %\footnote{So really we have categories of sets on every level $\cat{\Set_i}$.}%
 . We write $\obj{\cSet} = \Set$. 
 Given two objects $A,B : \Set$ we define the set of morphisms which in this case is the set of functions, $\cSet(A,B) = A \to B$. For every object $A : \Set$ we have an identity function $\id_A : A \to A$ which is defined as $\id_A\,a = a$, given functions $f : B \to C$ and $g : A \to B$ we define function composition $f \circ g : A \to C$ as $(f\circ g)\,a = f\,(g\,a)$. The strange order of arguments in composition is a consequence of the fact that we write function application this way around, hence there is no change of direction in the definition of $\circ$. We observe that there are a number of laws for function composition: identity is neutral, that is given $f : A \to B$ we have that $\id_B \circ f = f$ and $f \circ \id_A = f$ and moreover it is associative, that is given three composable function $h : C \to D, g : B \to C, f : A \to B$ we have that $h \circ (g \circ f) = (h \circ g) \circ f$.
 
-\begin{exercise}
+
+\begin{exercise}{setCategoryLaws}
   Write down the proofs that identity is neutral and composition is associative in detail.
 \end{exercise}
 \begin{answer}
@@ -40,13 +43,38 @@ Given two objects $A,B : \Set$ we define the set of morphisms which in this case
   so $h \circ (g \circ f) = (h \circ g) \circ f$.
 \end{answer}
 
+
 We abstract from this example to define what is a category: A category $\cat{C}$ is given by a type of objects $\obj{\cat{C}}$ and given two objects $A,B: \obj{\cat{C}}$, a set of morphisms $\homC{C}{A}{B} : \Set$ called the \emph{homset}. 
 %Inspired by the set example we also write $A \to_{\cat{C}} B$ for this.
 For every object $A : \obj{\cat{C}}$ we have an identity function%
 \footnote{We are overloading $\id$ and $\circ$ to be precise we should annotate these symbols with the category, i.e. write $\id^{\cat{C}}$ and $\circ^{\cat{C}}$. However, it is usually clear from the context which category is meant.}
-$\id_A : \homC{C}{A}{A}$, given functions $f : \homC{C}{B}{C}$ and $g : \homC{C}{A}{B}$ there is a composite $f \circ g : \homC{C}{A}{C}$ satisfying the following laws: identity is neutral, that is given $f : \cat{C}(A,B)$ we have that $\id_B \circ f = f$ and $f \circ \id_A = f$ and moreover it is associative, that is given three composable functions $f : \homC{C}{A}{B}, g : \homC{C}{B}{C}, h : \homC{C}{C}{D}$ we have that $h \circ (g \circ h) = (h \circ g) \circ f$.
+$\id_A : \homC{C}{A}{A}$, given functions $f : \homC{C}{B}{C}$ and $g : \homC{C}{A}{B}$ there is a composite $f \circ g : \homC{C}{A}{C}$ satisfying the following laws: identity is neutral, that is given $f : \cat{C}(A,B)$ we have that $\id_B \circ f = f$ and $f \circ \id_A = f$ and moreover it is associative, that is given three composable functions $f : \homC{C}{A}{B}, g : \homC{C}{B}{C}, h : \homC{C}{C}{D}$ we have that $h \circ (g \circ h) = (h \circ g) \circ f$. Whenever we want to define a new category, we have to supply all these components (summarised in \checklistref{Category}); for instance, we do this for $\cat{Set}$ in \checklistref{Set}.
 
-Equations in category theory are often shown as \emph{commuting diagrams}. Composition corresponds to completing a triangle
+\begin{NamedDoubleChecklist}[to define a category $\cat{C}$, we need to specify]{Category}{Data}{Conditions}
+  \item objects
+  \item homsets (morphisms)
+  \item identity morphisms
+  \item composition
+
+  \NextColumn
+
+  \item identity is neutral (left and right)
+  \item composition is associative
+\end{NamedDoubleChecklist}
+
+\begin{DoubleChecklist}[$\cat{Set}$ is a category]{Set}
+  \item[\checked] objects: sets
+  \item[\checked] morphisms: functions
+  \item[\checked] identity morphisms: \[ \id_A\,a=a\]
+  \item[\checked] composition: \[(f\circ g)\,a = f(g(a))\]
+
+  \NextColumn
+
+  \item[\checked] identity is neutral: \autoref{setCategoryLaws}
+  \item[\checked] composition is associative: \autoref{setCategoryLaws}
+\end{DoubleChecklist}
+
+Equations in category theory are often shown as \emph{commuting diagrams}. Composition corresponds to completing a triangle 
 \[\begin{tikzcd}
 A \arrow[rd, dashrightarrow,"f\circ g" below] \arrow[r,"f"] & B \arrow[d,"g"]\\
 & C
@@ -91,7 +119,7 @@ We say that two objects $A,B$ are \emph{isomorphic} if there are morphisms $f : 
   A \arrow[r, bend left, "f"]  \arrow[loop left,"\id_A"] & B \arrow[l,bend left ,"g"]\arrow[loop right,"\id_B"] 
 \end{tikzcd}\]
 We call $f$ and $g$ \emph{isomorphisms}. We write $f : A \cong B$ or omitting the witness we write $A \cong B$ to express that $A$ and $B$ are isomorphic. 
-\begin{exercise}
+\begin{exercise}{inversesUnique}
   Show that inverses are unique, i.e. if $(f,g)$ and $(f,g')$ are an isomorphisms then $g = g'$. 
 \end{exercise}
 \begin{answer}
@@ -121,8 +149,8 @@ There is also a dual concept: the empty set is an \emph{initial object} $\bf{0}$
 this exists trivially because we don't have to say what the functions returns since there are no elements in its domain. In this case we are lucky there is only one way to write the initial object. We can make the symmetry precise by introducing the concept of a dual category: given a category $\cat{C}$ the opposite category $\cat{C}^\op$ has the same objects as $\cat{C}$ but the homsets are given by reversing the order $\cat{C}^\op(A,B) = \cat{C}(B,A)$ and consequently composition also reverses order $f \circ^{\cat{C}^\op} g = g \circ^{\cat{C}} f$. We can now say that an initial object is a terminal object in the opposite category, or vice versa a terminal object is an initial object in the opposite 
 category. We use the syllable \emph{co-} in this situation, we could say that an initial object is a co-terminal object or that a terminal object is a co-initial object (but nobody says this).
 
-\begin{exercise}
-  Prove explicitly that initial objects are unique upto isomorphism.
+\begin{exercise}{initObjUniq}
+  Prove explicitly that initial objects are unique up to isomorphism.
 \end{exercise}
 \begin{answer}
   This is a simple dualisation of the argument for terminal objects above. Suppose we had two initial objects $\bf{0}$ and $\bf{0'}$. Then the two triangles below commute.
@@ -140,8 +168,8 @@ When I say that a category has a terminal or initial object this also indicates 
 
 Let us look at some other examples of categories. We can use the natural numbers to define some categories: The category $\cat{\omega}$ has as objects the natural numbers and morphisms are given as $\homC{\omega}{m}{n} = m \leq n$. This is a category because $\leq$ is reflexive and transitive and those properties give rise to identity and composition. The laws hold trivial because there is at most one element of a proposition. This category is an example of a degenerate case of a category: it is a \emph{preorder}, i.e. a relation that is reflexive and transitive. 
 
-\begin{exercise}
-  Does this category have an initial or a terminal object? 
+\begin{exercise}{omegaInitTerm}
+  Does $\cat{\omega}$ have an initial or a terminal object? 
 \end{exercise}
 \begin{answer}
   It does have an initial object: 0. For all $n\colon\Nat$, we know $0\leq n$, so we get a morphism in $\homC{\omega}{0}{n}$. Since all the hom-sets are $\Prop$'s, we know that this morphism must be unique. This is an instance of a more general fact: if we view any preorder as a category (as we've done for the preorder $(\Nat,\leq)$ here), then an initial object in this category (if there is one) is a \emph{least element} in the preorder.
@@ -153,8 +181,8 @@ Let us look at some other examples of categories. We can use the natural numbers
 
 Another category we can be build from natural numbers has only one object and its morphisms are the natural numbers. The identity morphism is $0$ and composition is given by addition. The laws follow from the fact that $0$ is neutral ($n+0 = n = 0+n$) and associative $(l+m)+n = l+(m+n)$. Here we exploit the algebraic properties of $+$, namely that it is a \emph{monoid}; hence categories with one object correspond to monoids.
 
-\begin{exercise}
-  Does this category have an initial or a terminal object? 
+\begin{exercise}{NatMonoidInitTerm}
+  Does the monoid $\Nat$, considered as a one-object category, have an initial or a terminal object? 
 \end{exercise}
 \begin{answer}
   No. If an object $X$ is either initial or terminal, then this implies that $\cat{C}(X,X)$ must be the singleton set $\{\id_X\}$. But there is not one morphism from this object to itself, there are infinitely many.
@@ -162,7 +190,7 @@ Another category we can be build from natural numbers has only one object and it
 
 In Mathematics we are also interested in equivalence relations (preorders that are symmetric) and groups (monoids that have a inverses), like the integers $\Int$ with addition on negation). We can also do this for categories by saying that a category is a \emph{groupoid}, if for every morphism $f : A \to B$ there is an inverse $f^{-1} : B \to A$ such that $f \circ f^{-1} = \id$ and $f^{-1} \circ f = \id$. A groupoid whose homsets are propositions is an equivalence relation and a groupoid with one object is a group.
 
-\begin{exercise}
+\begin{exercise}{SetIsoGrpd}
   Let $\Set^{\cong}$ be the category whose objects are sets but whose morphisms are just the $\Set$-\emph{isomorphisms}. Show that this is a category, and moreover a groupoid. 
 \end{exercise}
 \begin{answer}
@@ -188,7 +216,7 @@ A rich source of categories are sets with structure. For example we define the c
 
 Another example is the category of monoids $\cat{Mon}$: Its objects are monoids, that is a set $A$ with a neutral element $e:A$ and a binary operation $\_*\_$ such that the laws of a monoid hold ($x*e=x, e*x=x, x*(y*z) = (x*y)*z$). A morphism between monoids $(A,e, \_*\_)$ and $(B,e',\_*'\_)$ is a function $f : A \to B$ which preserves the structure, i.e. $f\,e = e'$ and $f\,(x * y) = (f\,x) *' (f\, y)$. Again we only have to show that identity is a morphism and that morphisms are closed under composition to see that this is a category.
 
-\begin{exercise}
+\begin{exercise}{PreMonInitTerm}
   Do the categories $\cat{Pre}$ and $\cat{Mon}$ have initial and terminal objects?
 \end{exercise}
 \begin{answer}
@@ -226,7 +254,7 @@ On the other hand a surjective function can be cancelled on the right hand side.
 A \arrow[r,twoheadrightarrow,"e"]  & B
 \end{tikzcd}
 \]
-\begin{exercise}
+\begin{exercise}{InjMono}
   Show that the monos in $\cat{Set}$ are exactly the injective functions and the epis are exactly the surjective functions.
 % \footnote{It seems that the implication epi $\to$ surjective needs impredicativity, i.e. $\Prop_i : \Set_i$.} -- not true
 \end{exercise}
@@ -276,27 +304,24 @@ f \circ g = f \circ h
 & \implies &\id \circ g & = \id \circ h \\
 & \implies & g & = h 
 \end{align*}
-\begin{exercise}
+\begin{exercise}{sectionsAreEpic}
   Explicitly prove the dual construction: if $f : A \to B$ has a left inverse $r : B \to A$ with $f \circ r = \id$ then it is an epi.
 \end{exercise}
 Since $\half \circ \double = \id$ we can conclude that $\double$ is a mono (because it has a left inverse) and $\half$ is an epi (because it has a right inverse). On the other hand $\swap$ is self inverse that is $\swap \circ \swap = \id$ hence it has both a left and a right inverse (itself) and hence it is both a mono and an epi. 
  Indeed it is isomorphism and from the above it is easy to see that isomorphisms are always monos and epis. 
 
 In $\cat{\Set}$ the inverse direction is also true: 
-\begin{exercise}
+\begin{exercise}{BijIso}
   Show that in $\cat{\Set}$ a morphism that is both mono and epi (i.e. bijections) is an isomorphism.
 \footnote{One direction uses the principle of unique choice, that is for $R : A \to B \to \Prop$~
 \[(\forall x:A.\exists! y:B .R\,x\,y) \to \exists f :A \to B . \forall x:A.R\,x\,(f\,x) \]
 where $\exists!$ means there exists unique, i.e. $\exists! x:A.\phi\,x = \exists x:A.\phi\,x \wedge \forall y:A.\phi\,y \to x=y$. This principle is provable from univalence in Homotopy Type Theory.} 
 \end{exercise}
 However, this is not true in general: consider the embedding $i : \Nat \to \Int$, this is a monoid morphism $i : \cat{Mon}((\Nat,\_+\_,0),(\Int,\_+\_,0))$. 
-\begin{exercise}
+\begin{exercise}{epi-mono-not-iso}
   Show that $i$ is both an epi and a mono. But it cannot be an iso. Why?
 \end{exercise}
 However, if we know that the function is a mono and an epi because of inverses (we say it is a split mono and a split epi) that it is always an isomorphism:
-\begin{exercise}
-  Show that in any category a function that has both an left and a right inverse is always an isomorphism.
-\end{exercise}
 
 
 % \section{Lambda terms and substitutions}
@@ -310,7 +335,7 @@ However, if we know that the function is a mono and an epi because of inverses (
 
 % Yet another example for a category is $\cat{\Lambda}$ a category derived from simply typed $\lambda$-calculus. Here objects are contexts, that is  a sequence of typing assumptions for variables $x_0:\sigma_0,\dots,x_{n-1}:\sigma_{n-1}$ and morphisms between contexts 
 % $\Gamma$ and $\Delta = x_0:\sigma_0,\dots,x_{n-1}:\sigma_n$ are parallel substitutions of the form $x_0 \mapsto t_0, \dots x_{n-1} \mapsto t_{n-1}$ with $\Gamma \vdash t_i : \sigma_i$ for $0 \leq i < n$. 
-% \begin{exercise}
+% \begin{exercise}{}
 %   Complete the definition of this category: Define the application of a substitution of a term, that is if $\vec{t} : \cat{\Lambda}(\Gamma,\Delta)$ and $\Delta\vdash u : \sigma$ then $\Gamma \vdash u[\vec{t}] : \sigma$. Using this define composition of substitutions and define the identity substitution. Show that the laws of a category hold upto $\alpha$-conversion. If you want to avoid $\alpha$-conversion and capture-avoiding substitution use de Bruijn indices instead.
 % \end{exercise}
 

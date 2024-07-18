@@ -27,8 +27,14 @@
 \usepackage{etoolbox}
 \usetikzlibrary{cd}
 \usepackage{minted}
+\usepackage{mathtools}
+\usepackage{enumitem}
+\usepackage{framed}
+\usepackage{xifthen}
 
-
+\newcommand{\ifnonempty}[2]{%
+  \ifthenelse{\isempty{#1}}{}{#2}%
+}
 
 
 \renewcommand{\ExerciseHeader}{{\noindent\textbf{
@@ -37,6 +43,7 @@
 \renewcommand{\AnswerHeader}{\noindent{\textbf{Exercise\ \ExerciseHeaderNB:}}\;}
 \renewcommand{\ExerciseSkipAfter}{8pt}
 \renewcommand{\AnswerSkipAfter}{8pt}
+\newcommand{\Exerciseautorefname}{Exercise}
 
 \newtheorem{question}[Exercise]{Question}
 
@@ -84,10 +91,11 @@
 }{}{}
 
 % Saves the problem statement to theproblem.tmp, and prints it in an Exercise environment
-\newenvironment{exercise}
+\NewDocumentEnvironment{exercise}{m}
 {\VerbatimOut{theproblem.tmp}}
 {\endVerbatimOut
-  \begin{Exercise}
+  \begin{Exercise}[label=#1] 
+
     \input{theproblem.tmp}
   \end{Exercise}
 }
@@ -109,3 +117,68 @@
     \noindent\textit{Solution:}
     
 }{\end{Answer}}
+
+\newcommand{\checkbox}{$\Box$}
+\newcommand{\checked}{\raisebox{-.7pt}{\rlap{$\Box$}\;\!\raisebox{1.4pt}{\checkmark}}}
+\newlist{checklist}{itemize}{3}
+\setlist{noitemsep}
+\setlist[checklist]{label={\checkbox}}
+
+
+\newenvironment{Checklist}[2][]{
+  \begin{figure}[t] \label{checklist:#2}
+    \begin{framed}
+      \begin{center}
+      \textbf{#2~checklist}\ifnonempty{#1}{:~#1}
+      \vspace{0.25cm}
+      \hrule
+      \vspace{0.25cm}
+    
+    \begin{checklist}
+}
+{
+    \end{checklist}
+\end{center}
+\end{framed}
+\end{figure}
+}
+\newcommand{\NextColumn}{\end{checklist}\end{minipage}\begin{minipage}[t]{0.49\textwidth}\begin{checklist}}
+\newenvironment{DoubleChecklist}[2][]{
+  \begin{figure}[t] \label{checklist:#2}
+    \begin{framed} \centering
+    \textbf{#2~checklist}\ifnonempty{#1}{:~#1}
+    \vspace{0.25cm}
+    \hrule
+    \vspace{0.25cm}
+    \begin{minipage}[t]{0.49\textwidth}
+    \begin{checklist}
+}
+{
+    \end{checklist}
+  \end{minipage}
+\end{framed}
+\end{figure}
+}
+
+\newenvironment{NamedDoubleChecklist}[4][]{
+  \begin{figure}[t] \label{checklist:#2}
+    \renewcommand{\NextColumn}{\end{checklist}\end{minipage}\begin{minipage}[t]{0.49\textwidth}
+      \begin{center}\itshape #4\end{center}
+      \begin{checklist}}
+    \begin{framed} \centering
+    \textbf{#2~checklist}\ifnonempty{#1}{:~#1}
+    \vspace{0.25cm}
+    \hrule
+    \vspace{0.25cm}
+    \begin{minipage}[t]{0.49\textwidth}
+      \begin{center}\itshape #3\end{center}
+    \begin{checklist}
+}
+{
+    \end{checklist}
+  \end{minipage}
+\end{framed}
+\end{figure}
+}
+
+\newcommand{\checklistref}[1]{\hyperref[checklist:#1]{#1~checklist}}
