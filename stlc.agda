@@ -343,6 +343,30 @@ v[∘] {x = suc x} {ts = ts , t} = v[∘] {x = x}
     ≡⟨ cong (λ vs → u [ vs ]) (∘▷-tms {ts = ts}{us = us}) ⟩
  u [ (ts ∘ us) ▷-tms ] ∎)
 
+v[id] : x v[ id ] ≡ var x
+v[id] {x = zero} = refl
+v[id] {x = suc x} = 
+  x v[ suc-tms id ]
+     ≡⟨ {!!} ⟩
+  suc-tm (x v[ id ])
+     ≡⟨ {!!} ⟩     
+  var (suc x) ∎
+
+
+[id] : t [ id ] ≡ t
+[id] {t = var x} = v[id] {x = x}
+[id] {t = t $ u} = cong₂ _$_ ([id] {t = t}) ([id] {t = u})
+[id] {t = ƛ t} = cong ƛ ([id] {t = t})
+
+
+idr : ts ∘ id ≡ ts
+idr {ts = ε} = refl
+idr {ts = ts , t} = cong₂ _,_ (idr {ts = ts}) {!!}
+
+∘-assoc : (ts ∘ us) ∘ vs ≡ ts ∘ (us ∘ vs)
+∘-assoc {ts = ε} = refl
+∘-assoc {ts = ts , t} = cong₂ _,_ (∘-assoc {ts = ts}) ([∘] {u = t})
+
 {-
  ?
     ≡⟨ ? ⟩
