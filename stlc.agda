@@ -191,14 +191,14 @@ v[v∘] : x v[ xs ]v v[ ts ] ≡ x v[ xs v∘ ts ]
 v[v∘] {x = zero} {xs = xs , y} = refl
 v[v∘] {x = suc x} {xs = xs , y} = v[v∘] {x = x}
 
-suc-tm-var-nat : x v[ suc-tms ts {σ = σ} ] ≡ suc-tm (x v[ ts ])
-suc-tm-var-nat {x = zero} {ts = ts , t} = refl
-suc-tm-var-nat {x = suc x} {ts = ts , t} = suc-tm-var-nat {x = x}
+suc-var-tm-nat : x v[ suc-tms ts {σ = σ} ] ≡ suc-tm (x v[ ts ])
+suc-var-tm-nat {x = zero} {ts = ts , t} = refl
+suc-var-tm-nat {x = suc x} {ts = ts , t} = suc-var-tm-nat {x = x}
 
 suc-vars-tms-nat : xs v∘ (suc-tms ts {σ = σ}) ≡ suc-tms (xs v∘ ts)
 suc-vars-tms-nat {xs = ε} = refl
 suc-vars-tms-nat {xs = xs , x} =
-  cong₂ _,_ (suc-vars-tms-nat {xs = xs}) (suc-tm-var-nat {x = x})
+  cong₂ _,_ (suc-vars-tms-nat {xs = xs}) (suc-var-tm-nat {x = x})
 
 v∘▷ : (_▷-vars xs {σ = σ}) v∘ (ts ▷-tms) ≡ (xs v∘ ts) ▷-tms
 v∘▷ {xs = xs}{ts = ts} = 
@@ -237,8 +237,83 @@ suc-tms-lem {ts = ε} = refl
 suc-tms-lem {ts = ts , t} = cong₂ _,_ (suc-tms-lem {ts = ts}) (suc-tm-lem {t = t})
 
 -- needs [∘]v
+
+_∘v_ : Tms Γ Δ → Vars Θ Γ → Tms Θ Δ
+ε ∘v ts = ε
+(ts , t) ∘v xs = (ts ∘v xs) , (t [ xs ]v)
+
+id∘vl : ts ∘v idv ≡ ts
+id∘vl {ts = ε} = refl
+id∘vl {ts = ts , t} = cong₂ _,_ (id∘vl {ts = ts}) ([idv]v {t = t})
+
+suc-tm-vars-lem : suc-tm t [ xs , x ]v ≡ t [ xs ]v
+suc-tm-vars-lem {t = t}{xs = xs}{x = x} = 
+  suc-tm t [ xs , x ]v
+    ≡⟨⟩
+  t [ suc-vars idv ]v [ xs , x ]v
+    ≡⟨ [v∘v]v {u = t} ⟩
+  t [ (suc-vars idv) v∘v (xs , x) ]v
+    ≡⟨ cong (λ ys → t [ ys ]v) (suc-vars-lem {xs = idv}) ⟩
+  t [ idv v∘v xs ]v
+    ≡⟨ cong (λ ys → t [ ys ]v) (idvl {xs = xs}) ⟩        
+ t [ xs ]v ∎
+
+suc-tms-vars-lem : suc-tms ts ∘v (xs , x) ≡ ts ∘v xs
+suc-tms-vars-lem {ts = ε} {xs = xs} = refl
+suc-tms-vars-lem {ts = ts , t} {xs = xs} = cong₂ _,_ (suc-tms-vars-lem {ts = ts}) (suc-tm-vars-lem {t = t})
+
+suc-tm-var-nat : t [ suc-vars xs {σ = σ} ]v ≡ suc-tm (t [ xs ]v)
+suc-tm-var-nat {t = t}{xs = xs} = 
+   t [ suc-vars xs ]v
+     ≡⟨ cong (λ ys → t [ suc-vars ys ]v) (sym (idvr {xs = xs})) ⟩
+   t [ suc-vars (xs v∘v idv) ]v   
+     ≡⟨ cong (λ ys → t [ ys ]v) (sym (suc-vars-nat {xs = xs})) ⟩
+   t [ xs v∘v (suc-vars idv) ]v
+     ≡⟨ sym ([v∘v]v {u = t}) ⟩     
+   t [ xs ]v [ suc-vars idv ]v
+     ≡⟨⟩
+   suc-tm (t [ xs ]v) ∎
+
+suc-tms-vars-nat : ts ∘v (suc-vars xs {σ = σ}) ≡ suc-tms (ts ∘v xs)
+suc-tms-vars-nat {ts = ε} = refl
+suc-tms-vars-nat {ts = ts , t} = cong₂ _,_ (suc-tms-vars-nat {ts = ts}) (suc-tm-var-nat {t = t})
+
+∘v▷ : (_▷-tms ts {σ = σ}) ∘v (xs ▷-vars) ≡ (ts ∘v xs) ▷-tms
+∘v▷ {ts = ts}{xs = xs} = 
+ (ts ▷-tms) ∘v (xs ▷-vars)
+    ≡⟨⟩
+ (suc-tms ts , var zero) ∘v (suc-vars xs , zero)
+    ≡⟨ cong (λ us → us , var zero) (suc-tms-vars-lem {ts = ts}) ⟩
+ (ts ∘v suc-vars xs) , var zero
+    ≡⟨ cong (λ us → us , var zero) (suc-tms-vars-nat {ts = ts}) ⟩     
+ (ts ∘v xs) ▷-tms ∎
+
+v[∘v] : x v[ ts ] [ xs ]v ≡ x v[ ts ∘v xs ]
+v[∘v] {x = zero} {ts = ts , t} = refl
+v[∘v] {x = suc x} {ts = ts , t} = v[∘v] {x = x}
+
+[∘v] : u [ ts ] [ xs ]v ≡ u [ ts ∘v xs ]
+[∘v] {u = var x} = v[∘v] {x = x}
+[∘v] {u = t $ u} = cong₂ _$_ ([∘v] {u = t}) ([∘v] {u = u})
+[∘v] {u = ƛ u}{ts = ts}{xs = xs} = cong ƛ ((
+ u [ ts ▷-tms ] [ xs ▷-vars ]v
+    ≡⟨ [∘v] {u = u} ⟩
+ u [ (ts ▷-tms) ∘v (xs ▷-vars) ]
+    ≡⟨ cong (λ zs → u [ zs ]) (∘v▷ {ts = ts}) ⟩
+ u [ (ts ∘v xs) ▷-tms ] ∎))
+
 suc-tm-nat : t [ suc-tms ts {σ = σ} ] ≡ suc-tm (t [ ts ])
-suc-tm-nat = {!!}
+suc-tm-nat{t = t}{ts = ts} = 
+ t [ suc-tms ts ]
+     ≡⟨ sym (cong (λ us → t [ suc-tms us ]) (id∘vl {ts = ts})) ⟩
+ t [ suc-tms (ts ∘v idv) ]
+     ≡⟨ sym (cong (λ us → t [ us ]) (suc-tms-vars-nat {ts = ts})) ⟩     
+ t [ ts ∘v (suc-vars idv) ]  
+     ≡⟨ sym ([∘v] {u = t}) ⟩
+ t [ ts ] [ suc-vars idv ]v 
+    ≡⟨⟩
+ suc-tm (t [ ts ]) ∎
+
 
 suc-tms-nat : ts ∘ (suc-tms us {σ = σ}) ≡ suc-tms (ts ∘ us)
 suc-tms-nat {ts = ε} = refl
