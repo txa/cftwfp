@@ -100,7 +100,7 @@ module V(X : Con → Ty → Set)
   (suc i) v[ xs , x ] = i v[ xs ]
 
   open W X zeroX sucX 
-  open S Var X _v[_]
+  --open S Var X _v[_]
 
   suc-nat-v : i v[ suc* {τ = τ} xs ] ≡ sucX (i v[ xs ])
   suc-nat-v {i = zero} {xs = xs , x} = refl
