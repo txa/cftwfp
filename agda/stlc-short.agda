@@ -15,9 +15,9 @@ variable Γ Δ Θ : Con
 
 data Var : Con → Ty → Set where
   zero : Var (Γ ▷ σ) σ
-  suc : Var Γ σ → {τ : Ty} → Var (Γ ▷ τ) σ
+  suc : Var Γ σ → Var (Γ ▷ τ) σ
 
-variable x y z : Var Γ σ
+variable i j k : Var Γ σ
 
 data Tm : Con → Ty → Set where
   var : Var Γ σ → Tm Γ σ
@@ -30,127 +30,117 @@ data _* (X :  Con → Ty → Set) : Con → Con → Set where
   ε : (X *) Γ •
   _,_ : (X *) Γ Δ → X Γ σ → (X *) Γ (Δ ▷ σ)
 
-{-# INJECTIVE_FOR_INFERENCE _* #-}
--- doesn't work
-
 variable X Y Z : Con → Ty → Set
+variable x y z : X Γ σ
+variable xs ys zs : (X *) Γ Δ
+variable is js ks : (Var *) Γ Δ
+variable ts us vs : (Tm *) Γ Δ
 
 map : ({σ : Ty} → X Γ σ → Y Δ σ) → (X *) Γ Θ → (Y *) Δ Θ
 map f ε = ε
 map f (xs , x) = map f xs , f x
 
-module S (X : Con → Ty → Set)
-         (zeroX : ∀ {Γ}{σ} → X (Γ ▷ σ) σ)
-         (sucX : ∀ {Γ}{σ} → X Γ σ → {τ : Ty} → X (Γ ▷ τ) σ)
-         (Var→X : ∀ {Γ}{σ} → Var Γ σ → X Γ σ)
-         (X→Tm :  ∀ {Γ}{σ} → X Γ σ → Tm Γ σ)
-         (Var→X-zero : ∀ {Γ}{σ} → (zeroX {Γ}{σ}) ≡ Var→X zero)
-         (Var→X-suc : ∀ {Γ}{σ}{τ}{x : Var Γ σ} → sucX (Var→X x) {τ = τ} ≡ Var→X (suc x))
-         (Var→X→Tm : ∀ {Γ}{σ}{x : Var Γ σ} → X→Tm (Var→X x) ≡ var x)
-         where
+module S(X Y : Con → Ty → Set)
+        (_[_] : ∀ {Γ}{σ}{Δ} → X Γ σ → (Y *) Δ Γ → Y Δ σ) where
 
-  variable xs ys zs : (X *) Γ Δ
-  variable vs ws : (Var *) Γ Δ
-  variable ts us : (Tm *) Γ Δ
+   _∘_ : (X *) Γ Θ → (Y *) Δ Γ → (Y *) Δ Θ
+   xs ∘ ys = map (λ x → x [ ys ]) xs
 
-  Var*→X* : (Var *) Γ Δ → (X *) Γ Δ
-  Var*→X* = map Var→X
+module W(X : Con → Ty → Set)
+        (zero : ∀ {Γ}{σ} → X (Γ ▷ σ) σ)
+        (suc : ∀ {Γ}{σ}{τ} → X Γ σ → X (Γ ▷ τ) σ) where
 
-  X*→Tm* : (X *) Γ Δ → (Tm *) Γ Δ
-  X*→Tm* = map X→Tm
+   suc* : {Γ Δ : Con} → (X *) Γ Δ → (X *) (Γ ▷ τ) Δ
+   suc* xs = map (λ x → suc x) xs
 
-  sucX* : {Γ Δ : Con} → (X *) Γ Δ → {τ : Ty} → (X *) (Γ ▷ τ) Δ
-  sucX* xs {τ = τ} = map (λ x → sucX x {τ}) xs
+   _▷* : {Γ Δ : Con} →  (X *) Γ Δ → {σ : Ty} → (X *) (Γ ▷ σ) (Δ ▷ σ)
+   xs ▷* = suc* xs , zero
 
-  _▷X : {Γ Δ : Con} →  (X *) Γ Δ → {σ : Ty} → (X *) (Γ ▷ σ) (Δ ▷ σ)
-  xs ▷X = sucX* xs , zeroX
+   id : {Γ : Con} → (X *) Γ Γ
+   id {Γ = •} = ε
+   id {Γ = Γ ▷ σ} = id {Γ = Γ} ▷*
 
-  idX : {Γ : Con} → (X *) Γ Γ
-  idX {Γ = •} = ε
-  idX {Γ = Γ ▷ σ} = idX {Γ = Γ} ▷X
+   module WW (Y : Con → Ty → Set)
+             (_[_] : ∀ {Γ}{σ}{Δ} → X Γ σ → (Y *) Δ Γ → Y Δ σ)
+             (zero≡ : ∀ {Γ}{σ}{Δ}
+                 {ys : (Y *) Δ Γ}{y : Y Δ σ}
+                 → zero [ ys , y ] ≡ y)
+             (suc≡ : ∀ {Γ}{σ}{τ}{Δ}
+                     {ys : (Y *) Δ Γ}{y : Y Δ σ}{x : X Γ τ}
+                     → (suc x) [ ys , y ] ≡ x [ ys ]) where
+
+       open S X Y _[_]
+
+       suc*∘ : {ys : (Y *) Δ Γ}{y : Y Δ τ}
+          → (suc* {τ = τ} xs) ∘ (ys , y) ≡ xs ∘ ys
+       suc*∘ {xs = ε} = refl
+       suc*∘ {xs = xs , x} = cong₂ _,_ (suc*∘ {xs = xs}) (suc≡ {x = x})
+
+       idl : {Γ : Con}{ys : (Y *) Δ Γ} → (id {Γ = Γ}) ∘ ys ≡ ys
+       idl {Γ = •} {ε} = refl
+       idl {Γ = Γ ▷ σ} {ys , y} = cong₂ _,_ (
+         suc* id ∘ (ys , y)
+         ≡⟨ suc*∘ ⟩
+         id ∘ ys
+         ≡⟨ idl ⟩    
+         ys ∎
+         ) zero≡
+       
+module V(X : Con → Ty → Set)
+        (zeroX : ∀ {Γ}{σ} → X (Γ ▷ σ) σ)
+        (sucX : ∀ {Γ}{σ}{τ} → X Γ σ → X (Γ ▷ τ) σ)
+        (Var→X : ∀ {Γ}{σ} → Var Γ σ → X Γ σ)
+        (Var→X-zero : ∀ {Γ}{σ} → (zeroX {Γ}{σ}) ≡ Var→X zero)
+        (Var→X-suc : ∀ {Γ}{σ}{τ}{x : Var Γ σ} →
+                   sucX {τ = τ} (Var→X x) ≡ Var→X (suc x))
+        where
 
   _v[_] : Var Γ σ → (X *) Δ Γ → X Δ σ
   zero v[ xs , x ] = x
-  suc y v[ xs , x ] = y v[ xs ]
+  (suc i) v[ xs , x ] = i v[ xs ]
 
-  suc-nat : x v[ sucX* xs {τ = τ} ] ≡ sucX (x v[ xs ])
-  suc-nat {x = zero} {xs = xs , x} = refl
-  suc-nat {x = suc x} {xs = xs , _} = suc-nat {x = x}
+  open W X zeroX sucX 
+  open S Var X _v[_]
 
-  v[id] : x v[ idX ] ≡ Var→X x
-  v[id] {x = zero} = Var→X-zero
-  v[id] {x = suc x} = 
-    suc x v[ idX ]
-      ≡⟨⟩
-    x v[ sucX* idX ]    
-      ≡⟨ suc-nat {x = x} ⟩
-    sucX (x v[ idX ])    
-      ≡⟨ cong (λ y → sucX y) (v[id] {x = x}) ⟩
-    sucX (Var→X x)    
-      ≡⟨ Var→X-suc ⟩        
-    Var→X (suc x) ∎
+  suc-nat-v : i v[ suc* {τ = τ} xs ] ≡ sucX (i v[ xs ])
+  suc-nat-v {i = zero} {xs = xs , x} = refl
+  suc-nat-v {i = suc i} {xs = xs , x} = suc-nat-v {i = i}
 
-  _v∘_ : ∀ {Γ}{Δ} → (Var *) Γ Θ → (X *) Δ Γ → (X *) Δ Θ
-  xs v∘ ys = map (λ x → x v[ ys ]) xs
+  v[id] : i v[ id ] ≡ Var→X i 
+  v[id] {i = zero} = Var→X-zero
+  v[id] {i = suc i} = 
+     (suc i) v[ id ]
+        ≡⟨⟩
+     i v[ suc* id ]
+        ≡⟨ suc-nat-v {i = i} ⟩
+     sucX (i v[ id ])
+        ≡⟨ cong sucX v[id] ⟩
+     sucX (Var→X i)
+        ≡⟨ Var→X-suc ⟩           
+     Var→X (suc i) ∎
 
-  v∘id : ∀ {xs : (Var *) Γ Δ} → xs v∘ idX ≡ Var*→X* xs
-  v∘id {xs = ε} = refl
-  v∘id {xs = xs , x} = cong₂ _,_ (v∘id {xs = xs}) v[id]
+{-
+module T(X : Con → Ty → Set)
+        (X→Tm :  ∀ {Γ}{σ} → X Γ σ → Tm Γ σ)
+        (zero : ∀ {Γ}{σ} → X (Γ ▷ σ) σ)
+        (suc : ∀ {Γ}{σ}{τ} → X Γ σ → X (Γ ▷ τ) σ) where
 
-  -- idv : (Var *) Γ Γ
-  -- Var*→X* idv ≡ idX
-  -- idv∘ : idv v∘ xs ≡ xs   
-
-  -- x v[ vs v∘ xs ] ≡ x v[ Var*→X* vs ] ?[ xs ]
-  -- Var→X y ≡ x v[ Var*→X* vs ] → x v[ vs v∘ xs ] ≡ y v[ xs ]
-
-  -- (vs v∘ ws) v∘ xs
-  -- Var*→X* vsws ≡ vs v∘ (Var*→X* ws) → vsws v∘ xs ≡ vs ∘v (ws ∘v xs)    
+  open V X using (_v[_]) 
+  open W X zero suc using (suc*; _▷* ; id) public
 
   _[_] : Tm Γ σ → (X *) Δ Γ → Tm Δ σ
   var x [ xs ] = X→Tm (x v[ xs ])
   (t $ u) [ xs ] = (t [ xs ]) $ (u [ xs ])
-  ƛ t [ xs ] = ƛ (t [ xs ▷X ])
+  ƛ t [ xs ] = ƛ (t [ (xs ▷*) ])
 
-  [id] : t [ idX ] ≡ t
-  [id] {t = var x} = 
-    X→Tm (x v[ idX ])
-      ≡⟨ cong X→Tm (v[id] {x = x}) ⟩
-    X→Tm (Var→X x)
-      ≡⟨ Var→X→Tm ⟩      
-    var x ∎
-  [id] {t = t $ u} = cong₂ _$_ ([id] {t = t}) ([id] {t = u})
-  [id] {t = ƛ t} = cong ƛ ([id] {t = t})
+open T Var var zero suc renaming
+  (_[_] to _[_]v ; id to idv; suc* to sucv*)
 
-  _∘_ : (Tm *) Γ Θ → (X *) Δ Γ → (Tm *) Δ Θ
-  ts ∘ ys = map (λ t → t [ ys ]) ts
+suc-tm : Tm Γ σ → Tm (Γ ▷ τ) σ
+suc-tm t = t [ sucv* idv ]v -- t [ suc-vars idv ]v
 
-  -- idt : (Tm *) Γ Γ
-  -- X*→Tm* idX ≡ idt
-  -- id∘ : idt ∘ xs ≡ X*→Tm* xs
+open T Tm (λ x → x) (var zero) suc-tm
+open S Tm
 
-  ∘id : ts ∘ idX ≡ ts
-  ∘id {ts = ε} = refl
-  ∘id {ts = ts , t} = cong₂ _,_ (∘id {ts = ts}) ([id] {t = t})
-
-module V where
-
-  open S Var zero suc (λ x → x) var refl refl refl
-
-  suc-tm : Tm Γ σ → {τ : Ty} → Tm (Γ ▷ τ) σ
-  suc-tm t = t [ sucX* idX ]
-
-  suc-tm-var : suc-tm (var x) {τ} ≡ var (suc x)
-  suc-tm-var {x = x} = 
-    suc-tm (var x)
-      ≡⟨⟩
-    (var x) [ sucX* idX ]
-      ≡⟨⟩
-    var (x v[ sucX* idX ])
-      ≡⟨⟩
-    var ((suc x) v[ idX ])
-      ≡⟨ cong var (v[id] {x = suc x}) ⟩          
-    var (suc x) ∎
-
-open S Tm (var zero) V.suc-tm var (λ x → x) refl V.suc-tm-var refl public
-
+   
+-}

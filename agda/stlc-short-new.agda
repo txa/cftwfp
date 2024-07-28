@@ -41,41 +41,6 @@ map : ({σ : Ty} → X Γ σ → Y Δ σ) → (X *) Γ Θ → (Y *) Δ Θ
 map f ε = ε
 map f (xs , x) = map f xs , f x
 
-
-module L (X : Con → Ty → Set)
-         (zeroX : ∀ {Γ}{σ} → X (Γ ▷ σ) σ)
-         (sucX : ∀ {Γ}{σ} → X Γ σ → {τ : Ty} → X (Γ ▷ τ) σ) where
-
-  sucX* : {Γ Δ : Con} → (X *) Γ Δ → {τ : Ty} → (X *) (Γ ▷ τ) Δ
-  sucX* xs {τ = τ} = map (λ x → sucX x {τ}) xs
-
-  _▷X : {Γ Δ : Con} →  (X *) Γ Δ → {σ : Ty} → (X *) (Γ ▷ σ) (Δ ▷ σ)
-  xs ▷X = sucX* xs , zeroX
-
-  idX : {Γ : Con} → (X *) Γ Γ
-  idX {Γ = •} = ε
-  idX {Γ = Γ ▷ σ} = idX {Γ = Γ} ▷X
-
-  {-
-  _v[_] : Var Γ σ → (X *) Δ Γ → X Δ σ
-  zero v[ xs , x ] = x
-  suc i v[ xs , x ] = i v[ xs ]
-
-  _v∘_ : ∀ {Γ}{Δ} → (Var *) Γ Θ → (X *) Δ Γ → (X *) Δ Θ
-  is v∘ xs = map (λ i → i v[ xs ]) is
-  -}
-
--- module VV = V Var zero suc
-
-module V (X : Con → Ty → Set) where
-
-  _v[_] : Var Γ σ → (X *) Δ Γ → X Δ σ
-  zero v[ xs , x ] = x
-  suc i v[ xs , x ] = i v[ xs ]
-
-  _v∘_ : ∀ {Γ}{Δ} → (Var *) Γ Θ → (X *) Δ Γ → (X *) Δ Θ
-  is v∘ xs = map (λ i → i v[ xs ]) is
-
 module S(X : Con → Ty → Set)
         (zeroX : ∀ {Γ}{σ} → X (Γ ▷ σ) σ)
         (sucX : ∀ {Γ}{σ} → X Γ σ → {τ : Ty} → X (Γ ▷ τ) σ)
@@ -85,11 +50,51 @@ module S(X : Con → Ty → Set)
         (sucX≡ : ∀ {Γ}{Δ}{σ}{τ}{y : X Γ τ}{xs : (X *) Δ Γ}{x : X Δ σ}
             → (sucX y) [ xs , x ]X ≡ y [ xs ]X) where
 
-   open L X zeroX sucX
-   
+   sucX* : {Γ Δ : Con} → (X *) Γ Δ → {τ : Ty} → (X *) (Γ ▷ τ) Δ
+   sucX* xs {τ = τ} = map (λ x → sucX x {τ}) xs
+
+   _▷X : {Γ Δ : Con} →  (X *) Γ Δ → {σ : Ty} → (X *) (Γ ▷ σ) (Δ ▷ σ)
+   xs ▷X = sucX* xs , zeroX
+
+   idX : {Γ : Con} → (X *) Γ Γ
+   idX {Γ = •} = ε
+   idX {Γ = Γ ▷ σ} = idX {Γ = Γ} ▷X
+
    _∘X_ : (X *) Γ Θ → (X *) Δ Γ → (X *) Δ Θ
    xs ∘X ys = map (λ i → i [ ys ]X) xs
 
+module V(X : Con → Ty → Set) where
+
+  _v[_] : Var Γ σ → (X *) Δ Γ → X Δ σ
+  zero v[ xs , x ] = x
+  suc y v[ xs , x ] = y v[ xs ]
+
+module VV where
+
+  open V Var public
+  open S Var zero suc _v[_] refl refl public
+  
+module T(X : Con → Ty → Set)
+        (zeroX : ∀ {Γ}{σ} → X (Γ ▷ σ) σ)
+        (sucX : ∀ {Γ}{σ} → X Γ σ → {τ : Ty} → X (Γ ▷ τ) σ)
+        (_[_]X : ∀ {Γ}{σ}{Δ} → X Γ σ → (X *) Δ Γ → X Δ σ)
+        (zeroX≡ : ∀ {Γ}{Δ}{σ}{xs : (X *) Δ Γ}{x : X Δ σ}
+            → zeroX [ xs , x ]X ≡ x)
+        (sucX≡ : ∀ {Γ}{Δ}{σ}{τ}{y : X Γ τ}{xs : (X *) Δ Γ}{x : X Δ σ}
+            → (sucX y) [ xs , x ]X ≡ y [ xs ]X) where
+        (X→Tm :  ∀ {Γ}{σ} → X Γ σ → Tm Γ σ) where
+
+  open VV using (_v[_])
+
+
+  _[_] : Tm Γ σ → (X *) Δ Γ → Tm Δ σ
+  var x [ xs ] = X→Tm (x v[ xs ])
+  (t $ u) [ xs ] = (t [ xs ]) $ (u [ xs ])
+  ƛ t [ xs ] = ƛ (t [ xs ▷X ])
+  
+
+
+{-
    sucX*∘X : {ys : (X *) Γ Δ}{y : X Γ τ}
            → sucX* xs {τ = τ} ∘X (ys , y) ≡ xs ∘X ys
    sucX*∘X {xs = ε} = refl
@@ -254,4 +259,5 @@ module V where
 open S Tm (var zero) V.suc-tm var (λ x → x) refl V.suc-tm-var refl public
 
 
+-}
 -}
