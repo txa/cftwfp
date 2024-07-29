@@ -40,99 +40,116 @@ map : ({σ : Ty} → X Γ σ → Y Δ σ) → (X *) Γ Θ → (Y *) Δ Θ
 map f ε = ε
 map f (xs , x) = map f xs , f x
 
-module S(X Y : Con → Ty → Set)
-        (_[_] : ∀ {Γ}{σ}{Δ} → X Γ σ → (Y *) Δ Γ → Y Δ σ) where
-
-   _∘_ : (X *) Γ Θ → (Y *) Δ Γ → (Y *) Δ Θ
-   xs ∘ ys = map (λ x → x [ ys ]) xs
-
-module W(X : Con → Ty → Set)
-        (zero : ∀ {Γ}{σ} → X (Γ ▷ σ) σ)
-        (suc : ∀ {Γ}{σ}{τ} → X Γ σ → X (Γ ▷ τ) σ) where
-
-   suc* : {Γ Δ : Con} → (X *) Γ Δ → (X *) (Γ ▷ τ) Δ
-   suc* xs = map (λ x → suc x) xs
-
-   _▷* : {Γ Δ : Con} →  (X *) Γ Δ → {σ : Ty} → (X *) (Γ ▷ σ) (Δ ▷ σ)
-   xs ▷* = suc* xs , zero
-
-   id : {Γ : Con} → (X *) Γ Γ
-   id {Γ = •} = ε
-   id {Γ = Γ ▷ σ} = id {Γ = Γ} ▷*
-
-   module WW (Y : Con → Ty → Set)
-             (_[_] : ∀ {Γ}{σ}{Δ} → X Γ σ → (Y *) Δ Γ → Y Δ σ)
-             (zero≡ : ∀ {Γ}{σ}{Δ}
-                 {ys : (Y *) Δ Γ}{y : Y Δ σ}
-                 → zero [ ys , y ] ≡ y)
-             (suc≡ : ∀ {Γ}{σ}{τ}{Δ}
-                     {ys : (Y *) Δ Γ}{y : Y Δ σ}{x : X Γ τ}
-                     → (suc x) [ ys , y ] ≡ x [ ys ]) where
-
-       open S X Y _[_]
-
-       suc*∘ : {ys : (Y *) Δ Γ}{y : Y Δ τ}
-          → (suc* {τ = τ} xs) ∘ (ys , y) ≡ xs ∘ ys
-       suc*∘ {xs = ε} = refl
-       suc*∘ {xs = xs , x} = cong₂ _,_ (suc*∘ {xs = xs}) (suc≡ {x = x})
-
-       idl : {Γ : Con}{ys : (Y *) Δ Γ} → (id {Γ = Γ}) ∘ ys ≡ ys
-       idl {Γ = •} {ε} = refl
-       idl {Γ = Γ ▷ σ} {ys , y} = cong₂ _,_ (
-         suc* id ∘ (ys , y)
-         ≡⟨ suc*∘ ⟩
-         id ∘ ys
-         ≡⟨ idl ⟩    
-         ys ∎
-         ) zero≡
+{-
+module W (X : Con → Ty → Set)
+         (zeroX : ∀ {Γ}{σ} → X (Γ ▷ σ) σ)
+         (sucX : ∀ {Γ}{σ}{τ} → X Γ σ → X (Γ ▷ τ) σ)
+         (_X[_]X : ∀ {Γ}{σ}{Δ} → X Γ σ → (X *) Δ Γ → X Δ σ)
+         
        
-module V(X : Con → Ty → Set)
+where
+-}
+
+
+module T(X : Con → Ty → Set)
+        (Var→X : ∀ {Γ}{σ} → Var Γ σ → X Γ σ)
+        (X→Tm :  ∀ {Γ}{σ} → X Γ σ → Tm Γ σ)
+        (Var→X→Tm : ∀ {Γ}{σ}{i : Var Γ σ} → X→Tm (Var→X i) ≡ var i) 
         (zeroX : ∀ {Γ}{σ} → X (Γ ▷ σ) σ)
         (sucX : ∀ {Γ}{σ}{τ} → X Γ σ → X (Γ ▷ τ) σ)
-        (Var→X : ∀ {Γ}{σ} → Var Γ σ → X Γ σ)
         (Var→X-zero : ∀ {Γ}{σ} → (zeroX {Γ}{σ}) ≡ Var→X zero)
         (Var→X-suc : ∀ {Γ}{σ}{τ}{x : Var Γ σ} →
                    sucX {τ = τ} (Var→X x) ≡ Var→X (suc x))
-        where
+          where
 
-  _v[_] : Var Γ σ → (X *) Δ Γ → X Δ σ
-  zero v[ xs , x ] = x
-  (suc i) v[ xs , x ] = i v[ xs ]
+   _v[_] : Var Γ σ → (X *) Δ Γ → X Δ σ
+   zero v[ xs , x ] = x
+   (suc i) v[ xs , x ] = i v[ xs ]
 
-  open W X zeroX sucX 
-  --open S Var X _v[_]
+   sucX* : {Γ Δ : Con} → (X *) Γ Δ → (X *) (Γ ▷ τ) Δ
+   sucX* xs = map (λ x → sucX x) xs
 
-  suc-nat-v : i v[ suc* {τ = τ} xs ] ≡ sucX (i v[ xs ])
-  suc-nat-v {i = zero} {xs = xs , x} = refl
-  suc-nat-v {i = suc i} {xs = xs , x} = suc-nat-v {i = i}
+   _▷X : {Γ Δ : Con} →  (X *) Γ Δ → {σ : Ty} → (X *) (Γ ▷ σ) (Δ ▷ σ)
+   xs ▷X = sucX* xs , zeroX
 
-  v[id] : i v[ id ] ≡ Var→X i 
-  v[id] {i = zero} = Var→X-zero
-  v[id] {i = suc i} = 
-     (suc i) v[ id ]
-        ≡⟨⟩
-     i v[ suc* id ]
-        ≡⟨ suc-nat-v {i = i} ⟩
-     sucX (i v[ id ])
-        ≡⟨ cong sucX v[id] ⟩
-     sucX (Var→X i)
-        ≡⟨ Var→X-suc ⟩           
-     Var→X (suc i) ∎
+   idX : {Γ : Con} → (X *) Γ Γ
+   idX {Γ = •} = ε
+   idX {Γ = Γ ▷ σ} = idX {Γ = Γ} ▷X
+
+   suc-nat-v : i v[ sucX* {τ = τ} xs ] ≡ sucX (i v[ xs ])
+   suc-nat-v {i = zero} {xs = xs , x} = refl
+   suc-nat-v {i = suc i} {xs = xs , x} = suc-nat-v {i = i}
+
+   v[id] : i v[ idX ] ≡ Var→X i 
+   v[id] {i = zero} = Var→X-zero
+   v[id] {i = suc i} = 
+      (suc i) v[ idX ]
+         ≡⟨⟩
+      i v[ sucX* idX ]
+         ≡⟨ suc-nat-v {i = i} ⟩
+      sucX (i v[ idX ])
+         ≡⟨ cong sucX v[id] ⟩
+      sucX (Var→X i)
+         ≡⟨ Var→X-suc ⟩           
+      Var→X (suc i) ∎
+
+   _v∘_ : (Var *) Γ Θ → (X *) Δ Γ → (X *) Δ Θ
+   is v∘ xs = map (λ i → i v[ xs ]) is
+
+   _[_]X : Tm Γ σ → (X *) Δ Γ → Tm Δ σ
+   var x [ xs ]X = X→Tm (x v[ xs ])
+   (t $ u) [ xs ]X = (t [ xs ]X) $ (u [ xs ]X)
+   ƛ t [ xs ]X = ƛ (t [ (xs ▷X) ]X)
+
+   t[id]X : t [ idX ]X ≡ t 
+   t[id]X {t = var i} = 
+      X→Tm (i v[ idX ])
+        ≡⟨ cong X→Tm v[id] ⟩
+      X→Tm (Var→X i)
+        ≡⟨ Var→X→Tm  ⟩       
+      var i ∎
+   t[id]X {t = t $ u} = cong₂ _$_ (t[id]X {t = t}) (t[id]X {t = u})
+   t[id]X {t = ƛ t} = cong ƛ t[id]X
+
+   _∘X_ : (Tm *) Γ Θ → (X *) Δ Γ → (Tm *) Δ Θ
+   ts ∘X xs = map (λ t → t [ xs ]X) ts
+
+   ∘Xid : ts ∘X idX ≡ ts
+   ∘Xid {ts = ε} = refl
+   ∘Xid {ts = ts , t} = cong₂ _,_ (∘Xid {ts = ts}) t[id]X
+
+open T Var (λ i → i) var refl zero suc refl refl renaming (_v[_] to _v[_]v; _[_]X to _[_]v; sucX* to sucVar* ; idX to idv)
+
+suc-tm : Tm Γ σ → Tm (Γ ▷ τ) σ
+suc-tm t = t [ sucVar* idv ]v
+
+suc-tm-var : suc-tm {τ = τ} (var i) ≡ var (suc i)
+suc-tm-var {i = i} = 
+   suc-tm (var i)
+    ≡⟨⟩
+    var (i v[ sucVar* idv ]v)
+    ≡⟨ cong var (suc-nat-v {i = i}) ⟩
+    var (suc (i v[ idv ]v))
+    ≡⟨ cong (λ i → var (suc i)) v[id] ⟩    
+    var (suc i) ∎
+
+open T Tm var (λ t → t) refl (var zero) suc-tm refl suc-tm-var renaming (idX to id ; _∘X_ to _∘_ ; ∘Xid to ∘id)
 
 {-
-module T(X : Con → Ty → Set)
-        (X→Tm :  ∀ {Γ}{σ} → X Γ σ → Tm Γ σ)
-        (zero : ∀ {Γ}{σ} → X (Γ ▷ σ) σ)
-        (suc : ∀ {Γ}{σ}{τ} → X Γ σ → X (Γ ▷ τ) σ) where
+suc*∘ : {ys : (Y *) Δ Γ}{y : Y Δ τ}
+          → (suc* {τ = τ} xs) ∘ (ys , y) ≡ xs ∘ ys
+suc*∘ {xs = ε} = refl
+suc*∘ {xs = xs , x} = cong₂ _,_ (suc*∘ {xs = xs}) (suc≡ {x = x})
+-}
 
-  open V X using (_v[_]) 
-  open W X zero suc using (suc*; _▷* ; id) public
 
-  _[_] : Tm Γ σ → (X *) Δ Γ → Tm Δ σ
-  var x [ xs ] = X→Tm (x v[ xs ])
-  (t $ u) [ xs ] = (t [ xs ]) $ (u [ xs ])
-  ƛ t [ xs ] = ƛ (t [ (xs ▷*) ])
 
+
+{-
+  open S Tm X {!!}
+-}
+
+{-
 open T Var var zero suc renaming
   (_[_] to _[_]v ; id to idv; suc* to sucv*)
 
@@ -143,4 +160,10 @@ open T Tm (λ x → x) (var zero) suc-tm
 open S Tm
 
    
+-}
+{-
+   sucX*∘ : {xs : (X *) Δ Γ}{X : Y Δ τ}
+      → (sucX* {τ = τ} xs) ∘ (ys , y) ≡ xs ∘ ys
+   sucX*∘ {xs = ε} = refl
+   sucX*∘ {xs = xs , x} = cong₂ _,_ (sucX*∘ {xs = xs}) (sucX≡ {x = x})
 -}
